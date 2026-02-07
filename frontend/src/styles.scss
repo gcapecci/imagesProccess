@@ -51,25 +51,44 @@ body {
   z-index: 9999;
 }
 
-/* File drop zone */
-.file-drop-zone {
-  border: 2px dashed var(--border-color);
-  border-radius: 8px;
-  padding: 32px;
-  text-align: center;
-  background-color: #fafafa;
-  transition: all 0.3s ease;
-  cursor: pointer;
+
+
+/* Override ngx-file-drop library styles */
+ngx-file-drop {
+  display: block !important;
+  width: 100% !important;
 }
 
-.file-drop-zone:hover {
-  border-color: var(--primary-color);
-  background-color: #f0f0f0;
+.ngx-file-drop__drop-zone {
+  width: 100% !important;
+  min-height: 220px !important;
+  height: auto !important;
+  margin: 0 !important;
+  border: 2px dashed #ccc !important;
+  border-radius: 8px !important;
+  background-color: #fafafa !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  padding: 16px !important;
 }
 
-.file-drop-zone.drag-over {
-  border-color: var(--primary-color);
-  background-color: #e8eaf6;
+.ngx-file-drop__drop-zone:hover,
+.ngx-file-drop__drop-zone--is-over {
+  border-color: var(--primary-color) !important;
+  background-color: #ede7f6 !important;
+}
+
+.ngx-file-drop__content {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* Image preview */

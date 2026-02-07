@@ -13,9 +13,7 @@
       (onFileOver)="onFileHover($event)"
       (onFileLeave)="onFileLeave($event)"
       [accept]="'image/*'"
-      [multiple]="false"
-      class="file-drop-zone"
-      [class.drag-over]="isHovering">
+      [multiple]="false">
       
       <ng-template ngx-file-drop-content-tmp>
         <div class="drop-content">

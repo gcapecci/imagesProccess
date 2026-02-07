@@ -23,6 +23,14 @@
   }
 }
 
+app-image-uploader,
+app-model-selector,
+app-image-processor {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 @media (max-width: 768px) {
   .background-remover-container {
     padding: 0 16px;

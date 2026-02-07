@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Refactored - 2026-02-07 (Frontend Architecture & Styling)
+
+#### Component File Separation
+- **AppComponent**: Extracted inline `template` and `styles` to dedicated `app.component.html` and `app.component.scss` files
+- **Image Uploader Styling**: Migrated `ngx-file-drop` style overrides from component-level `::ng-deep` to global `styles.scss` for proper specificity
+  - Removed duplicate `.file-drop-zone` styles from both `styles.scss` and component SCSS
+  - Removed `class="file-drop-zone"` from HTML template to eliminate double border
+  - Fixed upload icon being cut off by `overflow: hidden` — changed to `overflow: visible`
+  - Increased upload icon size to 64px with proper centering
+  - Improved "Choose File" button appearance with rounded corners and better padding
+  - Added subtle background (`#fafafa`) and hover effect (`#ede7f6`) to drop zone
+
+#### Multi-Page Navigation System
+- **Angular Routing**: Created `app-routing.module.ts` with routes:
+  - `/` → `HomeComponent`
+  - `/background-remover` → `BackgroundRemoverComponent`
+  - `/help` → `HelpComponent`
+  - `**` → redirect to `/`
+- **New Pages**:
+  - `HomeComponent`: Landing page with feature cards, "How It Works" steps, and "Coming Soon" placeholders
+  - `HelpComponent`: Documentation and FAQ page with `mat-accordion`
+  - `BackgroundRemoverComponent`: Encapsulates full background removal workflow (model selection, upload, processing)
+- **Header Navigation**: Refactored header with `routerLink` navigation links and responsive mobile `mat-menu`
+- **AppComponent Shell**: Simplified to `<app-header>`, `<router-outlet>`, `<app-footer>`
+
 ### Fixed - 2026-02-07 (Performance & Timeout Improvements)
 
 #### ISNet Alpha Matting Timeout Issue
