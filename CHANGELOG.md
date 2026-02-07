@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2026-02-07 (Developer Experience)
+
+#### Docker Compose Profiles (Dev/Prod)
+- **Profiles system**: Adicionado suporte a profiles (`dev` e `prod`) no `docker-compose.yml` para gerenciar ambientes de desenvolvimento e produção em um único arquivo
+  - `docker compose --profile dev up -d` → Sobe ambiente de desenvolvimento com live reload
+  - `docker compose --profile prod up -d` → Sobe ambiente de produção com build otimizado
+- **Frontend Dev Service** (`frontend-dev`): Container com `node:18-alpine` executando `ng serve` com:
+  - `--poll 2000` para detecção de mudanças em volumes Docker
+  - `--live-reload true` para atualização automática no browser
+  - Volume mount do código-fonte (`./frontend:/app`)
+  - Volume nomeado `frontend_node_modules` para persistência de dependências
+- **Nginx Dev Service** (`nginx-dev`): Configuração dedicada para desenvolvimento com:
+  - Upstream apontando para `frontend-dev:4200` (Angular dev server)
+  - Suporte a WebSocket (`/ng-cli-ws`) para live reload
+  - Proxy reverso transparente para API e AI service
+- **Arquivo `nginx/default.dev.conf`**: Configuração Nginx específica para dev com proxy WebSocket
+- **Removidos arquivos extras**: Eliminados `Dockerfile.dev` e `docker-compose.dev.yml` — tudo consolidado no compose principal via profiles
+- **Serviços compartilhados**: `backend` e `ai-service` rodam em ambos os modos (sem profile)
+
 ### Improved - 2026-02-07 (UX Enhancement)
 
 #### Image Uploader UX

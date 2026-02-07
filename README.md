@@ -26,7 +26,8 @@
 - ✅ **Seções Colapsáveis**: Toggle expand/collapse em cada seção (mat-expansion-panel)
 - ✅ **Menu Responsivo**: Navegação adaptável para desktop e mobile
 - ✅ **API RESTful**: Integração com outros sistemas
-- ✅ **Containerizado**: Deploy simplificado com Docker
+- ✅ **Containerizado**: Deploy simplificado com Docker (profiles dev/prod)
+- ✅ **Live Reload**: Desenvolvimento com hot reload sem rebuild de containers
 - ✅ **Escalável**: Microserviços independentes
 - ✅ **Monitoramento**: Health checks e estatísticas
 
@@ -53,22 +54,40 @@
 - **OpenCV** para processamento
 
 ### Infraestrutura
-- **Docker & Docker Compose**
-- **Nginx** como proxy reverso  
-- **Volume persistente** para modelos AI
+- **Docker & Docker Compose** com **profiles** (dev/prod)
+- **Nginx** como proxy reverso (config separada para dev com WebSocket)
+- **Live Reload** via `ng serve` + polling no modo dev
+- **Volume persistente** para modelos AI e node_modules
 - **Network isolation** entre containers
 
 ## 🔧 Execução Rápida
 
+### 🚀 Produção
 ```bash
-# Clonar e executar
+# Clonar e executar em modo produção
 git clone <repo-url>
 cd imagesProccess
-docker-compose up --build
+docker compose --profile prod up -d --build
 
 # Acessar aplicação
 # http://localhost (Frontend + API)
 ```
+
+### 🛠️ Desenvolvimento (Live Reload)
+```bash
+# Executar em modo desenvolvimento com live reload
+docker compose --profile dev up -d
+
+# Acessar aplicação (auto-reload ao editar código)
+# http://localhost (via Nginx proxy)
+# http://localhost:4201 (direto no Angular dev server)
+
+# Parar ambiente
+docker compose --profile dev down
+```
+
+> **Nota**: O modo dev monta o código-fonte como volume e usa `ng serve` com polling.
+> Alterações em arquivos `.ts`, `.html` e `.scss` são detectadas automaticamente e o browser atualiza sozinho.
 
 **📖 Documentação completa**: [README_EXECUTION.md](README_EXECUTION.md)
 
@@ -133,7 +152,8 @@ imagesProccess/
 │
 └── 🌐 nginx/                      # Proxy Reverso
     ├── Dockerfile
-    └── conf.d/default.conf
+    ├── default.dev.conf            # Config Nginx para dev (WebSocket + port 4200)
+    └── conf.d/default.conf         # Config Nginx para produção
 ```
 
 ## 📈 Performance & Escalabilidade
