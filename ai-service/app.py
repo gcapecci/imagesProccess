@@ -64,6 +64,19 @@ async def lifespan(app: FastAPI):
             stats["model_usage"][model_name] = 0
             logger.info(f"✅ {model_name} warmed up successfully!")
         
+        # Additional warm-up for isnet alpha matting (prevents 56s delay on first request)
+        logger.info("Warming up isnet alpha matting...")
+        _ = remove(
+            dummy_image, 
+            session=rembg_sessions['isnet-general-use'],
+            alpha_matting=True,
+            alpha_matting_foreground_threshold=240,
+            alpha_matting_background_threshold=10,
+            alpha_matting_erode_size=10,
+            post_process_mask=True
+        )
+        logger.info("✅ Alpha matting warmed up successfully!")
+        
         logger.info(f"✅ AI Service initialized with {len(rembg_sessions)} models!")
         
     except Exception as e:

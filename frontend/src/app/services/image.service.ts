@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, timeout } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 export interface ProcessingResult {
@@ -15,7 +15,7 @@ export interface ProcessingResult {
 
 export interface UploadProgress {
   progress: number;
-  status: 'uploading' | 'processing' | 'complete' | 'error';
+  status: 'uploading' | 'processing' | 'downloading' | 'complete' | 'error';
   message?: string;
 }
 
@@ -40,11 +40,15 @@ export class ImageService {
     const formData = new FormData();
     formData.append('image', file);
 
+    // Extended timeout for alpha matting (first request with isnet-general-use can take ~60s)
+    const timeoutDuration = model === 'isnet-general-use' ? 180000 : 120000; // 3 min for premium, 2 min for standard
+
     return this.http.post(`${this.baseUrl}/images/remove-background?model=${model}`, formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'blob'
     }).pipe(
+      timeout(timeoutDuration),
       map((event: HttpEvent<Blob>) => {
         switch (event.type) {
           case HttpEventType.UploadProgress:
@@ -54,6 +58,29 @@ export class ImageService {
                 progress: progress * 0.3, // Upload is 30% of total progress
                 status: 'uploading',
                 message: 'Uploading image...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Sent:
+            // Upload complete, waiting for AI processing
+            this.uploadProgressSubject.next({
+              progress: 35,
+              status: 'processing',
+              message: model === 'isnet-general-use' 
+                ? 'Processing with Premium Quality (Alpha Matting)...' 
+                : 'Processing with AI...'
+            });
+            return { success: false };
+
+          case HttpEventType.DownloadProgress:
+            // AI processing complete, downloading result
+            if (event.total) {
+              const progress = 35 + Math.round(65 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress,
+                status: 'downloading',
+                message: 'Receiving processed image...'
               });
             }
             return { success: false };

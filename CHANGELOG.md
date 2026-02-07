@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - 2026-02-07 (Performance & Timeout Improvements)
+
+#### ISNet Alpha Matting Timeout Issue
+- **Problem**: First request with `isnet-general-use` model took ~56 seconds (alpha matting initialization)
+  - Caused 503 Service Unavailable errors on first premium quality processing
+  - User experience: Appeared as endpoint error
+  
+- **Solution Implemented**:
+  1. **Frontend Timeout Extension** (`frontend/src/app/services/image.service.ts`):
+     - Added dynamic timeout based on model selection
+     - Standard (u2net): 120s (2 minutes)
+     - Premium (isnet-general-use): 180s (3 minutes)
+     - Imported RxJS `timeout` operator for proper timeout handling
+  
+  2. **AI Service Alpha Matting Warm-up** (`ai-service/app.py`):
+     - Added dedicated warm-up for alpha matting parameters on startup
+     - Pre-initializes scipy and alpha matting algorithms
+     - Eliminates 56s delay on first premium quality request
+     - Warm-up runs with full alpha matting configuration:
+       - `alpha_matting=True`
+       - `foreground_threshold=240`
+       - `background_threshold=10`
+       - `erode_size=10`
+       - `post_process_mask=True`
+  
+  3. **Enhanced Progress Feedback** (`frontend/src/app/services/image.service.ts`):
+     - Added `HttpEventType.Sent` handler: Shows "Processing with Premium Quality (Alpha Matting)..." message
+     - Added `HttpEventType.DownloadProgress` handler: Shows result download progress (35-100%)
+     - Better user feedback during long-running premium processing
+     - Model-specific messages to set user expectations
+
+- **Performance Impact**:
+  - First ISNet request: From 56s → ~1s (after warm-up)
+  - Subsequent requests: Maintained at ~0.85-1.0s
+  - U²-Net performance: Unchanged (~0.3-0.5s)
+
 ### Added - 2026-02-07 (feature/initial-project)
 
 #### Frontend Components
