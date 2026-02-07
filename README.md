@@ -222,6 +222,60 @@ GET /health
 - **Sharp**: Processamento de imagens
 - **Multer**: Upload de arquivos
 - **UUID**: Geração de IDs únicos
+- **Docker**: Containerização e deployment
+
+## 🔧 Troubleshooting Docker
+
+### Erro: `npm ci` falha com "package-lock.json not found"
+
+Este erro ocorre quando o Docker não consegue encontrar o package-lock.json. Soluções:
+
+```bash
+# 1. Verifique se está no diretório correto
+pwd  # Deve estar em .../imagesProccess
+
+# 2. Verifique se os arquivos existem
+./verify-docker.sh
+
+# 3. Limpe o cache do Docker e rebuilde
+docker compose down
+docker builder prune -af
+docker compose build --no-cache
+docker compose up -d
+```
+
+### Erro: Referência a "frontend builder" ou "nginx" 
+
+Se você ver erros sobre stages "frontend builder" ou "nginx" que não existem:
+
+```bash
+# 1. Verifique se está usando o Dockerfile correto
+cat Dockerfile | head -5
+
+# 2. Certifique-se de não estar usando um docker-compose.yml customizado
+git status
+
+# 3. Se modificou os arquivos, restaure para a versão original
+git checkout Dockerfile docker-compose.yml
+```
+
+### Script de Verificação
+
+Execute o script de verificação para diagnosticar problemas:
+
+```bash
+chmod +x verify-docker.sh
+./verify-docker.sh
+```
+
+Este script verifica:
+- ✓ Arquivos necessários presentes
+- ✓ Estrutura de diretórios correta  
+- ✓ Docker e Docker Compose instalados
+
+### Mais Ajuda
+
+Para troubleshooting detalhado, veja [DOCKER_TROUBLESHOOTING.md](DOCKER_TROUBLESHOOTING.md)
 
 ## 📝 Benefícios da Clean Architecture
 
