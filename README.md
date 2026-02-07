@@ -72,12 +72,48 @@ src/
 
 ## 🚀 Como Executar
 
-### Pré-requisitos
+### Opção 1: Usando Docker (Recomendado)
 
+#### Pré-requisitos
+- Docker
+- Docker Compose
+
+#### Executar em Produção
+
+```bash
+# Clone o repositório
+git clone https://github.com/gcapecci/imagesProccess.git
+
+# Entre no diretório
+cd imagesProccess
+
+# Inicie com Docker Compose
+docker compose up -d
+
+# Visualizar logs
+docker compose logs -f
+
+# Parar a aplicação
+docker compose down
+```
+
+#### Executar em Desenvolvimento (com hot reload)
+
+```bash
+# Inicie em modo desenvolvimento
+docker compose -f docker-compose.dev.yml up
+
+# Parar a aplicação
+docker compose -f docker-compose.dev.yml down
+```
+
+### Opção 2: Instalação Local
+
+#### Pré-requisitos
 - Node.js (v14 ou superior)
 - npm ou yarn
 
-### Instalação
+#### Instalação
 
 ```bash
 # Clone o repositório
@@ -90,13 +126,13 @@ cd imagesProccess
 npm install
 ```
 
-### Executar em Desenvolvimento
+#### Executar em Desenvolvimento
 
 ```bash
 npm run dev
 ```
 
-### Build e Execução em Produção
+#### Build e Execução em Produção
 
 ```bash
 # Compilar TypeScript
