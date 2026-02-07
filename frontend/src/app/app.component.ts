@@ -13,14 +13,21 @@ import { Component } from '@angular/core';
             <p>Remove backgrounds from your images using advanced AI technology</p>
           </div>
           
+          <app-model-selector
+            (modelSelected)="onModelSelected($event)"
+            [disabled]="isProcessing">
+          </app-model-selector>
+          
           <app-image-uploader 
             (imageUploaded)="onImageUploaded($event)"
+            (imageRemoved)="onImageRemoved()"
             [isProcessing]="isProcessing">
           </app-image-uploader>
           
           <app-image-processor
             *ngIf="uploadedImage"
             [image]="uploadedImage"
+            [selectedModel]="selectedModel"
             (processingStart)="onProcessingStart()"
             (processingComplete)="onProcessingComplete($event)"
             (processingError)="onProcessingError($event)">
@@ -85,10 +92,20 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   uploadedImage: File | null = null;
+  selectedModel = 'u2net';
   isProcessing = false;
+
+  onModelSelected(modelId: string) {
+    this.selectedModel = modelId;
+  }
 
   onImageUploaded(image: File) {
     this.uploadedImage = image;
+  }
+
+  onImageRemoved() {
+    this.uploadedImage = null;
+    this.isProcessing = false;
   }
 
   onProcessingStart() {

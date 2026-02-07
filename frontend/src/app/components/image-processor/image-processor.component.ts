@@ -124,6 +124,7 @@ import { Subscription } from 'rxjs';
 })
 export class ImageProcessorComponent implements OnDestroy {
   @Input() image: File | null = null;
+  @Input() selectedModel = 'u2net';
   @Output() processingStart = new EventEmitter<void>();
   @Output() processingComplete = new EventEmitter<ProcessingResult>();
   @Output() processingError = new EventEmitter<string>();
@@ -182,8 +183,8 @@ export class ImageProcessorComponent implements OnDestroy {
       progress => this.progress = progress
     );
 
-    // Process the image
-    this.imageService.removeBackground(this.image).subscribe({
+    // Process the image with selected model
+    this.imageService.removeBackground(this.image, this.selectedModel).subscribe({
       next: (result: ProcessingResult) => {
         if (result.success && result.processedImage) {
           this.processedImage = result.processedImage;

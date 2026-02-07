@@ -17,6 +17,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatRadioModule } from '@angular/material/radio';
 
 // Third-party
 import { NgxFileDropModule } from 'ngx-file-drop';
@@ -25,6 +26,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 import { AppComponent } from './app.component';
 import { ImageUploaderComponent } from './components/image-uploader/image-uploader.component';
 import { ImageProcessorComponent } from './components/image-processor/image-processor.component';
+import { ModelSelectorComponent } from './components/model-selector/model-selector.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 
@@ -37,6 +39,7 @@ import { NotificationService } from './services/notification.service';
     AppComponent,
     ImageUploaderComponent,
     ImageProcessorComponent,
+    ModelSelectorComponent,
     HeaderComponent,
     FooterComponent
   ],
@@ -60,6 +63,7 @@ import { NotificationService } from './services/notification.service';
     MatChipsModule,
     MatTooltipModule,
     MatDividerModule,
+    MatRadioModule,
     
     // Third-party
     NgxFileDropModule

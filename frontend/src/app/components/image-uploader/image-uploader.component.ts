@@ -132,6 +132,7 @@ import { NotificationService } from '../../services/notification.service';
 })
 export class ImageUploaderComponent {
   @Output() imageUploaded = new EventEmitter<File>();
+  @Output() imageRemoved = new EventEmitter<void>();
   @Input() isProcessing = false;
 
   selectedFile: File | null = null;
@@ -188,6 +189,8 @@ export class ImageUploaderComponent {
 
   removeFile() {
     this.selectedFile = null;
+    this.imageRemoved.emit();
+    this.notification.showInfo('Image removed');
   }
 
   formatFileSize(bytes: number): string {

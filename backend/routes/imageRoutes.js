@@ -23,20 +23,22 @@ const upload = multer({
 });
 
 /**
- * POST /api/images/remove-background
+ * POST /api/images/remove-background?model=u2net
  * Remove background from uploaded image using AI
  */
 router.post('/remove-background', upload.single('image'), validateImage, async (req, res) => {
   try {
     const { buffer, mimetype, originalname, size } = req.file;
+    const model = req.query.model || 'u2net'; // Get model from query param, default to u2net
     
-    console.log(`📸 Processing image: ${originalname} (${(size / 1024).toFixed(2)}KB)`);
+    console.log(`📸 Processing image: ${originalname} (${(size / 1024).toFixed(2)}KB) with model: ${model}`);
     
     // Process image through AI service
     const processedImage = await imageService.removeBackground({
       buffer,
       mimetype,
-      originalname
+      originalname,
+      model
     });
 
     // Set appropriate headers

@@ -36,11 +36,11 @@ export class ImageService {
   /**
    * Remove background from uploaded image
    */
-  removeBackground(file: File): Observable<ProcessingResult> {
+  removeBackground(file: File, model: string = 'u2net'): Observable<ProcessingResult> {
     const formData = new FormData();
     formData.append('image', file);
 
-    return this.http.post(`${this.baseUrl}/images/remove-background`, formData, {
+    return this.http.post(`${this.baseUrl}/images/remove-background?model=${model}`, formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'blob'

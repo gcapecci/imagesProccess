@@ -1,19 +1,21 @@
 """
 AI Service for Background Removal
 Using FastAPI + rembg for high-performance image processing
+Clean Architecture Implementation
 """
 
 import os
 import io
 import time
 import logging
+import psutil
 from typing import Optional
 from contextlib import asynccontextmanager
 
 import numpy as np
 from PIL import Image
-from fastapi import FastAPI, File, UploadFile, HTTPException, status
-from fastapi.responses import FileResponse, Response
+from fastapi import FastAPI, File, UploadFile, HTTPException, status, Query
+from fastapi.responses import Response
 from rembg import remove, new_session
 import uvicorn
 
@@ -21,26 +23,48 @@ import uvicorn
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Global session for rembg (loaded once for performance)
-rembg_session = None
+# Global sessions for different AI models (loaded once for performance)
+rembg_sessions = {}
+
+# Statistics tracking
+stats = {
+    "total_processed": 0,
+    "total_errors": 0,
+    "total_processing_time": 0.0,
+    "average_processing_time": 0.0,
+    "model_usage": {}
+}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize and cleanup resources"""
-    global rembg_session
+    global rembg_sessions
     
     # Startup
     logger.info("🚀 Initializing AI Service...")
     try:
-        # Initialize rembg session with u2net model (best quality)
-        logger.info("Loading rembg model...")
-        rembg_session = new_session('u2net')
-        logger.info("✅ rembg model loaded successfully!")
+        # Initialize rembg sessions for both models
+        logger.info("Loading AI models...")
         
-        # Warm up the model with a dummy image
+        # Load u2net (standard quality - faster)
+        logger.info("Loading u2net model (standard quality)...")
+        rembg_sessions['u2net'] = new_session('u2net')
+        logger.info("✅ u2net model loaded!")
+        
+        # Load isnet-general-use (premium quality)
+        logger.info("Loading isnet-general-use model (premium quality)...")
+        rembg_sessions['isnet-general-use'] = new_session('isnet-general-use')
+        logger.info("✅ isnet-general-use model loaded!")
+        
+        # Warm up models with dummy images
+        logger.info("Warming up models...")
         dummy_image = Image.new('RGB', (100, 100), color='white')
-        _ = remove(dummy_image, session=rembg_session)
-        logger.info("✅ Model warmed up successfully!")
+        for model_name, session in rembg_sessions.items():
+            _ = remove(dummy_image, session=session)
+            stats["model_usage"][model_name] = 0
+            logger.info(f"✅ {model_name} warmed up successfully!")
+        
+        logger.info(f"✅ AI Service initialized with {len(rembg_sessions)} models!")
         
     except Exception as e:
         logger.error(f"❌ Failed to initialize AI service: {e}")
@@ -54,52 +78,66 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app
 app = FastAPI(
     title="AI Background Removal Service",
-    description="High-performance background removal using U²-Net",
-    version="1.0.0",
+    description="High-performance background removal using multiple AI models",
+    version="2.0.0",
     lifespan=lifespan
 )
 
-# Statistics tracking
-stats = {
-    "total_processed": 0,
-    "total_errors": 0,
-    "total_processing_time": 0.0,
-    "average_processing_time": 0.0
-}
+def get_memory_usage():
+    """Get current memory usage"""
+    process = psutil.Process()
+    memory_info = process.memory_info()
+    return {
+        "rss": f"{memory_info.rss / 1024 / 1024:.2f} MB",
+        "vms": f"{memory_info.vms / 1024 / 1024:.2f} MB"
+    }
 
 @app.get("/")
 async def root():
     """Root endpoint"""
     return {
         "service": "AI Background Removal",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "status": "healthy",
-        "models": ["u2net"],
+        "available_models": list(rembg_sessions.keys()),
+        "model_details": {
+            "u2net": {
+                "quality": "standard",
+                "speed": "fast",
+                "description": "Fast and efficient for general purpose"
+            },
+            "isnet-general-use": {
+                "quality": "premium",
+                "speed": "moderate",
+                "description": "Superior quality with alpha matting",
+                "features": ["alpha_matting", "post_processing"]
+            }
+        },
         "endpoints": ["/remove-background", "/health", "/stats"]
     }
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    global rembg_session
+    global rembg_sessions
     
     try:
-        # Check if model is loaded
-        if rembg_session is None:
+        # Check if models are loaded
+        if not rembg_sessions or len(rembg_sessions) == 0:
             raise HTTPException(
                 status_code=503,
-                detail="AI model not loaded"
+                detail="AI models not loaded"
             )
         
         # Quick model test
         test_image = Image.new('RGB', (32, 32), color='red')
-        _ = remove(test_image, session=rembg_session)
+        _ = remove(test_image, session=rembg_sessions['u2net'])
         
         return {
             "status": "healthy",
-            "model": "u2net",
+            "loaded_models": list(rembg_sessions.keys()),
             "memory_usage": get_memory_usage(),
-            "uptime": time.time()
+            "uptime_seconds": time.time()
         }
         
     except Exception as e:
@@ -112,23 +150,34 @@ async def health_check():
 @app.post("/remove-background")
 async def remove_background(
     image: UploadFile = File(...),
-    output_format: Optional[str] = "png"
+    model: str = Query("u2net", description="AI model to use: u2net (fast) or isnet-general-use (premium quality)"),
+    output_format: str = Query("png", description="Output format: png or jpg")
 ):
     """
     Remove background from uploaded image
     
     Args:
         image: Uploaded image file
-        output_format: Output format (png, jpg)
+        model: AI model to use ('u2net' or 'isnet-general-use')
+        output_format: Output format ('png' or 'jpg')
     
     Returns:
-        Processed image with transparent background
+        Processed image with transparent background (PNG) or white background (JPG)
     """
-    global rembg_session, stats
+    global rembg_sessions, stats
     
     start_time = time.time()
     
     try:
+        # Validate model
+        if model not in rembg_sessions:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid model '{model}'. Available models: {list(rembg_sessions.keys())}"
+            )
+        
+        selected_session = rembg_sessions[model]
+        
         # Validate file
         if not image.content_type.startswith('image/'):
             raise HTTPException(
@@ -137,7 +186,7 @@ async def remove_background(
             )
         
         # Read image data
-        logger.info(f"📷 Processing image: {image.filename} ({image.content_type})")
+        logger.info(f"📷 Processing: {image.filename} ({image.content_type}) with model: {model}")
         image_data = await image.read()
         
         if len(image_data) == 0:
@@ -151,7 +200,7 @@ async def remove_background(
             pil_image = Image.open(io.BytesIO(image_data))
             
             # Convert to RGB if needed
-            if pil_image.mode != 'RGB':
+            if pil_image.mode not in ['RGB', 'RGBA']:
                 pil_image = pil_image.convert('RGB')
                 
         except Exception as e:
@@ -163,14 +212,28 @@ async def remove_background(
         # Log image details
         logger.info(f"Image size: {pil_image.size}, mode: {pil_image.mode}")
         
-        # Remove background using rembg
-        logger.info("🤖 Removing background with AI...")
-        processed_image = remove(pil_image, session=rembg_session)
+        # Remove background with model-specific processing
+        logger.info(f"🤖 Removing background with {model}...")
+        
+        if model == 'isnet-general-use':
+            # Premium quality with alpha matting and post-processing
+            processed_image = remove(
+                pil_image, 
+                session=selected_session,
+                alpha_matting=True,
+                alpha_matting_foreground_threshold=240,
+                alpha_matting_background_threshold=10,
+                alpha_matting_erode_size=10,
+                post_process_mask=True
+            )
+        else:
+            # Standard quality - faster processing
+            processed_image = remove(pil_image, session=selected_session)
         
         # Prepare output
         output_buffer = io.BytesIO()
         
-        if output_format.lower() == 'jpg' or output_format.lower() == 'jpeg':
+        if output_format.lower() in ['jpg', 'jpeg']:
             # For JPEG, composite with white background
             white_bg = Image.new('RGBA', processed_image.size, (255, 255, 255, 255))
             final_image = Image.alpha_composite(white_bg, processed_image)
@@ -189,145 +252,47 @@ async def remove_background(
         # Update statistics
         stats["total_processed"] += 1
         stats["total_processing_time"] += processing_time
-        stats["average_processing_time"] = (
-            stats["total_processing_time"] / stats["total_processed"]
-        )
+        stats["average_processing_time"] = stats["total_processing_time"] / stats["total_processed"]
+        stats["model_usage"][model] += 1
         
-        logger.info(f"✅ Background removed successfully in {processing_time:.2f}s")
+        logger.info(f"✅ Processed in {processing_time:.2f}s with {model}")
         
-        # Return processed image
         return Response(
             content=output_buffer.getvalue(),
             media_type=media_type,
             headers={
                 "X-Processing-Time": f"{processing_time:.2f}s",
+                "X-Model-Used": model,
                 "X-Original-Size": str(len(image_data)),
-                "X-Processed-Size": str(len(output_buffer.getvalue())),
-                "Content-Disposition": f'attachment; filename="processed_{image.filename}"'
+                "X-Processed-Size": str(len(output_buffer.getvalue()))
             }
         )
         
     except HTTPException:
-        # Re-raise HTTP exceptions
         raise
-        
     except Exception as e:
-        # Handle unexpected errors
-        processing_time = time.time() - start_time
         stats["total_errors"] += 1
-        
-        logger.error(f"❌ Error processing image: {str(e)}")
+        logger.error(f"❌ Processing error: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to process image: {str(e)}"
+            detail=f"Processing failed: {str(e)}"
         )
 
 @app.get("/stats")
 async def get_stats():
-    """Get processing statistics"""
+    """Get service statistics"""
     return {
         **stats,
-        "model": "u2net",
-        "memory_usage": get_memory_usage(),
-        "status": "healthy" if rembg_session else "unhealthy"
+        "status": "healthy" if rembg_sessions else "unhealthy",
+        "available_models": list(rembg_sessions.keys()),
+        "memory_usage": get_memory_usage()
     }
 
-@app.post("/batch-remove-background")
-async def batch_remove_background(
-    images: list[UploadFile] = File(...),
-    output_format: Optional[str] = "png"
-):
-    """
-    Process multiple images in batch
-    
-    Args:
-        images: List of uploaded image files
-        output_format: Output format (png, jpg)
-    
-    Returns:
-        ZIP file with processed images
-    """
-    if len(images) > 10:
-        raise HTTPException(
-            status_code=400,
-            detail="Maximum 10 images allowed per batch"
-        )
-    
-    results = []
-    for image in images:
-        try:
-            # Process each image
-            result = await remove_background(image, output_format)
-            results.append({
-                "filename": image.filename,
-                "success": True,
-                "size": len(result.body)
-            })
-        except Exception as e:
-            results.append({
-                "filename": image.filename,
-                "success": False,
-                "error": str(e)
-            })
-    
-    return {"results": results}
-
-def get_memory_usage():
-    """Get current memory usage"""
-    try:
-        import psutil
-        process = psutil.Process(os.getpid())
-        memory_info = process.memory_info()
-        return {
-            "rss": f"{memory_info.rss / 1024 / 1024:.2f} MB",
-            "vms": f"{memory_info.vms / 1024 / 1024:.2f} MB"
-        }
-    except ImportError:
-        return {"status": "psutil not installed"}
-
-# Model management endpoints (for advanced usage)
-@app.post("/switch-model")
-async def switch_model(model_name: str):
-    """Switch to different rembg model"""
-    global rembg_session
-    
-    available_models = ['u2net', 'u2netp', 'u2net_human_seg', 'silueta']
-    
-    if model_name not in available_models:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Model {model_name} not available. Choose from: {available_models}"
-        )
-    
-    try:
-        logger.info(f"🔄 Switching to model: {model_name}")
-        rembg_session = new_session(model_name)
-        
-        # Warm up new model
-        dummy_image = Image.new('RGB', (100, 100), color='white')
-        _ = remove(dummy_image, session=rembg_session)
-        
-        logger.info(f"✅ Successfully switched to model: {model_name}")
-        
-        return {
-            "status": "success",
-            "model": model_name,
-            "message": f"Successfully switched to {model_name}"
-        }
-        
-    except Exception as e:
-        logger.error(f"❌ Failed to switch model: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to switch model: {str(e)}"
-        )
-
 if __name__ == "__main__":
-    # Run with uvicorn
     uvicorn.run(
         "app:app",
         host="0.0.0.0",
-        port=int(os.getenv("PORT", 5000)),
-        reload=os.getenv("ENVIRONMENT", "production") == "development",
-        workers=1  # rembg models don't work well with multiple workers
+        port=5000,
+        reload=False,
+        log_level="info"
     )

@@ -15,7 +15,7 @@ class ImageService {
   /**
    * Remove background from image using AI service
    */
-  async removeBackground({ buffer, mimetype, originalname }) {
+  async removeBackground({ buffer, mimetype, originalname, model = 'u2net' }) {
     const startTime = Date.now();
     
     try {
@@ -26,11 +26,11 @@ class ImageService {
         contentType: mimetype
       });
 
-      // Send request to AI service
-      console.log(`🤖 Sending image to AI service: ${this.aiServiceUrl}/remove-background`);
+      // Send request to AI service with model parameter
+      console.log(`🤖 Sending image to AI service: ${this.aiServiceUrl}/remove-background?model=${model}`);
       
       const response = await axios.post(
-        `${this.aiServiceUrl}/remove-background`,
+        `${this.aiServiceUrl}/remove-background?model=${model}`,
         formData,
         {
           headers: {
