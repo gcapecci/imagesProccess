@@ -1,60 +1,58 @@
-<mat-card class="uploader-card">
-  <mat-card-header>
-    <mat-card-title>
+<mat-expansion-panel class="section-panel" [expanded]="true">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
       <mat-icon>cloud_upload</mat-icon>
       Upload Your Image
-    </mat-card-title>
-  </mat-card-header>
-  
-  <mat-card-content>
-    <ngx-file-drop 
-      *ngIf="!selectedFile"
-      dropZoneLabel="Drop your image here or click to browse"
-      (onFileDrop)="onFileDropped($event)"
-      (onFileOver)="onFileHover($event)"
-      (onFileLeave)="onFileLeave($event)"
-      [accept]="'image/*'"
-      [multiple]="false">
-      
-      <ng-template ngx-file-drop-content-tmp>
-        <div class="drop-content">
-          <mat-icon class="upload-icon">cloud_upload</mat-icon>
-          <h3>Drop your image here</h3>
-          <p>or</p>
-          <button 
-            mat-raised-button 
-            color="primary" 
-            type="button"
-            (click)="openFileDialog($event)">
-            Choose File
-          </button>
-          <p class="file-info">
-            Supports: JPG, PNG, WEBP, BMP, TIFF (Max: 50MB)
-          </p>
-        </div>
-      </ng-template>
-    </ngx-file-drop>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
 
-    <input 
-      #fileInput 
-      type="file" 
-      accept="image/*" 
-      (change)="onFileSelected($event)" 
-      style="display: none;">
-           
-    <div *ngIf="selectedFile" class="selected-file">
-      <div class="selected-file-info">
-        <mat-icon>image</mat-icon>
-        <span class="file-name">{{ selectedFile.name }}</span>
-        <button mat-icon-button (click)="removeFile()" color="warn">
-          <mat-icon>cancel</mat-icon>
+  <ngx-file-drop 
+    *ngIf="!selectedFile"
+    dropZoneLabel="Drop your image here or click to browse"
+    (onFileDrop)="onFileDropped($event)"
+    (onFileOver)="onFileHover($event)"
+    (onFileLeave)="onFileLeave($event)"
+    [accept]="'image/*'"
+    [multiple]="false">
+    
+    <ng-template ngx-file-drop-content-tmp>
+      <div class="drop-content">
+        <mat-icon class="upload-icon">cloud_upload</mat-icon>
+        <h3>Drop your image here</h3>
+        <p>or</p>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="button"
+          (click)="openFileDialog($event)">
+          Choose File
         </button>
+        <p class="file-info">
+          Supports: JPG, PNG, WEBP, BMP, TIFF (Max: 50MB)
+        </p>
       </div>
-      
-      <div class="file-details">
-        <p>Size: {{ formatFileSize(selectedFile.size) }}</p>
-        <p>Type: {{ selectedFile.type }}</p>
-      </div>
+    </ng-template>
+  </ngx-file-drop>
+
+  <input 
+    #fileInput 
+    type="file" 
+    accept="image/*" 
+    (change)="onFileSelected($event)" 
+    style="display: none;">
+         
+  <div *ngIf="selectedFile" class="selected-file">
+    <div class="selected-file-info">
+      <mat-icon>image</mat-icon>
+      <span class="file-name">{{ selectedFile.name }}</span>
+      <button mat-icon-button (click)="removeFile()" color="warn">
+        <mat-icon>cancel</mat-icon>
+      </button>
     </div>
-  </mat-card-content>
-</mat-card>
+    
+    <div class="file-details">
+      <p>Size: {{ formatFileSize(selectedFile.size) }}</p>
+      <p>Type: {{ selectedFile.type }}</p>
+    </div>
+  </div>
+</mat-expansion-panel>

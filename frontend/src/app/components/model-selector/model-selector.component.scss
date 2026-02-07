@@ -1,5 +1,12 @@
-.model-selector-card {
+.section-panel {
   margin-bottom: 24px;
+
+  ::ng-deep .mat-expansion-panel-header-title {
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
 }
 
 .description {

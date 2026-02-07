@@ -17,10 +17,14 @@
 
 ## 🚀 Funcionalidades
 
-- ✅ **Upload de Imagens**: Drag & drop, suporte múltiplos formatos
-- ✅ **IA Avançada**: Remoção de fundo usando U²-Net 
-- ✅ **Preview em Tempo Real**: Comparação antes/depois
-- ✅ **Download Otimizado**: PNG com transparência ou JPG
+- ✅ **Upload de Imagens**: Drag & drop com auto-hide da drop zone ao carregar imagem
+- ✅ **IA Avançada**: Remoção de fundo usando U²-Net (Standard) e ISNet (Premium com Alpha Matting)
+- ✅ **Seleção de Modelo**: Escolha entre qualidade Standard e Premium antes do processamento
+- ✅ **Preview em Tempo Real**: Comparação antes/depois com resultado colapsável
+- ✅ **Download Otimizado**: PNG com transparência
+- ✅ **Multi-Page SPA**: Navegação entre Home, Background Remover e Help
+- ✅ **Seções Colapsáveis**: Toggle expand/collapse em cada seção (mat-expansion-panel)
+- ✅ **Menu Responsivo**: Navegação adaptável para desktop e mobile
 - ✅ **API RESTful**: Integração com outros sistemas
 - ✅ **Containerizado**: Deploy simplificado com Docker
 - ✅ **Escalável**: Microserviços independentes
@@ -33,6 +37,8 @@
 - **TypeScript** para type safety
 - **RxJS** para programação reativa
 - **NgX File Drop** para upload intuitivo
+- **Angular Router** para navegação multi-page
+- **Mat Expansion Panel** para seções colapsáveis
 
 ### Backend  
 - **Node.js** + Express + TypeScript
@@ -69,9 +75,9 @@ docker-compose up --build
 ## 🤖 Opções de IA Implementadas
 
 ### Atual: Python + rembg
-- **Modelo**: U²-Net (U-squared Network)
-- **Performance**: Excelente qualidade
-- **Tempo de processamento**: ~2-5 segundos
+- **Modelos**: U²-Net (Standard) e ISNet General Use (Premium)
+- **Premium**: Alpha Matting com warm-up automático
+- **Performance**: ~0.3-0.5s (Standard), ~1s (Premium)
 - **Formato de saída**: PNG com transparência
 
 ### Alternativas Documentadas
@@ -95,7 +101,19 @@ imagesProccess/
 │   ├── Dockerfile
 │   ├── package.json
 │   ├── src/app/
+│   │   ├── app.component.{ts,html,scss}
+│   │   ├── app.module.ts
+│   │   ├── app-routing.module.ts     # Roteamento (/, /background-remover, /help)
 │   │   ├── components/
+│   │   │   ├── header/               # Navegação responsiva
+│   │   │   ├── footer/
+│   │   │   ├── model-selector/        # Seleção de modelo AI
+│   │   │   ├── image-uploader/        # Upload com drag & drop
+│   │   │   └── image-processor/       # Processamento e resultado
+│   │   ├── pages/
+│   │   │   ├── home/                  # Landing page
+│   │   │   ├── background-remover/    # Página principal de remoção
+│   │   │   └── help/                  # Documentação e FAQ
 │   │   └── services/
 │   └── nginx.conf
 │
