@@ -1,0 +1,257 @@
+<div class="help-container">
+  <section class="help-header">
+    <mat-icon class="help-icon">help_outline</mat-icon>
+    <h1>Help & Documentation</h1>
+    <p>Learn how to use AI Image Processor effectively</p>
+  </section>
+
+  <div class="help-content">
+    <mat-accordion>
+      <!-- Background Remover Section -->
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>layers_clear</mat-icon>
+            Background Remover
+          </mat-panel-title>
+          <mat-panel-description>
+            How to remove backgrounds from images
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        
+        <div class="help-section-content">
+          <h3>Getting Started</h3>
+          <p>
+            The Background Remover uses advanced AI models to automatically detect and remove 
+            backgrounds from your images, leaving only the main subject.
+          </p>
+
+          <h3>Step-by-Step Guide</h3>
+          <ol class="help-steps">
+            <li>
+              <strong>Select AI Model:</strong> Choose between U²-Net Standard (faster) or 
+              ISNet Enhanced (higher quality with alpha matting).
+            </li>
+            <li>
+              <strong>Upload Image:</strong> Click "Choose File" or drag and drop your image. 
+              Supported formats: JPG, PNG, WEBP, BMP, TIFF (max 50MB).
+            </li>
+            <li>
+              <strong>Processing:</strong> Wait while the AI processes your image. This typically 
+              takes 3-10 seconds depending on the model and image size.
+            </li>
+            <li>
+              <strong>Download Result:</strong> Once complete, preview the result and download 
+              your image with transparent background.
+            </li>
+          </ol>
+
+          <h3>Model Comparison</h3>
+          <mat-card class="comparison-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>U²-Net Standard</th>
+                  <th>ISNet Enhanced</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Speed</td>
+                  <td><mat-icon class="status-icon good">bolt</mat-icon> Fast</td>
+                  <td><mat-icon class="status-icon medium">schedule</mat-icon> Moderate</td>
+                </tr>
+                <tr>
+                  <td>Quality</td>
+                  <td><mat-icon class="status-icon medium">star_half</mat-icon> Good</td>
+                  <td><mat-icon class="status-icon good">star</mat-icon> Excellent</td>
+                </tr>
+                <tr>
+                  <td>Edge Detail</td>
+                  <td>Standard</td>
+                  <td>High (Alpha Matting)</td>
+                </tr>
+                <tr>
+                  <td>Best For</td>
+                  <td>Quick previews, simple backgrounds</td>
+                  <td>Professional use, complex details</td>
+                </tr>
+              </tbody>
+            </table>
+          </mat-card>
+
+          <h3>Tips for Best Results</h3>
+          <ul class="tips-list">
+            <li>
+              <mat-icon>lightbulb</mat-icon>
+              <span>Use high-resolution images for better edge detection</span>
+            </li>
+            <li>
+              <mat-icon>lightbulb</mat-icon>
+              <span>Ensure good contrast between subject and background</span>
+            </li>
+            <li>
+              <mat-icon>lightbulb</mat-icon>
+              <span>Use ISNet Enhanced for images with fine details (hair, fur, transparent objects)</span>
+            </li>
+            <li>
+              <mat-icon>lightbulb</mat-icon>
+              <span>Avoid images with cluttered or complex backgrounds for faster processing</span>
+            </li>
+          </ul>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Technical Information -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>settings</mat-icon>
+            Technical Information
+          </mat-panel-title>
+          <mat-panel-description>
+            System requirements and specifications
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        
+        <div class="help-section-content">
+          <h3>Supported Formats</h3>
+          <mat-chip-set>
+            <mat-chip>JPG/JPEG</mat-chip>
+            <mat-chip>PNG</mat-chip>
+            <mat-chip>WEBP</mat-chip>
+            <mat-chip>BMP</mat-chip>
+            <mat-chip>TIFF</mat-chip>
+          </mat-chip-set>
+
+          <h3>File Size Limits</h3>
+          <p>Maximum file size: <strong>50 MB</strong></p>
+          <p>Recommended: <strong>5-10 MB</strong> for optimal processing speed</p>
+
+          <h3>Browser Compatibility</h3>
+          <ul>
+            <li>Chrome 90+ (Recommended)</li>
+            <li>Firefox 88+</li>
+            <li>Edge 90+</li>
+            <li>Safari 14+</li>
+          </ul>
+
+          <h3>Output Format</h3>
+          <p>All processed images are returned in <strong>PNG format</strong> with transparent background.</p>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Troubleshooting -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>build</mat-icon>
+            Troubleshooting
+          </mat-panel-title>
+          <mat-panel-description>
+            Common issues and solutions
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        
+        <div class="help-section-content">
+          <h3>Common Issues</h3>
+          
+          <mat-card class="issue-card">
+            <h4>Upload Failed</h4>
+            <p><strong>Possible causes:</strong></p>
+            <ul>
+              <li>File size exceeds 50MB</li>
+              <li>Unsupported file format</li>
+              <li>Network connection issues</li>
+            </ul>
+            <p><strong>Solution:</strong> Compress your image or convert to a supported format.</p>
+          </mat-card>
+
+          <mat-card class="issue-card">
+            <h4>Processing Timeout</h4>
+            <p><strong>Possible causes:</strong></p>
+            <ul>
+              <li>Very large image size</li>
+              <li>Server is busy</li>
+            </ul>
+            <p><strong>Solution:</strong> Try resizing your image or use U²-Net Standard model for faster processing.</p>
+          </mat-card>
+
+          <mat-card class="issue-card">
+            <h4>Poor Result Quality</h4>
+            <p><strong>Possible causes:</strong></p>
+            <ul>
+              <li>Low image resolution</li>
+              <li>Poor contrast between subject and background</li>
+              <li>Complex background</li>
+            </ul>
+            <p><strong>Solution:</strong> Use ISNet Enhanced model and ensure good lighting in your original image.</p>
+          </mat-card>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- FAQ -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>question_answer</mat-icon>
+            Frequently Asked Questions
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="help-section-content">
+          <div class="faq-item">
+            <h4>Is my data secure?</h4>
+            <p>
+              Yes. Images are processed on our servers and are not stored permanently. 
+              They are automatically deleted after processing.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>Can I process multiple images at once?</h4>
+            <p>
+              Currently, images must be processed one at a time. Batch processing 
+              is planned for a future update.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>What's the difference between the two AI models?</h4>
+            <p>
+              U²-Net Standard is faster and suitable for most images. ISNet Enhanced 
+              uses advanced alpha matting for superior edge quality, especially for 
+              fine details like hair, fur, or transparent objects.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h4>Is there a limit on how many images I can process?</h4>
+            <p>
+              Currently, there are no limits. However, please use the service responsibly.
+            </p>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <!-- Contact Section -->
+    <mat-card class="contact-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>contact_support</mat-icon>
+        <mat-card-title>Still Need Help?</mat-card-title>
+        <mat-card-subtitle>We're here to assist you</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          If you couldn't find the answer to your question, feel free to reach out to our support team.
+        </p>
+        <button mat-raised-button color="primary">
+          <mat-icon>email</mat-icon>
+          Contact Support
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
