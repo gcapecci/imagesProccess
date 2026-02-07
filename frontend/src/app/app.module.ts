@@ -4,6 +4,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
+// Routing
+import { AppRoutingModule } from './app-routing.module';
+
 // Angular Material
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +21,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 // Third-party
 import { NgxFileDropModule } from 'ngx-file-drop';
@@ -30,6 +35,11 @@ import { ModelSelectorComponent } from './components/model-selector/model-select
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 
+// Pages
+import { HomeComponent } from './pages/home/home.component';
+import { BackgroundRemoverComponent } from './pages/background-remover/background-remover.component';
+import { HelpComponent } from './pages/help/help.component';
+
 // Services
 import { ImageService } from './services/image.service';
 import { NotificationService } from './services/notification.service';
@@ -41,7 +51,10 @@ import { NotificationService } from './services/notification.service';
     ImageProcessorComponent,
     ModelSelectorComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    HomeComponent,
+    BackgroundRemoverComponent,
+    HelpComponent
   ],
   imports: [
     BrowserModule,
@@ -49,6 +62,7 @@ import { NotificationService } from './services/notification.service';
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
+    AppRoutingModule,
     
     // Angular Material
     MatToolbarModule,
@@ -64,6 +78,8 @@ import { NotificationService } from './services/notification.service';
     MatTooltipModule,
     MatDividerModule,
     MatRadioModule,
+    MatMenuModule,
+    MatExpansionModule,
     
     // Third-party
     NgxFileDropModule

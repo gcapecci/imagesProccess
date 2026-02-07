@@ -45,6 +45,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added - 2026-02-07 (feature/initial-project)
 
+#### Core Frontend Structure
+- **Header and Footer Components**: Implemented `HeaderComponent` and `FooterComponent` to provide a consistent layout and branding across the application.
+  - Located: `frontend/src/app/components/header/` and `frontend/src/app/components/footer/`
+
+#### Initial Project Setup
+- **Angular Application**: Initialized the frontend application using Angular v17.
+- **Angular Material**: Integrated the Angular Material library for UI components.
+
 #### Frontend Components
 - **Model Selector Component**: New component for AI model selection before image upload
   - User can choose between Standard (U²-Net) and Premium (ISNet) quality models

@@ -7,32 +7,7 @@ import { Component } from '@angular/core';
       <app-header></app-header>
       
       <main class="main-content">
-        <div class="container">
-          <div class="intro-section">
-            <h1>AI Background Remover</h1>
-            <p>Remove backgrounds from your images using advanced AI technology</p>
-          </div>
-          
-          <app-model-selector
-            (modelSelected)="onModelSelected($event)"
-            [disabled]="isProcessing">
-          </app-model-selector>
-          
-          <app-image-uploader 
-            (imageUploaded)="onImageUploaded($event)"
-            (imageRemoved)="onImageRemoved()"
-            [isProcessing]="isProcessing">
-          </app-image-uploader>
-          
-          <app-image-processor
-            *ngIf="uploadedImage"
-            [image]="uploadedImage"
-            [selectedModel]="selectedModel"
-            (processingStart)="onProcessingStart()"
-            (processingComplete)="onProcessingComplete($event)"
-            (processingError)="onProcessingError($event)">
-          </app-image-processor>
-        </div>
+        <router-outlet></router-outlet>
       </main>
       
       <app-footer></app-footer>
@@ -49,76 +24,7 @@ import { Component } from '@angular/core';
       flex: 1;
       padding: 24px 0;
     }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    .intro-section {
-      text-align: center;
-      margin-bottom: 48px;
-      
-      h1 {
-        font-size: 2.5rem;
-        font-weight: 300;
-        color: #3f51b5;
-        margin-bottom: 16px;
-      }
-      
-      p {
-        font-size: 1.2rem;
-        color: #757575;
-        max-width: 600px;
-        margin: 0 auto;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        padding: 0 16px;
-      }
-      
-      .intro-section h1 {
-        font-size: 2rem;
-      }
-      
-      .intro-section p {
-        font-size: 1rem;
-      }
-    }
   `]
 })
 export class AppComponent {
-  uploadedImage: File | null = null;
-  selectedModel = 'u2net';
-  isProcessing = false;
-
-  onModelSelected(modelId: string) {
-    this.selectedModel = modelId;
-  }
-
-  onImageUploaded(image: File) {
-    this.uploadedImage = image;
-  }
-
-  onImageRemoved() {
-    this.uploadedImage = null;
-    this.isProcessing = false;
-  }
-
-  onProcessingStart() {
-    this.isProcessing = true;
-  }
-
-  onProcessingComplete(result: any) {
-    this.isProcessing = false;
-    console.log('Processing complete:', result);
-  }
-
-  onProcessingError(error: any) {
-    this.isProcessing = false;
-    console.error('Processing error:', error);
-  }
 }

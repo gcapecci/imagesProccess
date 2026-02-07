@@ -1,19 +1,45 @@
 <mat-toolbar color="primary" class="header-toolbar">
   <div class="toolbar-content">
-    <div class="logo-section">
+    <div class="logo-section" routerLink="/">
       <mat-icon class="logo-icon">photo_camera</mat-icon>
       <span class="app-title">AI Image Processor</span>
     </div>
     
-    <div class="nav-section">
-      <button mat-button class="nav-button">
-        <mat-icon>info</mat-icon>
-        <span class="button-text">About</span>
-      </button>
-      <button mat-button class="nav-button">
+    <nav class="nav-links">
+      <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>home</mat-icon>
+        <span class="nav-text">Home</span>
+      </a>
+      
+      <a mat-button routerLink="/background-remover" routerLinkActive="active">
+        <mat-icon>layers_clear</mat-icon>
+        <span class="nav-text">Background Remover</span>
+      </a>
+      
+      <a mat-button routerLink="/help" routerLinkActive="active">
         <mat-icon>help</mat-icon>
-        <span class="button-text">Help</span>
-      </button>
-    </div>
+        <span class="nav-text">Help</span>
+      </a>
+    </nav>
+    
+    <button mat-icon-button class="mobile-menu-button" [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    
+    <mat-menu #menu="matMenu">
+      <a mat-menu-item routerLink="/">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      <a mat-menu-item routerLink="/background-remover">
+        <mat-icon>layers_clear</mat-icon>
+        <span>Background Remover</span>
+      </a>
+      <a mat-menu-item routerLink="/help">
+        <mat-icon>help</mat-icon>
+        <span>Help</span>
+      </a>
+    </mat-menu>
   </div>
 </mat-toolbar>
+
