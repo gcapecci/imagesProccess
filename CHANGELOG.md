@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Improved - 2026-02-07 (UX Enhancement)
+
+#### Image Uploader UX
+- **Drop zone auto-hide**: A área de upload (drag & drop + botão "Choose File") agora é escondida automaticamente quando uma imagem é carregada
+  - Ao carregar uma imagem, apenas o card com nome do arquivo e botão de remover (X) é exibido
+  - Ao clicar no X para remover a imagem, a drop zone reaparece
+  - Implementado via `*ngIf="!selectedFile"` no `<ngx-file-drop>`
+
 ### Refactored - 2026-02-07 (Frontend Architecture & Styling)
 
 #### Component File Separation

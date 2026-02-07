@@ -8,6 +8,7 @@
   
   <mat-card-content>
     <ngx-file-drop 
+      *ngIf="!selectedFile"
       dropZoneLabel="Drop your image here or click to browse"
       (onFileDrop)="onFileDropped($event)"
       (onFileOver)="onFileHover($event)"
