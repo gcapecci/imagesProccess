@@ -5,122 +5,8 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-image-processor',
-  template: `
-    <mat-card class="processor-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>auto_fix_high</mat-icon>
-          AI Background Removal
-        </mat-card-title>
-      </mat-card-header>
-
-      <mat-card-content>
-        <div class="image-preview" *ngIf="imagePreview">
-          <img [src]="imagePreview" alt="Original image" class="preview-image">
-        </div>
-
-        <div class="actions">
-          <button mat-raised-button 
-                  color="primary" 
-                  [disabled]="isProcessing"
-                  (click)="processImage()">
-            <mat-icon *ngIf="!isProcessing">smart_toy</mat-icon>
-            <mat-spinner *ngIf="isProcessing" diameter="20"></mat-spinner>
-            {{ isProcessing ? 'Processing...' : 'Remove Background' }}
-          </button>
-        </div>
-
-        <!-- Progress Bar -->
-        <div *ngIf="isProcessing" class="progress-section">
-          <mat-progress-bar mode="determinate" [value]="progress.progress"></mat-progress-bar>
-          <p class="progress-text">{{ progress.message }}</p>
-        </div>
-
-        <!-- Results -->
-        <div *ngIf="processedImage" class="results-section">
-          <h3>Processed Result</h3>
-          <div class="comparison">
-            <div class="image-container">
-              <h4>Original</h4>
-              <img [src]="imagePreview" alt="Original" class="result-image">
-            </div>
-            <div class="image-container">
-              <h4>Processed</h4>
-              <img [src]="processedImageUrl" alt="Processed" class="result-image">
-            </div>
-          </div>
-          
-          <div class="download-section">
-            <button mat-raised-button color="accent" (click)="downloadImage()">
-              <mat-icon>download</mat-icon>
-              Download Processed Image
-            </button>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  `,
-  styles: [`
-    .processor-card {
-      margin-top: 24px;
-    }
-
-    .image-preview {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .preview-image {
-      max-width: 100%;
-      max-height: 400px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .actions {
-      text-align: center;
-      margin: 24px 0;
-    }
-
-    .progress-section {
-      margin: 24px 0;
-    }
-
-    .progress-text {
-      text-align: center;
-      margin-top: 8px;
-      color: #666;
-    }
-
-    .comparison {
-      display: flex;
-      gap: 24px;
-      margin: 24px 0;
-    }
-
-    .image-container {
-      flex: 1;
-      text-align: center;
-    }
-
-    .result-image {
-      max-width: 100%;
-      max-height: 300px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .download-section {
-      text-align: center;
-      margin-top: 24px;
-    }
-
-    @media (max-width: 768px) {
-      .comparison {
-        flex-direction: column;
-      }
-    }
-  `]
+  templateUrl: './image-processor.component.html',
+  styleUrls: ['./image-processor.component.scss']
 })
 export class ImageProcessorComponent implements OnDestroy {
   @Input() image: File | null = null;
@@ -213,6 +99,23 @@ export class ImageProcessorComponent implements OnDestroy {
       const filename = `processed_${this.image.name.replace(/\.[^/.]+$/, '')}.png`;
       this.imageService.downloadImage(this.processedImage, filename);
       this.notification.showInfo('Download started!');
+    }
+  }
+
+  getProgressIcon(): string {
+    switch (this.progress.status) {
+      case 'uploading':
+        return 'cloud_upload';
+      case 'processing':
+        return 'settings';
+      case 'downloading':
+        return 'cloud_download';
+      case 'complete':
+        return 'check_circle';
+      case 'error':
+        return 'error';
+      default:
+        return 'hourglass_empty';
     }
   }
 }

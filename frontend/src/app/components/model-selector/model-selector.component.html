@@ -1,0 +1,35 @@
+<mat-card class="model-selector-card">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>tune</mat-icon>
+      Select AI Model Quality
+    </mat-card-title>
+  </mat-card-header>
+  
+  <mat-card-content>
+    <p class="description">Choose the AI model that best fits your needs</p>
+    
+    <mat-radio-group 
+      [(ngModel)]="selectedModelId"
+      (change)="onModelChange()"
+      [disabled]="disabled"
+      class="model-options">
+      
+      <mat-radio-button 
+        *ngFor="let model of models" 
+        [value]="model.id"
+        class="model-option">
+        <div class="model-info">
+          <div class="model-header">
+            <mat-icon [color]="model.quality === 'premium' ? 'accent' : 'primary'">
+              {{ model.icon }}
+            </mat-icon>
+            <span class="model-name">{{ model.name }}</span>
+            <mat-chip *ngIf="model.quality === 'premium'" color="accent">Premium</mat-chip>
+          </div>
+          <p class="model-description">{{ model.description }}</p>
+        </div>
+      </mat-radio-button>
+    </mat-radio-group>
+  </mat-card-content>
+</mat-card>
