@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # Backend Node.js
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: image-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - AI_SERVICE_URL=http://ai-service:5000
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - app-network
+    depends_on:
+      - ai-service
+
+  # Frontend Angular
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: image-frontend
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    networks:
+      - app-network
+
+  # Serviço de IA (Python)
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: image-ai-service
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./ai-service:/app
+      - ai-models:/app/models
+    networks:
+      - app-network
+
+  # Nginx Proxy Reverso
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: image-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    networks:
+      - app-network
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  ai-models:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

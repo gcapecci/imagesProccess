@@ -1,0 +1,11 @@
+flask
+rembg[cpu]
+pillow
+numpy
+scipy
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+requests
+psutil
