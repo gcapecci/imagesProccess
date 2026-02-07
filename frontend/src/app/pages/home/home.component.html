@@ -1,0 +1,110 @@
+<div class="home-container">
+  <section class="hero-section">
+    <mat-icon class="hero-icon">auto_fix_high</mat-icon>
+    <h1>Welcome to AI Image Processor</h1>
+    <p class="hero-subtitle">
+      Transform your images with advanced AI-powered tools
+    </p>
+  </section>
+
+  <section class="features-section">
+    <div class="features-grid">
+      <mat-card class="feature-card" routerLink="/background-remover">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">layers_clear</mat-icon>
+          <mat-card-title>Background Remover</mat-card-title>
+          <mat-card-subtitle>Remove backgrounds instantly</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Use advanced AI models (U²-Net and ISNet) to automatically remove backgrounds 
+            from your images with precision and quality.
+          </p>
+          <ul class="feature-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>Multiple AI models</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>High-quality results</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>Fast processing</span>
+            </li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/background-remover">
+            <mat-icon>arrow_forward</mat-icon>
+            Try Now
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card coming-soon">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">palette</mat-icon>
+          <mat-card-title>Image Enhancement</mat-card-title>
+          <mat-card-subtitle>Coming Soon</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Enhance your images with AI-powered filters, color correction, 
+            and quality improvements.
+          </p>
+          <mat-chip class="coming-soon-chip">Coming Soon</mat-chip>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card coming-soon">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">crop</mat-icon>
+          <mat-card-title>Smart Crop</mat-card-title>
+          <mat-card-subtitle>Coming Soon</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Automatically crop and resize images with intelligent focus 
+            on important elements.
+          </p>
+          <mat-chip class="coming-soon-chip">Coming Soon</mat-chip>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </section>
+
+  <section class="info-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>info</mat-icon>
+        <mat-card-title>How It Works</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="steps-grid">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Upload</h3>
+            <p>Choose or drag & drop your image</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>Select Model</h3>
+            <p>Choose the AI model quality</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Process</h3>
+            <p>AI removes the background</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <h3>Download</h3>
+            <p>Get your processed image</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>
