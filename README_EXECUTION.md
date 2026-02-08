@@ -78,6 +78,34 @@ curl -X POST \
   -F "image=@/path/to/your/image.jpg"
 ```
 
+### Face Swap / Style Transfer
+```bash
+# Face swap (base image + face reference)
+curl -X POST \
+  "http://localhost/api/images/face-swap?mode=face-swap" \
+  -H "Content-Type: multipart/form-data" \
+  -F "image=@/path/to/your/image.jpg" \
+  -F "face_image=@/path/to/face.jpg" \
+  --output face_swap.png
+
+# Style transfer (base image + style reference)
+curl -X POST \
+  "http://localhost/api/images/face-swap?mode=style-transfer" \
+  -H "Content-Type: multipart/form-data" \
+  -F "image=@/path/to/your/image.jpg" \
+  -F "style_image=@/path/to/style.jpg" \
+  --output style_transfer.png
+```
+
+### Image Restoration
+```bash
+curl -X POST \
+  "http://localhost/api/images/restoration?repair=true&colorize=false&denoise=true" \
+  -H "Content-Type: multipart/form-data" \
+  -F "image=@/path/to/your/image.jpg" \
+  --output restored.png
+```
+
 ## 🐳 Comandos Docker Úteis
 
 ```bash

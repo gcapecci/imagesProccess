@@ -30,12 +30,18 @@
       <button class="tool-btn" [class.active]="activeTool === 'crop'" (click)="setActiveTool('crop')" matTooltip="Smart Crop">
         <mat-icon>crop</mat-icon>
       </button>
+        <button class="tool-btn" [class.active]="activeTool === 'face-swap'" (click)="setActiveTool('face-swap')" matTooltip="Face Swap & Style Transfer">
+          <mat-icon>face</mat-icon>
+        </button>
+        <button class="tool-btn" [class.active]="activeTool === 'restoration'" (click)="setActiveTool('restoration')" matTooltip="Image Restoration">
+          <mat-icon>restore</mat-icon>
+        </button>
     </div>
 
     <!-- Active Tool Settings Panel -->
     <div class="settings-panel" [style.width.px]="panelWidth" [class.collapsed]="panelWidth === 0">
       <div class="panel-header">
-        <h3 *ngIf="activeTool">{{ activeTool | titlecase }}</h3>
+        <h3 *ngIf="activeTool">{{ getActiveToolTitle(activeTool) }}</h3>
         <button mat-icon-button (click)="closePanel()" class="close-btn" *ngIf="panelWidth > 0">
           <mat-icon>close</mat-icon>
         </button>
@@ -97,6 +103,65 @@
             </button>
           </div>
         </div>
+        
+          <!-- Face Swap & Style Transfer Controls -->
+          <div *ngIf="activeTool === 'face-swap'" class="tool-controls">
+            <p class="helper-text">Choose a mode and upload the required references.</p>
+            <mat-radio-group [(ngModel)]="faceSwapMode" class="vertical-radio-group">
+              <mat-radio-button value="face-swap" class="model-option">
+                <div class="model-label">
+                  <strong>Face Swap</strong>
+                  <span>Replace the face on the current image</span>
+                </div>
+              </mat-radio-button>
+              <mat-radio-button value="style-transfer" class="model-option">
+                <div class="model-label">
+                  <strong>Style Transfer</strong>
+                  <span>Apply the look of a reference image</span>
+                </div>
+              </mat-radio-button>
+            </mat-radio-group>
+
+            <div class="file-picker" *ngIf="faceSwapMode === 'face-swap'">
+              <button mat-stroked-button color="primary" (click)="faceSourceInput.click()">
+                <mat-icon>upload</mat-icon>
+                Select Face Image
+              </button>
+              <span class="file-name" *ngIf="faceSourceName">{{ faceSourceName }}</span>
+              <input #faceSourceInput type="file" accept="image/*" (change)="onFaceSourceSelected($event)" style="display: none;">
+            </div>
+
+            <div class="file-picker" *ngIf="faceSwapMode === 'style-transfer'">
+              <button mat-stroked-button color="primary" (click)="styleReferenceInput.click()">
+                <mat-icon>upload</mat-icon>
+                Select Style Image
+              </button>
+              <span class="file-name" *ngIf="styleReferenceName">{{ styleReferenceName }}</span>
+              <input #styleReferenceInput type="file" accept="image/*" (change)="onStyleReferenceSelected($event)" style="display: none;">
+            </div>
+
+            <div class="action-area">
+              <button mat-raised-button color="primary" class="full-width" 
+                (click)="applyFaceSwap()" [disabled]="!currentImageUrl || isProcessing">
+                <mat-icon>auto_fix_high</mat-icon> Apply
+              </button>
+            </div>
+          </div>
+
+          <!-- Restoration Controls -->
+          <div *ngIf="activeTool === 'restoration'" class="tool-controls">
+            <p class="helper-text">Select restoration options.</p>
+            <mat-slide-toggle [(ngModel)]="restorationOptions.repair">Repair scratches</mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="restorationOptions.colorize">Colorize B/W</mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="restorationOptions.denoise">Denoise</mat-slide-toggle>
+
+            <div class="action-area">
+              <button mat-raised-button color="primary" class="full-width" 
+                (click)="applyRestoration()" [disabled]="!currentImageUrl || isProcessing">
+                <mat-icon>restore</mat-icon> Restore Image
+              </button>
+            </div>
+          </div>
       </div>
     </div>
 

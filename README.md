@@ -17,23 +17,28 @@
 
 ## 🚀 Funcionalidades
 
-- ✅ **Upload de Imagens**: Drag & drop com auto-hide da drop zone ao carregar imagem
-- ✅ **IA Avançada**: Remoção de fundo usando U²-Net (Standard) e ISNet (Premium com Alpha Matting)
-- ✅ **Image Enhancement**: Ajuste de brilho, contraste, saturação e nitidez com auto-enhance AI
+- ✅ **Upload de Imagens**: Drag & drop com auto-hide da drop zone, suporte até 120MB por arquivo
+- ✅ **IA Avancada**: Remocao de fundo usando U2-Net (Standard) e ISNet (Premium com Alpha Matting)
+- ✅ **Image Enhancement**: Ajuste de brilho, contraste, saturacao e nitidez com auto-enhance AI
 - ✅ **Smart Crop**: Crop inteligente com AI auto-detect de faces ou controle manual preciso
-- ✅ **Fluxo Unificado**: Em Background Remover, Image Enhancement e Smart Crop o botão de ação fica no painel de configurações/modelo e o resultado aparece no mesmo card de preview
-- ✅ **Seleção de Modelo**: Escolha entre qualidade Standard e Premium antes do processamento
-- ✅ **Preview em Tempo Real**: Comparação antes/depois com resultado em tempo real
-- ✅ **Download Otimizado**: PNG com transparência
-- ✅ **Multi-Page SPA**: Navegação entre Home, Background Remover, Image Enhancement, Smart Crop e Help
-- ✅ **Seções Colapsáveis**: Toggle expand/collapse em cada seção (mat-expansion-panel)
-- ✅ **Menu Responsivo**: Navegação adaptável para desktop e mobile
- - ✅ **i18n (EN/PT)**: Suporte a inglês e português com seletor de idioma fixo no header
-- ✅ **API RESTful**: Integração com outros sistemas
+- ✅ **Face Swap & Style Transfer**: Troca de rostos e aplicacao de estilos artisticos com PIL
+- ✅ **Image Restoration**: Restauracao de fotos (repair, denoise, colorize) com filtros inteligentes
+- ✅ **Fluxo Unificado**: Em Background Remover, Image Enhancement e Smart Crop o botao de acao fica no painel de configuracoes/modelo e o resultado aparece no mesmo card de preview
+- ✅ **Selecao de Modelo**: Escolha entre qualidade Standard e Premium antes do processamento
+- ✅ **Preview em Tempo Real**: Comparacao antes/depois com resultado em tempo real
+- ✅ **Download Otimizado**: PNG com transparencia
+- ✅ **Multi-Page SPA**: Navegacao entre Home, Background Remover, Image Enhancement, Smart Crop, Face Swap, Restoration, Editor e Help
+- ✅ **Menu Agrupado Photo Editor**: Navegacao principal consolida 6 ferramentas de edicao em dropdown unico
+- ✅ **Secoes Colapsaveis**: Toggle expand/collapse em cada secao (mat-expansion-panel)
+- ✅ **Menu Responsivo**: Navegacao adaptavel para desktop e mobile
+- ✅ **i18n (EN/PT)**: Suporte a ingles e portugues com seletor de idioma fixo no header
+- ✅ **Multi-file Upload**: Suporte a upload de multiplos arquivos (face swap: base + face + style)
+- ✅ **Progress Tracking**: Acompanhamento de progresso por etapas (upload, processing, download)
+- ✅ **API RESTful**: Integracao com outros sistemas
 - ✅ **Containerizado**: Deploy simplificado com Docker (profiles dev/prod)
 - ✅ **Live Reload**: Desenvolvimento com hot reload sem rebuild de containers
-- ✅ **Escalável**: Microserviços independentes
-- ✅ **Monitoramento**: Health checks e estatísticas
+- ✅ **Escalavel**: Microservicos independentes
+- ✅ **Monitoramento**: Health checks e estatisticas
 
 ## 📋 Tecnologias Utilizadas
 
@@ -54,7 +59,11 @@
 ### AI Service
 - **Python 3.11** + FastAPI
 - **rembg** para remoção de fundo
-- **Pillow (ImageEnhance/ImageFilter)** para image enhancement
+- **Pillow (PIL)** para processamento de imagens:
+  - **ImageEnhance/ImageFilter** para image enhancement
+  - **Image.composite/blend** para face swap e style transfer
+  - **ImageOps.colorize** para restauração e colorização
+  - **ImageDraw** para máscaras e overlays
 - **OpenCV** para face detection e smart crop
 - **U²-Net** model (SOTA quality)
 - **Haar Cascade** para detecção de faces
@@ -94,12 +103,8 @@ docker compose --profile dev up -d --build
 # http://localhost       (via Nginx dev proxy)
 # http://localhost:4201  (direto no Angular dev server dentro do container)
 
-# Parar ambiente de desenvolvimento
-docker compose --profile dev down
 ```
 
-> **Nota**: No profile `dev` o código do frontend é montado como volume e servido via `ng serve`.
-> Alterações em arquivos `.ts`, `.html` e `.scss` são recarregadas automaticamente, **sem precisar** rodar `docker compose --build` a cada mudança de código.
 
 **📖 Documentação completa**: [README_EXECUTION.md](README_EXECUTION.md)
 
@@ -134,7 +139,7 @@ imagesProccess/
 │   ├── src/app/
 │   │   ├── app.component.{ts,html,scss}
 │   │   ├── app.module.ts
-│   │   ├── app-routing.module.ts     # Roteamento (/, /background-remover, /image-enhancement, /smart-crop, /help)
+│   │   ├── app-routing.module.ts     # Roteamento (/, /editor, /background-remover, /image-enhancement, /smart-crop, /face-swap, /restoration, /help)
 │   │   ├── components/
 │   │   │   ├── header/               # Navegação responsiva
 │   │   │   ├── footer/
@@ -181,8 +186,9 @@ imagesProccess/
 ### Métricas Atuais
 - **Throughput**: ~50 imagens/minuto
 - **Latência média**: 2-5 segundos por imagem
-- **Suporte**: Imagens até 50MB
+- **Suporte**: Imagens até 120MB por arquivo, até 3 arquivos simultâneos (face swap)
 - **Concorrência**: Múltiplas requisições simultâneas
+- **Timeout**: 60s backend, 120s frontend para operações complexas
 
 ### Otimizações Implementadas
 - ✅ **Caching de modelos** AI
@@ -202,9 +208,16 @@ imagesProccess/
 
 ## 🚧 Roadmap
 
-### Em Desenvolvimento
-- [ ] **Face Swap & Style Transfer**: Troca de rostos e transferência de estilo artístico
-- [ ] **Image Restoration**: Restauração de fotos antigas, remoção de arranhões, colorização
+### ✅ Disponível (v3.1.0)
+- [x] **Background Remover**: Remoção de fundo com U²-Net e ISNet
+- [x] **Image Enhancement**: Ajustes de brilho, contraste, saturação, nitidez e auto-enhance
+- [x] **Smart Crop**: Crop inteligente com detecção de faces ou controle manual
+- [x] **Face Swap & Style Transfer**: Troca de rostos (ellipse mask overlay) e transferência de estilo (image blending)
+- [x] **Image Restoration**: Restauração de fotos (MedianFilter repair, denoise, ImageOps colorize)
+
+### 🚧 Em Desenvolvimento
+- [ ] **Filtros Criativos**: Filtros cinematográficos e presets artísticos
+- [ ] **Molduras & Layouts**: Bordas elegantes e layouts prontos
 
 ### Próximas Funcionalidades
 - [ ] **Autenticação JWT** 

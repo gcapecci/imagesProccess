@@ -13,7 +13,7 @@ from typing import Optional
 from contextlib import asynccontextmanager
 
 import numpy as np
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps, ImageDraw
 from fastapi import FastAPI, File, UploadFile, HTTPException, status, Query
 from fastapi.responses import Response
 from rembg import remove, new_session
@@ -92,7 +92,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AI Background Removal Service",
     description="High-performance background removal using multiple AI models",
-    version="2.0.0",
+    version="3.1.0",
     lifespan=lifespan
 )
 
@@ -110,7 +110,7 @@ async def root():
     """Root endpoint"""
     return {
         "service": "AI Image Processing",
-        "version": "3.0.0",
+        "version": "3.1.0",
         "status": "healthy",
         "available_models": list(rembg_sessions.keys()),
         "model_details": {
@@ -128,9 +128,11 @@ async def root():
         },
         "features": {
             "background_removal": "/remove-background",
-            "image_enhancement": "/enhance"
+            "image_enhancement": "/enhance",
+            "face_swap": "/face-swap",
+            "image_restoration": "/restoration"
         },
-        "endpoints": ["/remove-background", "/enhance", "/health", "/stats"]
+        "endpoints": ["/remove-background", "/enhance", "/crop", "/face-swap", "/restoration", "/health", "/stats"]
     }
 
 @app.get("/health")
@@ -628,6 +630,249 @@ async def crop_image(
         raise HTTPException(
             status_code=500,
             detail=f"Crop failed: {str(e)}"
+        )
+
+
+@app.post("/face-swap")
+async def face_swap_image(
+    image: UploadFile = File(...),
+    face_image: Optional[UploadFile] = File(None),
+    style_image: Optional[UploadFile] = File(None),
+    mode: str = Query("face-swap", description="face-swap or style-transfer"),
+    output_format: str = Query("png", description="Output format: png or jpg")
+):
+    """
+    Face swap or style transfer (baseline implementation).
+
+    - **face-swap**: overlays a reference face image at the center
+    - **style-transfer**: blends the base image with a style reference
+    """
+    start_time = time.time()
+
+    try:
+        if mode not in ["face-swap", "style-transfer"]:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid mode. Use 'face-swap' or 'style-transfer'."
+            )
+
+        if not image.content_type.startswith('image/'):
+            raise HTTPException(
+                status_code=400,
+                detail="File must be an image"
+            )
+
+        image_data = await image.read()
+        if len(image_data) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail="Empty image file"
+            )
+
+        try:
+            base_image = Image.open(io.BytesIO(image_data))
+            if base_image.mode not in ['RGB', 'RGBA']:
+                base_image = base_image.convert('RGB')
+        except Exception as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid image format: {str(e)}"
+            )
+
+        base_rgba = base_image.convert('RGBA')
+
+        operations = []
+
+        if mode == "face-swap":
+            if not face_image:
+                raise HTTPException(
+                    status_code=400,
+                    detail="face_image is required for face-swap mode"
+                )
+
+            face_data = await face_image.read()
+            if len(face_data) == 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Empty face image file"
+                )
+
+            face_ref = Image.open(io.BytesIO(face_data)).convert('RGBA')
+
+            base_w, base_h = base_rgba.size
+            overlay_size = int(min(base_w, base_h) * 0.45)
+            overlay_size = max(32, overlay_size)
+            overlay_size = min(overlay_size, min(base_w, base_h))
+
+            face_ref = face_ref.resize((overlay_size, overlay_size), Image.Resampling.LANCZOS)
+
+            mask = Image.new('L', (overlay_size, overlay_size), 0)
+            draw = ImageDraw.Draw(mask)
+            draw.ellipse((0, 0, overlay_size, overlay_size), fill=200)
+
+            paste_x = (base_w - overlay_size) // 2
+            paste_y = (base_h - overlay_size) // 2
+
+            result = base_rgba.copy()
+            result.paste(face_ref, (paste_x, paste_y), mask=mask)
+            operations.append("face-swap")
+
+        else:
+            if not style_image:
+                raise HTTPException(
+                    status_code=400,
+                    detail="style_image is required for style-transfer mode"
+                )
+
+            style_data = await style_image.read()
+            if len(style_data) == 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Empty style image file"
+                )
+
+            style_ref = Image.open(io.BytesIO(style_data)).convert('RGBA')
+            style_ref = style_ref.resize(base_rgba.size, Image.Resampling.LANCZOS)
+
+            result = Image.blend(base_rgba, style_ref, alpha=0.35)
+            operations.append("style-transfer")
+
+        output_buffer = io.BytesIO()
+        if output_format.lower() in ['jpg', 'jpeg']:
+            white_bg = Image.new('RGBA', result.size, (255, 255, 255, 255))
+            final_image = Image.alpha_composite(white_bg, result)
+            final_image.convert('RGB').save(output_buffer, format='JPEG', quality=95)
+            media_type = "image/jpeg"
+        else:
+            result.save(output_buffer, format='PNG', optimize=True)
+            media_type = "image/png"
+
+        output_buffer.seek(0)
+
+        processing_time = time.time() - start_time
+        stats["total_processed"] += 1
+        stats["total_processing_time"] += processing_time
+        stats["average_processing_time"] = stats["total_processing_time"] / stats["total_processed"]
+        stats["model_usage"][mode] = stats["model_usage"].get(mode, 0) + 1
+
+        return Response(
+            content=output_buffer.getvalue(),
+            media_type=media_type,
+            headers={
+                "X-Processing-Time": f"{processing_time:.2f}s",
+                "X-Face-Operation": ",".join(operations),
+                "X-Original-Size": str(len(image_data)),
+                "X-Processed-Size": str(len(output_buffer.getvalue()))
+            }
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        stats["total_errors"] += 1
+        logger.error(f"❌ Face swap error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Face swap failed: {str(e)}"
+        )
+
+
+@app.post("/restoration")
+async def restore_image(
+    image: UploadFile = File(...),
+    repair: bool = Query(True, description="Repair scratches and damage"),
+    colorize: bool = Query(False, description="Colorize grayscale images"),
+    denoise: bool = Query(True, description="Denoise the image"),
+    output_format: str = Query("png", description="Output format: png or jpg")
+):
+    """
+    Restore images (baseline implementation).
+
+    - **repair**: light median filter + subtle sharpening
+    - **denoise**: median filter
+    - **colorize**: grayscale colorization
+    """
+    start_time = time.time()
+
+    try:
+        if not image.content_type.startswith('image/'):
+            raise HTTPException(
+                status_code=400,
+                detail="File must be an image"
+            )
+
+        image_data = await image.read()
+        if len(image_data) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail="Empty image file"
+            )
+
+        try:
+            pil_image = Image.open(io.BytesIO(image_data))
+            if pil_image.mode not in ['RGB', 'RGBA']:
+                pil_image = pil_image.convert('RGB')
+        except Exception as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid image format: {str(e)}"
+            )
+
+        result = pil_image.copy()
+        operations = []
+
+        if denoise:
+            result = result.filter(ImageFilter.MedianFilter(size=3))
+            operations.append("denoise:median")
+
+        if repair:
+            result = result.filter(ImageFilter.MedianFilter(size=3))
+            result = ImageEnhance.Sharpness(result).enhance(1.15)
+            operations.append("repair:median")
+
+        if colorize:
+            grayscale = result.convert('L')
+            result = ImageOps.colorize(grayscale, black=(40, 40, 40), white=(240, 220, 200))
+            operations.append("colorize:basic")
+
+        output_buffer = io.BytesIO()
+        if output_format.lower() in ['jpg', 'jpeg']:
+            if result.mode == 'RGBA':
+                white_bg = Image.new('RGBA', result.size, (255, 255, 255, 255))
+                result = Image.alpha_composite(white_bg, result)
+            result.convert('RGB').save(output_buffer, format='JPEG', quality=95)
+            media_type = "image/jpeg"
+        else:
+            result.save(output_buffer, format='PNG', optimize=True)
+            media_type = "image/png"
+
+        output_buffer.seek(0)
+
+        processing_time = time.time() - start_time
+        stats["total_processed"] += 1
+        stats["total_processing_time"] += processing_time
+        stats["average_processing_time"] = stats["total_processing_time"] / stats["total_processed"]
+        stats["model_usage"]["restoration"] = stats["model_usage"].get("restoration", 0) + 1
+
+        return Response(
+            content=output_buffer.getvalue(),
+            media_type=media_type,
+            headers={
+                "X-Processing-Time": f"{processing_time:.2f}s",
+                "X-Restoration": "; ".join(operations),
+                "X-Original-Size": str(len(image_data)),
+                "X-Processed-Size": str(len(output_buffer.getvalue()))
+            }
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        stats["total_errors"] += 1
+        logger.error(f"❌ Restoration error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Restoration failed: {str(e)}"
         )
 
 

@@ -18,6 +18,16 @@ const routes: Routes = [
     component: EditorComponent
   },
   {
+    path: 'face-swap',
+    component: EditorComponent,
+    data: { tool: 'face-swap' }
+  },
+  {
+    path: 'restoration',
+    component: EditorComponent,
+    data: { tool: 'restoration' }
+  },
+  {
     path: 'background-remover',
     component: BackgroundRemoverComponent
   },

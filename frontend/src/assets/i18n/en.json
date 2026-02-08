@@ -4,9 +4,12 @@
   },
   "nav": {
     "editor": "Studio (New)",
+    "photoEditor": "Photo Editor",
     "backgroundRemover": "Background Remover",
     "imageEnhancement": "Image Enhancement",
     "smartCrop": "Smart Crop",
+    "faceSwap": "Face Swap & Style Transfer",
+    "restoration": "Image Restoration",
     "help": "Help"
   },
   "header": {
@@ -51,14 +54,38 @@
       },
       "faceSwap": {
         "title": "Face Swap & Style Transfer",
-        "subtitle": "Coming Soon",
+        "subtitle": "Swap faces and styles with AI",
         "description": "Swap faces between images and apply artistic styles with advanced neural networks for creative transformations.",
+        "bullets": {
+          "swap": "Precise face swapping",
+          "style": "Artistic style transfer",
+          "quality": "High-fidelity results"
+        },
+        "cta": "Try Now",
         "badge": "Coming Soon"
       },
       "restoration": {
         "title": "Image Restoration",
-        "subtitle": "Coming Soon",
+        "subtitle": "Recover details with AI",
         "description": "Restore old or damaged photos, remove scratches, and colorize black & white images with AI-powered restoration.",
+        "bullets": {
+          "repair": "Scratch and damage repair",
+          "colorize": "Automatic colorization",
+          "details": "Detail recovery"
+        },
+        "cta": "Try Now",
+        "badge": "Coming Soon"
+      },
+      "filters": {
+        "title": "Creative Filters",
+        "subtitle": "Coming Soon",
+        "description": "Apply cinematic filters and smart presets to create unique moods in one click.",
+        "badge": "Coming Soon"
+      },
+      "frames": {
+        "title": "Frames & Layouts",
+        "subtitle": "Coming Soon",
+        "description": "Add modern frames, ready-to-use layouts, and elegant borders to highlight your images.",
         "badge": "Coming Soon"
       }
     },

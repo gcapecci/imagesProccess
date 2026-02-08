@@ -260,6 +260,144 @@ class ImageService {
   }
 
   /**
+   * Face swap or style transfer
+   */
+  async faceSwapImage({ buffer, mimetype, originalname, mode = 'face-swap', faceImage, styleImage }) {
+    const startTime = Date.now();
+
+    try {
+      const formData = new FormData();
+      formData.append('image', buffer, {
+        filename: originalname,
+        contentType: mimetype
+      });
+
+      if (faceImage) {
+        formData.append('face_image', faceImage.buffer, {
+          filename: faceImage.originalname,
+          contentType: faceImage.mimetype
+        });
+      }
+
+      if (styleImage) {
+        formData.append('style_image', styleImage.buffer, {
+          filename: styleImage.originalname,
+          contentType: styleImage.mimetype
+        });
+      }
+
+      const params = new URLSearchParams({
+        mode: mode.toString()
+      });
+
+      console.log(`🙂 Sending image to AI service: ${this.aiServiceUrl}/face-swap?${params}`);
+
+      const response = await axios.post(
+        `${this.aiServiceUrl}/face-swap?${params}`,
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
+          },
+          timeout: 60000,
+          responseType: 'arraybuffer'
+        }
+      );
+
+      const processingTime = Date.now() - startTime;
+      this.updateStats(processingTime, false);
+
+      console.log(`✅ Face swap/style transfer completed in ${processingTime}ms`);
+
+      return {
+        buffer: response.data,
+        processingTime: `${processingTime}ms`,
+        operation: response.headers['x-face-operation'] || mode,
+        originalSize: buffer.length,
+        processedSize: response.data.length
+      };
+    } catch (error) {
+      const processingTime = Date.now() - startTime;
+      this.updateStats(processingTime, true);
+
+      console.error('❌ AI face swap error:', error.message);
+
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('AI service is not available');
+      } else if (error.response) {
+        throw new Error(`AI service error: ${error.response.status} - ${error.response.statusText}`);
+      } else if (error.code === 'ECONNABORTED') {
+        throw new Error('AI service timeout');
+      } else {
+        throw new Error(`AI service communication error: ${error.message}`);
+      }
+    }
+  }
+
+  /**
+   * Restore images (repair, colorize, denoise)
+   */
+  async restoreImage({ buffer, mimetype, originalname, repair = true, colorize = false, denoise = true }) {
+    const startTime = Date.now();
+
+    try {
+      const formData = new FormData();
+      formData.append('image', buffer, {
+        filename: originalname,
+        contentType: mimetype
+      });
+
+      const params = new URLSearchParams({
+        repair: repair.toString(),
+        colorize: colorize.toString(),
+        denoise: denoise.toString()
+      });
+
+      console.log(`🧽 Sending image to AI service: ${this.aiServiceUrl}/restoration?${params}`);
+
+      const response = await axios.post(
+        `${this.aiServiceUrl}/restoration?${params}`,
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
+          },
+          timeout: 60000,
+          responseType: 'arraybuffer'
+        }
+      );
+
+      const processingTime = Date.now() - startTime;
+      this.updateStats(processingTime, false);
+
+      console.log(`✅ Restoration completed in ${processingTime}ms`);
+
+      return {
+        buffer: response.data,
+        processingTime: `${processingTime}ms`,
+        operations: response.headers['x-restoration'] || '',
+        originalSize: buffer.length,
+        processedSize: response.data.length
+      };
+    } catch (error) {
+      const processingTime = Date.now() - startTime;
+      this.updateStats(processingTime, true);
+
+      console.error('❌ AI restoration error:', error.message);
+
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('AI service is not available');
+      } else if (error.response) {
+        throw new Error(`AI service error: ${error.response.status} - ${error.response.statusText}`);
+      } else if (error.code === 'ECONNABORTED') {
+        throw new Error('AI service timeout');
+      } else {
+        throw new Error(`AI service communication error: ${error.message}`);
+      }
+    }
+  }
+
+  /**
    * Get processing statistics
    */
   async getStats() {

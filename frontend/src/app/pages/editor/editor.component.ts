@@ -1,15 +1,16 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { ImageService, ProcessingResult, EnhancementOptions, CropOptions } from '../../services/image.service';
+import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ImageService, ProcessingResult, EnhancementOptions, CropOptions, RestorationOptions } from '../../services/image.service';
 import { NotificationService } from '../../services/notification.service';
 
-type EditorTool = 'crop' | 'enhance' | 'bg-remove' | null;
+type EditorTool = 'crop' | 'enhance' | 'bg-remove' | 'face-swap' | 'restoration' | null;
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss']
 })
-export class EditorComponent {
+export class EditorComponent implements OnInit {
   currentFile: File | null = null;
   currentImageUrl: string | null = null;
   originalFile: File | null = null; // For "Reset"
@@ -26,6 +27,16 @@ export class EditorComponent {
   
   // Tool specific state
   bgRemoveModel = 'u2net';
+  faceSwapMode: 'face-swap' | 'style-transfer' = 'face-swap';
+  faceSourceFile: File | null = null;
+  styleReferenceFile: File | null = null;
+  faceSourceName = '';
+  styleReferenceName = '';
+  restorationOptions: RestorationOptions = {
+    repair: true,
+    colorize: false,
+    denoise: true
+  };
   cropOptions: CropOptions = { width: 800, height: 600, aspectRatio: 'custom', autoDetect: false };
   enhancementOptions: EnhancementOptions = {
     brightness: 1.0,
@@ -38,8 +49,20 @@ export class EditorComponent {
 
   constructor(
     private imageService: ImageService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+    this.route.data.subscribe(data => {
+      const tool = data['tool'] as EditorTool | undefined;
+      if (tool) {
+        this.setActiveTool(tool);
+      } else {
+        this.setActiveTool('bg-remove');
+      }
+    });
+  }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
@@ -73,6 +96,7 @@ export class EditorComponent {
   }
 
   setActiveTool(tool: EditorTool) {
+    if (!tool) return;
     // If clicking same tool that is active
     if (this.activeTool === tool) {
       if (this.panelWidth === 0) {
@@ -91,6 +115,19 @@ export class EditorComponent {
   closePanel() {
     this.panelWidth = 0;
     this.activeTool = null;
+  }
+
+  getActiveToolTitle(tool: EditorTool): string {
+    const titles: Record<string, string> = {
+      'bg-remove': 'Background Remover',
+      'enhance': 'Image Enhancement',
+      'crop': 'Smart Crop',
+      'face-swap': 'Face Swap & Style Transfer',
+      'restoration': 'Image Restoration'
+    };
+
+    if (!tool) return '';
+    return titles[tool] || 'Editor';
   }
 
   // --- Resizing ---
@@ -150,32 +187,6 @@ export class EditorComponent {
     if (!this.currentFile) return;
     
     this.isProcessing = true;
-    this.imageService.removeBackground(this.currentFile, this.bgRemoveModel).subscribe({
-      next: (result: ProcessingResult) => {
-        if (result.processedImage && result.success !== false) { // ImageService returns intermediate events too
-           // We need to handle the observable properly as it returns events
-           // BUT ImageService.removeBackground returns events OR result depending on implementation.
-           // Looking at service code, it uses reportProgress: true and maps events.
-           // However, the final event returns a Blob but the service mapping might be tricky.
-           // Let's look at how other components consume it.
-        }
-        // In the service code read earlier:
-        // It returns Observable<ProcessingResult>.
-        // On HttpEventType.Response (not shown in snippet but implied), it yields the body.
-        // Wait, the snippet ended early. processingTime etc comes from headers.
-        
-        // Let's assume the service works as 'last emission is the result'.
-      },
-      error: (err) => {
-        this.notification.showError('Failed to remove background');
-        this.isProcessing = false;
-      }
-    });
-    
-    // NOTE: Because ImageService returns a stream of events (Composite object),
-    // I need to filter for the final result.
-    // Actually, looking at image.service.ts again, let's trust I can subscribe and check for 'processedImage'.
-    
     this.imageService.removeBackground(this.currentFile, this.bgRemoveModel).subscribe({
       next: (res) => {
         // Intermediate progress events return { success: false }
@@ -251,5 +262,81 @@ export class EditorComponent {
     if (this.originalFile) {
       this.loadFile(this.originalFile);
     }
+  }
+
+  onFaceSourceSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.faceSourceFile = file;
+      this.faceSourceName = file.name;
+    }
+  }
+
+  onStyleReferenceSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.styleReferenceFile = file;
+      this.styleReferenceName = file.name;
+    }
+  }
+
+  applyFaceSwap() {
+    if (!this.currentFile) {
+      this.notification.showWarning('Upload an image first');
+      return;
+    }
+
+    if (this.faceSwapMode === 'face-swap' && !this.faceSourceFile) {
+      this.notification.showWarning('Select a face image to swap');
+      return;
+    }
+
+    if (this.faceSwapMode === 'style-transfer' && !this.styleReferenceFile) {
+      this.notification.showWarning('Select a style reference image');
+      return;
+    }
+
+    this.isProcessing = true;
+
+    const mode = this.faceSwapMode;
+    const faceImage = mode === 'face-swap' ? this.faceSourceFile : undefined;
+    const styleImage = mode === 'style-transfer' ? this.styleReferenceFile : undefined;
+
+    this.imageService.faceSwapImage(this.currentFile, mode, faceImage || undefined, styleImage || undefined).subscribe({
+      next: (res) => {
+        if (res.processedImage) {
+          this.updateCurrentImage(res.processedImage, mode === 'style-transfer' ? 'style-transfer.png' : 'face-swap.png');
+          this.isProcessing = false;
+          this.notification.showSuccess('Image processed successfully');
+        }
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.notification.showError('Error processing image');
+      }
+    });
+  }
+
+  applyRestoration() {
+    if (!this.currentFile) {
+      this.notification.showWarning('Upload an image first');
+      return;
+    }
+
+    this.isProcessing = true;
+
+    this.imageService.restoreImage(this.currentFile, this.restorationOptions).subscribe({
+      next: (res) => {
+        if (res.processedImage) {
+          this.updateCurrentImage(res.processedImage, 'restored.png');
+          this.isProcessing = false;
+          this.notification.showSuccess('Image restored successfully');
+        }
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.notification.showError('Error restoring image');
+      }
+    });
   }
 }

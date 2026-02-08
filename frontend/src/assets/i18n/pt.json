@@ -4,9 +4,12 @@
   },
   "nav": {
     "editor": "Estúdio (Novo)",
+    "photoEditor": "Photo Editor",
     "backgroundRemover": "Removedor de Fundo",
     "imageEnhancement": "Aprimoramento de Imagem",
     "smartCrop": "Corte Inteligente",
+    "faceSwap": "Troca de Rostos & Style Transfer",
+    "restoration": "Restauração de Imagens",
     "help": "Ajuda"
   },
   "header": {
@@ -51,14 +54,38 @@
       },
       "faceSwap": {
         "title": "Troca de Rostos & Style Transfer",
-        "subtitle": "Em breve",
-        "description": "Troque rostos entre imagens e aplique estilos artísticos com redes neurais avançadas para transformações criativas.",
+        "subtitle": "Troque rostos e estilos com IA",
+        "description": "Troque rostos entre imagens e aplique estilos artísticos com redes neurais avançadas para transformacoes criativas.",
+        "bullets": {
+          "swap": "Troca precisa de rostos",
+          "style": "Transferencia de estilo artistico",
+          "quality": "Resultados com alta fidelidade"
+        },
+        "cta": "Usar agora",
         "badge": "Em breve"
       },
       "restoration": {
         "title": "Restauração de Imagens",
+        "subtitle": "Recupere detalhes com IA",
+        "description": "Restaure fotos antigas ou danificadas, remova riscos e colorize imagens em preto e branco com restauracao guiada por IA.",
+        "bullets": {
+          "repair": "Remocao de riscos e danos",
+          "colorize": "Colorizacao automatica",
+          "details": "Recuperacao de detalhes"
+        },
+        "cta": "Usar agora",
+        "badge": "Em breve"
+      },
+      "filters": {
+        "title": "Filtros Criativos",
         "subtitle": "Em breve",
-        "description": "Restaure fotos antigas ou danificadas, remova riscos e colorize imagens em preto e branco com restauração guiada por IA.",
+        "description": "Aplique filtros cinematograficos e presets inteligentes para criar atmosferas unicas com um clique.",
+        "badge": "Em breve"
+      },
+      "frames": {
+        "title": "Molduras & Layouts",
+        "subtitle": "Em breve",
+        "description": "Adicione molduras modernas, layouts prontos e bordas elegantes para destacar suas imagens.",
         "badge": "Em breve"
       }
     },

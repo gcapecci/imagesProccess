@@ -168,6 +168,25 @@
     padding-top: 24px;
     border-top: 1px solid #eee;
   }
+
+  .file-picker {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+
+    .file-name {
+      color: #555;
+      font-size: 0.85rem;
+      word-break: break-all;
+    }
+  }
+
+  mat-slide-toggle {
+    display: block;
+    margin: 8px 0;
+  }
 }
 
 // Canvas Area

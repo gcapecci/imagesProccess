@@ -2,15 +2,15 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const imageService = require('../services/imageService');
-const { validateImage } = require('../middleware/validation');
+const { validateImage, validateImageFields } = require('../middleware/validation');
 
 // Configure multer for handling multipart/form-data
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB limit
-    files: 1
+    fileSize: 120 * 1024 * 1024, // 120MB limit per file
+    files: 3
   },
   fileFilter: (req, file, cb) => {
     // Check if file is an image
@@ -177,6 +177,120 @@ router.post('/crop', upload.single('image'), validateImage, async (req, res) => 
       res.status(500).json({
         error: 'Internal server error',
         message: 'Failed to crop image'
+      });
+    }
+  }
+});
+
+/**
+ * POST /api/images/face-swap?mode=face-swap|style-transfer
+ * Face swap or style transfer with optional reference images
+ */
+router.post('/face-swap', upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'face_image', maxCount: 1 },
+  { name: 'style_image', maxCount: 1 }
+]), validateImageFields, async (req, res) => {
+  try {
+    const mode = req.query.mode || 'face-swap';
+    const baseFile = req.files.image[0];
+    const faceFile = req.files.face_image ? req.files.face_image[0] : null;
+    const styleFile = req.files.style_image ? req.files.style_image[0] : null;
+
+    if (mode === 'face-swap' && !faceFile) {
+      return res.status(400).json({
+        error: 'Face image required',
+        message: 'Please upload a face_image for face swap mode'
+      });
+    }
+
+    if (mode === 'style-transfer' && !styleFile) {
+      return res.status(400).json({
+        error: 'Style image required',
+        message: 'Please upload a style_image for style transfer mode'
+      });
+    }
+
+    console.log(`🙂 Face swap request: ${baseFile.originalname} mode=${mode}`);
+
+    const processedImage = await imageService.faceSwapImage({
+      buffer: baseFile.buffer,
+      mimetype: baseFile.mimetype,
+      originalname: baseFile.originalname,
+      mode,
+      faceImage: faceFile,
+      styleImage: styleFile
+    });
+
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Disposition': `attachment; filename="face_swap_${baseFile.originalname.replace(/\.[^/.]+$/, '')}.png"`,
+      'X-Processing-Time': processedImage.processingTime,
+      'X-Face-Operation': processedImage.operation,
+      'X-Original-Size': baseFile.size,
+      'X-Processed-Size': processedImage.buffer.length
+    });
+
+    res.send(processedImage.buffer);
+  } catch (error) {
+    console.error('❌ Error in face swap:', error);
+
+    if (error.message.includes('AI service')) {
+      res.status(503).json({
+        error: 'AI service temporarily unavailable',
+        message: 'Please try again in a few moments'
+      });
+    } else {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: 'Failed to process face swap'
+      });
+    }
+  }
+});
+
+/**
+ * POST /api/images/restoration
+ * Restore image (repair, colorize, denoise)
+ */
+router.post('/restoration', upload.single('image'), validateImage, async (req, res) => {
+  try {
+    const { buffer, mimetype, originalname, size } = req.file;
+    const { repair, colorize, denoise } = req.query;
+
+    console.log(`🧽 Restoring image: ${originalname} (${(size / 1024).toFixed(2)}KB)`);
+
+    const processedImage = await imageService.restoreImage({
+      buffer,
+      mimetype,
+      originalname,
+      repair: repair !== 'false',
+      colorize: colorize === 'true',
+      denoise: denoise !== 'false'
+    });
+
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Disposition': `attachment; filename="restored_${originalname.replace(/\.[^/.]+$/, '')}.png"`,
+      'X-Processing-Time': processedImage.processingTime,
+      'X-Restoration': processedImage.operations,
+      'X-Original-Size': size,
+      'X-Processed-Size': processedImage.buffer.length
+    });
+
+    res.send(processedImage.buffer);
+  } catch (error) {
+    console.error('❌ Error restoring image:', error);
+
+    if (error.message.includes('AI service')) {
+      res.status(503).json({
+        error: 'AI service temporarily unavailable',
+        message: 'Please try again in a few moments'
+      });
+    } else {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: 'Failed to restore image'
       });
     }
   }

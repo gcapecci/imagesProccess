@@ -6,26 +6,12 @@
     </div>
     
     <nav class="nav-links">
-      <a mat-button routerLink="/editor" routerLinkActive="active">
-        <mat-icon>auto_fix_high</mat-icon>
-        <span class="nav-text">{{ 'nav.editor' | translate }}</span>
-      </a>
+      <button mat-button [matMenuTriggerFor]="editorMenu" class="menu-trigger">
+        <mat-icon>photo_library</mat-icon>
+        <span class="nav-text">{{ 'nav.photoEditor' | translate }}</span>
+        <mat-icon class="chevron">expand_more</mat-icon>
+      </button>
 
-      <a mat-button routerLink="/background-remover" routerLinkActive="active">
-        <mat-icon>layers_clear</mat-icon>
-        <span class="nav-text">{{ 'nav.backgroundRemover' | translate }}</span>
-      </a>
-
-      <a mat-button routerLink="/image-enhancement" routerLinkActive="active">
-        <mat-icon>palette</mat-icon>
-        <span class="nav-text">{{ 'nav.imageEnhancement' | translate }}</span>
-      </a>
-
-      <a mat-button routerLink="/smart-crop" routerLinkActive="active">
-        <mat-icon>crop</mat-icon>
-        <span class="nav-text">{{ 'nav.smartCrop' | translate }}</span>
-      </a>
-      
       <a mat-button routerLink="/help" routerLinkActive="active">
         <mat-icon>help</mat-icon>
         <span class="nav-text">{{ 'nav.help' | translate }}</span>
@@ -62,6 +48,14 @@
         <mat-icon>crop</mat-icon>
         <span>{{ 'nav.smartCrop' | translate }}</span>
       </a>
+      <a mat-menu-item routerLink="/face-swap">
+        <mat-icon>face</mat-icon>
+        <span>{{ 'nav.faceSwap' | translate }}</span>
+      </a>
+      <a mat-menu-item routerLink="/restoration">
+        <mat-icon>restore</mat-icon>
+        <span>{{ 'nav.restoration' | translate }}</span>
+      </a>
       <a mat-menu-item routerLink="/help">
         <mat-icon>help</mat-icon>
         <span>{{ 'nav.help' | translate }}</span>
@@ -74,6 +68,33 @@
           <mat-option value="pt">Português</mat-option>
         </mat-select>
       </div>
+    </mat-menu>
+
+    <mat-menu #editorMenu="matMenu" [overlapTrigger]="false" class="editor-menu">
+        <a mat-menu-item routerLink="/editor">
+          <mat-icon>auto_fix_high</mat-icon>
+          <span>{{ 'nav.editor' | translate }}</span>
+        </a>
+        <a mat-menu-item routerLink="/background-remover">
+          <mat-icon>layers_clear</mat-icon>
+          <span>{{ 'nav.backgroundRemover' | translate }}</span>
+        </a>
+        <a mat-menu-item routerLink="/image-enhancement">
+          <mat-icon>palette</mat-icon>
+          <span>{{ 'nav.imageEnhancement' | translate }}</span>
+        </a>
+        <a mat-menu-item routerLink="/smart-crop">
+          <mat-icon>crop</mat-icon>
+          <span>{{ 'nav.smartCrop' | translate }}</span>
+        </a>
+        <a mat-menu-item routerLink="/face-swap">
+          <mat-icon>face</mat-icon>
+          <span>{{ 'nav.faceSwap' | translate }}</span>
+        </a>
+        <a mat-menu-item routerLink="/restoration">
+          <mat-icon>restore</mat-icon>
+          <span>{{ 'nav.restoration' | translate }}</span>
+        </a>
     </mat-menu>
   </div>
 </mat-toolbar>

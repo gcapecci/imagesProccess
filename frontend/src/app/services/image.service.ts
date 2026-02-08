@@ -31,6 +31,12 @@ export interface CropOptions {
   y?: number;
 }
 
+export interface RestorationOptions {
+  repair: boolean;
+  colorize: boolean;
+  denoise: boolean;
+}
+
 export interface UploadProgress {
   progress: number;
   status: 'uploading' | 'processing' | 'downloading' | 'complete' | 'error';
@@ -321,6 +327,177 @@ export class ImageService {
           message: this.getErrorMessage(error)
         });
         
+        return throwError(() => ({
+          success: false,
+          error: this.getErrorMessage(error)
+        }));
+      })
+    );
+  }
+
+  /**
+   * Face swap or style transfer
+   */
+  faceSwapImage(file: File, mode: 'face-swap' | 'style-transfer', faceImage?: File, styleImage?: File): Observable<ProcessingResult> {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    if (faceImage) {
+      formData.append('face_image', faceImage);
+    }
+    if (styleImage) {
+      formData.append('style_image', styleImage);
+    }
+
+    return this.http.post(`${this.baseUrl}/images/face-swap?mode=${mode}`, formData, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'blob'
+    }).pipe(
+      timeout(120000),
+      map((event: HttpEvent<Blob>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            if (event.total) {
+              const progress = Math.round(100 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress: progress * 0.3,
+                status: 'uploading',
+                message: 'Uploading images...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Sent:
+            this.uploadProgressSubject.next({
+              progress: 35,
+              status: 'processing',
+              message: mode === 'style-transfer' ? 'Applying style transfer...' : 'Swapping faces...'
+            });
+            return { success: false };
+
+          case HttpEventType.DownloadProgress:
+            if (event.total) {
+              const progress = 35 + Math.round(65 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress,
+                status: 'downloading',
+                message: 'Receiving processed image...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Response:
+            this.uploadProgressSubject.next({
+              progress: 100,
+              status: 'complete',
+              message: 'Processing complete!'
+            });
+
+            return {
+              success: true,
+              processedImage: event.body as Blob,
+              originalSize: file.size,
+              processedSize: event.body?.size || 0,
+              processingTime: event.headers.get('X-Processing-Time') || 'unknown'
+            };
+
+          default:
+            return { success: false };
+        }
+      }),
+      catchError(error => {
+        this.uploadProgressSubject.next({
+          progress: 0,
+          status: 'error',
+          message: this.getErrorMessage(error)
+        });
+
+        return throwError(() => ({
+          success: false,
+          error: this.getErrorMessage(error)
+        }));
+      })
+    );
+  }
+
+  /**
+   * Restore image (repair, colorize, denoise)
+   */
+  restoreImage(file: File, options: RestorationOptions): Observable<ProcessingResult> {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const params = new URLSearchParams({
+      repair: options.repair.toString(),
+      colorize: options.colorize.toString(),
+      denoise: options.denoise.toString()
+    });
+
+    return this.http.post(`${this.baseUrl}/images/restoration?${params}`, formData, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'blob'
+    }).pipe(
+      timeout(120000),
+      map((event: HttpEvent<Blob>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            if (event.total) {
+              const progress = Math.round(100 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress: progress * 0.3,
+                status: 'uploading',
+                message: 'Uploading image...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Sent:
+            this.uploadProgressSubject.next({
+              progress: 35,
+              status: 'processing',
+              message: options.colorize ? 'Restoring and colorizing...' : 'Restoring image...'
+            });
+            return { success: false };
+
+          case HttpEventType.DownloadProgress:
+            if (event.total) {
+              const progress = 35 + Math.round(65 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress,
+                status: 'downloading',
+                message: 'Receiving restored image...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Response:
+            this.uploadProgressSubject.next({
+              progress: 100,
+              status: 'complete',
+              message: 'Restoration complete!'
+            });
+
+            return {
+              success: true,
+              processedImage: event.body as Blob,
+              originalSize: file.size,
+              processedSize: event.body?.size || 0,
+              processingTime: event.headers.get('X-Processing-Time') || 'unknown'
+            };
+
+          default:
+            return { success: false };
+        }
+      }),
+      catchError(error => {
+        this.uploadProgressSubject.next({
+          progress: 0,
+          status: 'error',
+          message: this.getErrorMessage(error)
+        });
+
         return throwError(() => ({
           success: false,
           error: this.getErrorMessage(error)

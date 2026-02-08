@@ -108,7 +108,7 @@
         </mat-card-actions>
       </mat-card>
 
-      <mat-card class="feature-card coming-soon">
+      <mat-card class="feature-card" routerLink="/face-swap">
         <mat-card-header>
           <mat-icon mat-card-avatar class="feature-icon">face</mat-icon>
           <mat-card-title>{{ 'home.features.faceSwap.title' | translate }}</mat-card-title>
@@ -118,11 +118,30 @@
           <p>
             {{ 'home.features.faceSwap.description' | translate }}
           </p>
-          <mat-chip class="coming-soon-chip">{{ 'home.features.faceSwap.badge' | translate }}</mat-chip>
+          <ul class="feature-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.faceSwap.bullets.swap' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.faceSwap.bullets.style' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.faceSwap.bullets.quality' | translate }}</span>
+            </li>
+          </ul>
         </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/face-swap">
+            <mat-icon>arrow_forward</mat-icon>
+            {{ 'home.features.faceSwap.cta' | translate }}
+          </button>
+        </mat-card-actions>
       </mat-card>
 
-      <mat-card class="feature-card coming-soon">
+      <mat-card class="feature-card" routerLink="/restoration">
         <mat-card-header>
           <mat-icon mat-card-avatar class="feature-icon">restore</mat-icon>
           <mat-card-title>{{ 'home.features.restoration.title' | translate }}</mat-card-title>
@@ -132,7 +151,54 @@
           <p>
             {{ 'home.features.restoration.description' | translate }}
           </p>
-          <mat-chip class="coming-soon-chip">{{ 'home.features.restoration.badge' | translate }}</mat-chip>
+          <ul class="feature-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.restoration.bullets.repair' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.restoration.bullets.colorize' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.restoration.bullets.details' | translate }}</span>
+            </li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/restoration">
+            <mat-icon>arrow_forward</mat-icon>
+            {{ 'home.features.restoration.cta' | translate }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card coming-soon">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">filter_vintage</mat-icon>
+          <mat-card-title>{{ 'home.features.filters.title' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'home.features.filters.subtitle' | translate }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            {{ 'home.features.filters.description' | translate }}
+          </p>
+          <mat-chip class="coming-soon-chip">{{ 'home.features.filters.badge' | translate }}</mat-chip>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card coming-soon">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">crop_square</mat-icon>
+          <mat-card-title>{{ 'home.features.frames.title' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'home.features.frames.subtitle' | translate }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            {{ 'home.features.frames.description' | translate }}
+          </p>
+          <mat-chip class="coming-soon-chip">{{ 'home.features.frames.badge' | translate }}</mat-chip>
         </mat-card-content>
       </mat-card>
     </div>

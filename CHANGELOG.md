@@ -7,6 +7,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2026-02-08 (Face Swap & Style Transfer + Image Restoration — Full Implementation)
+
+#### Editor Integrado
+- Novas ferramentas no editor: **Face Swap & Style Transfer** e **Image Restoration**.
+- Rotas dedicadas `/face-swap` e `/restoration` abrindo o editor integrado com funcionalidades completas.
+
+#### Backend Implementation
+- **Novos endpoints** no backend (`backend/routes/imageRoutes.js`):
+  - `POST /api/images/face-swap`: Suporta multi-file upload (image, face_image, style_image) via `upload.fields()`
+  - `POST /api/images/restoration`: Single file upload com opções de repair/denoise/colorize via query params
+- **ImageService** (`backend/services/imageService.js`):
+  - `faceSwapImage()`: Constrói FormData com múltiplos arquivos e faz proxy para AI service
+  - `restoreImage()`: FormData com imagem e opções de restauração
+  - Timeout de 60s, error handling robusto
+- **Validation middleware** (`backend/middleware/validation.js`):
+  - `validateImageFields()`: Valida múltiplos campos de upload (image, face_image, style_image)
+  - `validateImageFile()`: Refatorado para validação individual de arquivos
+- **Upload limits aumentados**:
+  - Nginx: `client_max_body_size` aumentado de 50M para **120M** (dev e prod configs)
+  - Multer: limite por arquivo aumentado para **120MB**, máximo de 3 arquivos simultâneos
+
+#### AI Service Implementation
+- **Novos endpoints** no AI service (`ai-service/app.py`):
+  - `POST /face-swap`: Suporta dois modos via query param `mode`:
+    - **face-swap**: Sobrepõe face_image sobre image usando máscara elíptica centrada
+    - **style-transfer**: Transferência de estilo usando `Image.blend()` com alpha=0.35
+  - `POST /restoration`: Restauração de imagens com PIL:
+    - **repair**: Aplica `MedianFilter` para remover riscos e ruídos
+    - **denoise**: Redução de ruído com filtro mediano
+    - **colorize**: Colorização automática de imagens P&B usando `ImageOps.colorize`
+- **Processamento baseline com PIL**:
+  - Face swap: Overlay com máscara elíptica usando `Image.composite()` e `ImageDraw.ellipse()`
+  - Style blending: Mistura de imagens com transparência controlada
+  - Restoration: Filtros de mediana + operações de colorização
+- **Version bump**: AI service atualizado para v3.1.0
+- **Headers customizados**: `X-Processing-Time`, `X-Mode`, `X-Original-Size`, `X-Processed-Size`
+
+#### Frontend Integration
+- **ImageService** (`image.service.ts`):
+  - Interface `RestorationOptions` (repair, denoise, colorize booleans)
+  - `faceSwapImage()`: Suporta mode (face-swap ou style-transfer), progress tracking com HttpEventType
+  - `restoreImage()`: Processa com opções de restauração, timeout de 120s
+  - Progress tracking: 30% upload → 35% processing → 65% download com mensagens contextuais
+- **EditorComponent** (`editor.component.ts`):
+  - `applyFaceSwap()`: Conectado ao serviço real, valida seleção de arquivos (base + face/style)
+  - `applyRestoration()`: Conectado ao serviço real, processa com opções selecionadas
+  - Substituiu notificações "coming soon" por processamento real com preview atualizado
+  - Error handling e notificações de sucesso/erro integradas
+
+#### Navigation Improvements
+- **Menu agrupado "Photo Editor"**:
+  - Header refatorado para consolidar 6 links de editor em dropdown único
+  - Botão "Photo Editor" com ícone `photo_library` e chevron `expand_more`
+  - Menu Material (`mat-menu`) com 6 itens: Editor, Background Remover, Image Enhancement, Smart Crop, Face Swap, Restoration
+  - Alinhamento mantido à direita antes do seletor de idioma
+  - Link "Help" mantido separado do dropdown
+- **CSS responsivo ajustado**:
+  - Texto "Photo Editor" sempre visível com `!important` e `white-space: nowrap`
+  - Media query preserva texto do menu principal em telas menores (>960px)
+
+#### i18n Fixes
+- **Correção de sintaxe JSON** em `assets/i18n/pt.json`:
+  - Removida vírgula duplicada e chave `photoEditor` mal posicionada
+  - Estrutura JSON validada e corrigida
+- **Chaves adicionadas**:
+  - `nav.photoEditor`: "Photo Editor" (en/pt)
+  - Todas as features do editor mantêm traduções consistentes
+
+#### Documentacao
+- README e README_EXECUTION atualizados com rotas e exemplos completos de API
+- CHANGELOG atualizado com detalhes técnicos de implementação
+
 ### Changed - 2026-02-08 (Intro Hero Shared Styles & Layout Consistency)
 
 #### Estilo de Hero Unificado
