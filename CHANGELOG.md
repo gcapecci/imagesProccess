@@ -21,21 +21,19 @@ Implementada feature completa de crop inteligente com controle manual e detecç�
   - Botão "Reset All" para restaurar valores padrão
   - Estrutura flex panel-content/body/footer seguindo padrão estabelecido
 
-- **CropProcessorComponent** (`components/crop-processor/`):
+**CropProcessorComponent** (`components/crop-processor/`):
   - Preview da imagem com overlay visual indicando dimensões do crop (`crop-info`)
   - Badge "AI Auto-Detect Active" quando modo AI está habilitado
-  - Botão "Crop Image" com progress bar durante processamento
-  - Indicadores de status (uploading → processing → downloading → complete)
-  - Reutiliza `ResultComparisonComponent` para exibir resultado cropped
-  - Método público `scrollToResults()` para auto-scroll após processar
+  - Indicadores de status (uploading → processing → downloading → complete) com progress bar integrada
+  - Comparação lado a lado Original vs Cropped no próprio painel, sem necessidade de painel extra
   - Gerenciamento de memória com `URL.revokeObjectURL()` no `ngOnDestroy`
 
-- **SmartCropComponent** (`pages/smart-crop/`):
+**SmartCropComponent** (`pages/smart-crop/`):
   - Intro section com gradient background e ícone crop
   - Grid side-by-side (350px controls + 1fr processor) seguindo padrão Image Enhancement
   - 4 info cards quando nenhuma imagem foi carregada (AI Auto-Detect, Multiple Aspect Ratios, Precise Control, Maintain Quality)
   - Orquestração dos componentes com state management local
-  - Auto-scroll para resultado após processar via `ViewChild(CropProcessorComponent)`
+  - Resultados exibidos no mesmo painel de preview, evitando scroll extra
   - Responsive com grid colapsando para 1 coluna em mobile
 
 **Backend/AI Service:**
@@ -87,10 +85,10 @@ Implementada feature completa de crop inteligente com controle manual e detecç�
 **Arquitetura & Qualidade:**
 - Seguiu padrão estabelecido de componentes de apresentação puros
 - Comunicação via `@Input/@Output`, sem dependências diretas entre componentes
-- Component composition: SmartCropComponent orquestra CropControls + CropProcessor + ResultComparison
+- Component composition: SmartCropComponent orquestra CropControls + CropProcessor
 - Responsive design com breakpoint 768px
 - Estilos encapsulados (seguiu mesma estrutura CSS dos outros componentes)
-- Auto-scroll UX consistente (ViewChild + ElementRef + scrollIntoView)
+- UX consistente entre Smart Crop e Image Enhancement: botão de ação no painel de settings e resultado no mesmo card de preview
 
 ### Refactored - 2026-02-08 (ResultComparisonComponent — DRY)
 
@@ -116,27 +114,28 @@ Implementada feature completa de crop inteligente com controle manual e detecç�
 
 ### Changed - 2026-02-08 (Image Enhancement Layout)
 
-#### Layout Enhancement — Alinhamento dos Painéis e Auto-Scroll
+#### Layout Enhancement — Alinhado ao Fluxo do Smart Crop
 - **Painéis lado a lado com altura igual** (`image-enhancement.component.scss`):
-  - Grid com `align-items: stretch` para que "AI Image Enhancement" acompanhe a altura natural do "Enhancement Settings"
+  - Grid com `align-items: stretch` para que "Enhancement Settings" e "AI Image Enhancement" ocupem alturas compatíveis
   - Removida altura fixa para manter responsividade
-  - `::ng-deep` para propagar flex layout dentro dos `mat-expansion-panel`
+  - Layout responsivo herdado do padrão usado em Smart Crop
 
 - **Enhancement Settings** (`enhancement-controls`):
-  - Conteúdo reorganizado com `panel-content` > `panel-body` + `panel-footer`
-  - Botão "Reset All" fixo na parte inferior do painel via `margin-top: auto`
+  - Conteúdo organizado em `panel-content` > `panel-body` + `panel-footer`
+  - Botão principal **"Enhance Image"** movido para o painel de settings
+  - Botão "Reset All" mantido fixo na parte inferior do painel via `margin-top: auto`
+  - Inputs adicionais `isProcessing` e `hasImage` controlam habilitação dos botões
 
 - **AI Image Enhancement** (`enhancement-processor`):
-  - Preview da imagem centralizada verticalmente com `flex: 1` + `align-items: center` + `justify-content: center`
-  - Imagem usa `object-fit: contain` para se adaptar ao espaço disponível sem distorção
-  - Botão "Enhance Image" fixo na parte inferior, alinhado com "Reset All" do painel esquerdo
-  - Progress bar posicionada abaixo do botão no footer
+  - Card único exibindo primeiro o preview e, após o processamento, a comparação Original vs Enhanced no mesmo espaço
+  - Imagens usam `object-fit: contain` para se adaptar ao espaço disponível sem distorção
+  - Barra de progresso e mensagens de status exibidas no footer do próprio card durante o processamento
+  - Botão único **"Download Enhanced Image"** exibido apenas quando há resultado disponível
 
-- **Painel "Enhanced Result"** mantido full-width abaixo do grid
-
-- **Auto-scroll para resultado** (`image-enhancement.component.ts`):
-  - Ao finalizar o enhancement, a tela rola automaticamente com `scrollIntoView({ behavior: 'smooth' })` até o painel "Enhanced Result"
-  - Usa `ViewChild` + `ElementRef` com `setTimeout(100ms)` para aguardar renderização do Angular
+- **UX Atualizada (sem auto-scroll e sem painel extra)**:
+  - O painel "Enhanced Result" separado foi removido; a comparação agora ocorre no mesmo card de preview
+  - Removido o auto-scroll para o resultado; o usuário permanece no contexto do grid principal
+  - Fluxo visual e de interação agora espelha o Smart Crop (ação no settings, resultado no painel da direita)
 
 ### Added - 2026-02-07 (Image Enhancement Feature)
 

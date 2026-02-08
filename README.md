@@ -126,7 +126,7 @@ imagesProccess/
 │   ├── src/app/
 │   │   ├── app.component.{ts,html,scss}
 │   │   ├── app.module.ts
-│   │   ├── app-routing.module.ts     # Roteamento (/, /background-remover, /help)
+│   │   ├── app-routing.module.ts     # Roteamento (/, /background-remover, /image-enhancement, /smart-crop, /help)
 │   │   ├── components/
 │   │   │   ├── header/               # Navegação responsiva
 │   │   │   ├── footer/

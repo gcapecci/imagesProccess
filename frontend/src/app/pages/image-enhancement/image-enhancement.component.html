@@ -15,7 +15,10 @@
       <div class="grid-controls">
         <app-enhancement-controls
           (optionsChanged)="onOptionsChanged($event)"
-          [disabled]="isProcessing">
+          (enhanceImage)="onEnhanceImage()"
+          [disabled]="isProcessing"
+          [isProcessing]="isProcessing"
+          [hasImage]="!!uploadedImage">
         </app-enhancement-controls>
       </div>
 
@@ -31,16 +34,5 @@
       </div>
     </div>
 
-    <!-- Results Panel (full width, below grid) -->
-    <app-result-comparison
-      #resultsPanel
-      *ngIf="processor.processedImage && !processor.isProcessing"
-      title="Enhanced Result"
-      [originalImage]="processor.imagePreview"
-      [resultImage]="processor.processedImageUrl"
-      resultTitle="Enhanced"
-      downloadLabel="Download Enhanced Image"
-      (download)="processor.downloadImage()">
-    </app-result-comparison>
   </ng-container>
 </div>

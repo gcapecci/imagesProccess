@@ -1,5 +1,6 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { EnhancementOptions } from '../../services/image.service';
+import { EnhancementProcessorComponent } from '../../components/enhancement-processor/enhancement-processor.component';
 
 @Component({
   selector: 'app-image-enhancement',
@@ -7,7 +8,8 @@ import { EnhancementOptions } from '../../services/image.service';
   styleUrls: ['./image-enhancement.component.scss']
 })
 export class ImageEnhancementComponent {
-  @ViewChild('resultsPanel', { read: ElementRef }) resultsPanel!: ElementRef;
+  @ViewChild(EnhancementProcessorComponent) enhancementProcessor!: EnhancementProcessorComponent;
+  
   uploadedImage: File | null = null;
   isProcessing = false;
   enhancementOptions: EnhancementOptions = {
@@ -21,11 +23,20 @@ export class ImageEnhancementComponent {
 
   onImageUploaded(image: File) {
     this.uploadedImage = image;
+    // Reset previous results when new image is uploaded
+    if (this.enhancementProcessor) {
+      this.enhancementProcessor.processedImage = null;
+      this.enhancementProcessor.processedImageUrl = null;
+    }
   }
 
   onImageRemoved() {
     this.uploadedImage = null;
     this.isProcessing = false;
+    if (this.enhancementProcessor) {
+      this.enhancementProcessor.processedImage = null;
+      this.enhancementProcessor.processedImageUrl = null;
+    }
   }
 
   onOptionsChanged(options: EnhancementOptions) {
@@ -39,16 +50,13 @@ export class ImageEnhancementComponent {
   onProcessingComplete(result: any) {
     this.isProcessing = false;
     console.log('Enhancement complete:', result);
+    // No need to scroll - results replace the preview in same location
+  }
 
-    // Scroll to results panel after Angular renders it
-    setTimeout(() => {
-      if (this.resultsPanel) {
-        this.resultsPanel.nativeElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    }, 100);
+  onEnhanceImage() {
+    if (this.enhancementProcessor) {
+      this.enhancementProcessor.enhanceImage();
+    }
   }
 
   onProcessingError(error: any) {

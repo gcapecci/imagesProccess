@@ -106,18 +106,28 @@
   </div>
   </div><!-- /panel-body -->
 
-  <!-- Reset Button -->
+  <!-- Enhance & Reset Buttons -->
   <div class="panel-footer">
-    <div class="actions-section">
-      <button 
-        mat-stroked-button 
-        color="warn"
-        [disabled]="disabled"
-        (click)="resetAll()">
-        <mat-icon>restart_alt</mat-icon>
-        Reset All
-      </button>
-    </div>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      [disabled]="!hasImage || isProcessing"
+      (click)="enhanceImage.emit()"
+      class="enhance-button">
+      <mat-icon>auto_fix_high</mat-icon>
+      <span *ngIf="!isProcessing">Enhance Image</span>
+      <span *ngIf="isProcessing">Processing...</span>
+    </button>
+
+    <button 
+      mat-stroked-button 
+      color="warn"
+      [disabled]="disabled"
+      (click)="resetAll()"
+      class="reset-button">
+      <mat-icon>restart_alt</mat-icon>
+      Reset All
+    </button>
   </div>
   </div><!-- /panel-content -->
 </mat-expansion-panel>

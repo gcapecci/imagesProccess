@@ -8,7 +8,10 @@ import { EnhancementOptions } from '../../services/image.service';
 })
 export class EnhancementControlsComponent {
   @Output() optionsChanged = new EventEmitter<EnhancementOptions>();
+  @Output() enhanceImage = new EventEmitter<void>();
   @Input() disabled = false;
+  @Input() isProcessing = false;
+  @Input() hasImage = false;
 
   brightness = 1.0;
   contrast = 1.0;
