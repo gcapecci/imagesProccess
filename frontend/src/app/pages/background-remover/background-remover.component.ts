@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
+import { ImageProcessorComponent } from '../../components/image-processor/image-processor.component';
 
 @Component({
   selector: 'app-background-remover',
@@ -6,6 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./background-remover.component.scss']
 })
 export class BackgroundRemoverComponent {
+  @ViewChild(ImageProcessorComponent) imageProcessor!: ImageProcessorComponent;
   uploadedImage: File | null = null;
   selectedModel = 'u2net';
   isProcessing = false;
@@ -30,6 +32,10 @@ export class BackgroundRemoverComponent {
   onProcessingComplete(result: any) {
     this.isProcessing = false;
     console.log('Processing complete:', result);
+
+    if (this.imageProcessor) {
+      this.imageProcessor.scrollToResults();
+    }
   }
 
   onProcessingError(error: any) {

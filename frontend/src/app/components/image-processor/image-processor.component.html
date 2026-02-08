@@ -41,6 +41,7 @@
 
 <!-- Results Panel -->
 <app-result-comparison
+  #resultsPanel
   *ngIf="processedImage && !isProcessing"
   title="Processed Result"
   [originalImage]="imagePreview"

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ImageService, ProcessingResult, UploadProgress } from '../../services/image.service';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
@@ -14,6 +14,8 @@ export class ImageProcessorComponent implements OnDestroy {
   @Output() processingStart = new EventEmitter<void>();
   @Output() processingComplete = new EventEmitter<ProcessingResult>();
   @Output() processingError = new EventEmitter<string>();
+
+  @ViewChild('resultsPanel', { read: ElementRef }) resultsPanel!: ElementRef;
 
   imagePreview: string | null = null;
   processedImage: Blob | null = null;
@@ -100,6 +102,17 @@ export class ImageProcessorComponent implements OnDestroy {
       this.imageService.downloadImage(this.processedImage, filename);
       this.notification.showInfo('Download started!');
     }
+  }
+
+  scrollToResults(): void {
+    setTimeout(() => {
+      if (this.resultsPanel) {
+        this.resultsPanel.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
   }
 
   getProgressIcon(): string {

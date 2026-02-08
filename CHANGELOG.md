@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Registrado** `ResultComparisonComponent` no `AppModule`
 
+- **Auto-scroll para resultado**:
+  - `ImageProcessorComponent`: Adicionado método público `scrollToResults()` e `@ViewChild('resultsPanel')`
+  - `BackgroundRemoverComponent`: Implementado auto-scroll ao finalizar processamento, scroll suave até painel "Processed Result"
+  - Mesma UX do Image Enhancement — após clicar em "Remove Background" e finalizar, tela rola automaticamente para o resultado
+
 ### Changed - 2026-02-08 (Image Enhancement Layout)
 
 #### Layout Enhancement — Alinhamento dos Painéis e Auto-Scroll
