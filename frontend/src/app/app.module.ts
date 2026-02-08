@@ -36,6 +36,7 @@ import { ImageProcessorComponent } from './components/image-processor/image-proc
 import { ModelSelectorComponent } from './components/model-selector/model-selector.component';
 import { EnhancementControlsComponent } from './components/enhancement-controls/enhancement-controls.component';
 import { EnhancementProcessorComponent } from './components/enhancement-processor/enhancement-processor.component';
+import { ResultComparisonComponent } from './components/result-comparison/result-comparison.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 
@@ -57,6 +58,7 @@ import { NotificationService } from './services/notification.service';
     ModelSelectorComponent,
     EnhancementControlsComponent,
     EnhancementProcessorComponent,
+    ResultComparisonComponent,
     HeaderComponent,
     FooterComponent,
     HomeComponent,

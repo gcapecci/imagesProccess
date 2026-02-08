@@ -40,40 +40,12 @@
 </mat-expansion-panel>
 
 <!-- Results Panel -->
-<mat-expansion-panel 
-  class="section-panel results-panel" 
-  *ngIf="processedImage && !isProcessing" 
-  [expanded]="true">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <mat-icon>compare</mat-icon>
-      Processed Result
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-
-  <div class="comparison">
-    <div class="image-container">
-      <h4>Original</h4>
-      <img [src]="imagePreview" alt="Original" class="result-image">
-      <p class="image-label">Before</p>
-    </div>
-    
-    <mat-icon class="comparison-arrow">arrow_forward</mat-icon>
-    
-    <div class="image-container">
-      <h4>Processed</h4>
-      <img [src]="processedImageUrl" alt="Processed" class="result-image">
-      <p class="image-label">After</p>
-    </div>
-  </div>
-  
-  <div class="download-section">
-    <button 
-      mat-raised-button 
-      color="accent" 
-      (click)="downloadImage()">
-      <mat-icon>download</mat-icon>
-      Download Processed Image
-    </button>
-  </div>
-</mat-expansion-panel>
+<app-result-comparison
+  *ngIf="processedImage && !isProcessing"
+  title="Processed Result"
+  [originalImage]="imagePreview"
+  [resultImage]="processedImageUrl"
+  resultTitle="Processed"
+  downloadLabel="Download Processed Image"
+  (download)="downloadImage()">
+</app-result-comparison>

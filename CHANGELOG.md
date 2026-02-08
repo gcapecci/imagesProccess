@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Refactored - 2026-02-08 (ResultComparisonComponent — DRY)
+
+#### Componente Reutilizável de Comparação de Resultados
+- **Novo componente** `ResultComparisonComponent` (`components/result-comparison/`):
+  - Encapsula o painel de comparação Before/After com download
+  - Inputs configuráveis: `title`, `originalImage`, `resultImage`, `resultTitle`, `originalLabel`, `resultLabel`, `downloadLabel`
+  - Output `download` para delegar ação ao componente pai
+  - Estilos auto-contidos (comparison layout, responsive, download section)
+  - Segue princípio SRP — responsabilidade única de exibir resultado comparativo
+
+- **Remoção de código duplicado**:
+  - `image-processor.component.html`: Substituído painel inline de 40 linhas por `<app-result-comparison>`
+  - `image-enhancement.component.html`: Substituído painel inline de 35 linhas por `<app-result-comparison>`
+  - CSS duplicado removido de `image-processor.component.scss` (~90 linhas) e `image-enhancement.component.scss` (~70 linhas)
+
+- **Registrado** `ResultComparisonComponent` no `AppModule`
+
 ### Changed - 2026-02-08 (Image Enhancement Layout)
 
 #### Layout Enhancement — Alinhamento dos Painéis e Auto-Scroll
