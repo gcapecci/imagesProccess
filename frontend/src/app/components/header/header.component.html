@@ -6,6 +6,11 @@
     </div>
     
     <nav class="nav-links">
+      <a mat-button routerLink="/editor" routerLinkActive="active">
+        <mat-icon>auto_fix_high</mat-icon>
+        <span class="nav-text">{{ 'nav.editor' | translate }}</span>
+      </a>
+
       <a mat-button routerLink="/background-remover" routerLinkActive="active">
         <mat-icon>layers_clear</mat-icon>
         <span class="nav-text">{{ 'nav.backgroundRemover' | translate }}</span>
@@ -41,6 +46,10 @@
     </button>
     
     <mat-menu #menu="matMenu">
+      <a mat-menu-item routerLink="/editor">
+        <mat-icon>auto_fix_high</mat-icon>
+        <span>{{ 'nav.editor' | translate }}</span>
+      </a>
       <a mat-menu-item routerLink="/background-remover">
         <mat-icon>layers_clear</mat-icon>
         <span>{{ 'nav.backgroundRemover' | translate }}</span>

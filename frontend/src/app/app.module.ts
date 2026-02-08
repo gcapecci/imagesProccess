@@ -37,6 +37,7 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // Components
 import { AppComponent } from './app.component';
+import { EditorComponent } from './pages/editor/editor.component';
 import { ImageUploaderComponent } from './components/image-uploader/image-uploader.component';
 import { ImageProcessorComponent } from './components/image-processor/image-processor.component';
 import { ModelSelectorComponent } from './components/model-selector/model-selector.component';
@@ -62,6 +63,7 @@ import { NotificationService } from './services/notification.service';
 @NgModule({
   declarations: [
     AppComponent,
+    EditorComponent,
     ImageUploaderComponent,
     ImageProcessorComponent,
     ModelSelectorComponent,

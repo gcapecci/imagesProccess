@@ -1,0 +1,131 @@
+<div class="editor-layout">
+  <!-- Top Actions -->
+  <div class="editor-header">
+    <div class="left-actions">
+      <button mat-button (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon> Open Image
+      </button>
+      <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+    </div>
+    
+    <div class="right-actions">
+      <button mat-button (click)="resetImage()" [disabled]="!currentImageUrl || isProcessing">
+        <mat-icon>restart_alt</mat-icon> Reset
+      </button>
+      <button mat-raised-button color="accent" (click)="downloadImage()" [disabled]="!currentImageUrl || isProcessing">
+        <mat-icon>download</mat-icon> Download
+      </button>
+    </div>
+  </div>
+
+  <div class="editor-workspace">
+    <!-- Left Toolbar (Icons) -->
+    <div class="tools-sidebar">
+      <button class="tool-btn" [class.active]="activeTool === 'bg-remove'" (click)="setActiveTool('bg-remove')" matTooltip="Background Remover">
+        <mat-icon>layers_clear</mat-icon>
+      </button>
+      <button class="tool-btn" [class.active]="activeTool === 'enhance'" (click)="setActiveTool('enhance')" matTooltip="Enhancement">
+        <mat-icon>tune</mat-icon>
+      </button>
+      <button class="tool-btn" [class.active]="activeTool === 'crop'" (click)="setActiveTool('crop')" matTooltip="Smart Crop">
+        <mat-icon>crop</mat-icon>
+      </button>
+    </div>
+
+    <!-- Active Tool Settings Panel -->
+    <div class="settings-panel" [style.width.px]="panelWidth" [class.collapsed]="panelWidth === 0">
+      <div class="panel-header">
+        <h3 *ngIf="activeTool">{{ activeTool | titlecase }}</h3>
+        <button mat-icon-button (click)="closePanel()" class="close-btn" *ngIf="panelWidth > 0">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <div class="panel-content" *ngIf="panelWidth > 0">
+        <!-- Background Remover Controls -->
+        <div *ngIf="activeTool === 'bg-remove'" class="tool-controls">
+          <p class="helper-text">Select AI Model Quality:</p>
+          <mat-radio-group [(ngModel)]="bgRemoveModel" class="vertical-radio-group">
+            <mat-radio-button value="u2net" class="model-option">
+              <div class="model-label">
+                <strong>Standard (U²-Net)</strong>
+                <span>Best for general purpose</span>
+              </div>
+            </mat-radio-button>
+            <mat-radio-button value="isnet-general-use" class="model-option">
+              <div class="model-label">
+                <strong>Premium (ISNet)</strong>
+                <span>High precision & alpha matting</span>
+              </div>
+            </mat-radio-button>
+          </mat-radio-group>
+          
+          <div class="action-area">
+            <button mat-raised-button color="primary" class="full-width" 
+              (click)="applyBgRemoval()" [disabled]="!currentImageUrl || isProcessing">
+              <mat-icon>auto_fix_high</mat-icon> Remove Background
+            </button>
+          </div>
+        </div>
+
+        <!-- Enhancement Controls -->
+        <div *ngIf="activeTool === 'enhance'" class="tool-controls">
+          <app-enhancement-controls 
+            [disabled]="!currentImageUrl || isProcessing"
+            (optionsChanged)="enhancementOptions = $event">
+          </app-enhancement-controls>
+          
+          <div class="action-area">
+             <button mat-raised-button color="primary" class="full-width" 
+              (click)="applyEnhance()" [disabled]="!currentImageUrl || isProcessing">
+              <mat-icon>auto_fix_normal</mat-icon> Apply Enhancement
+            </button>
+          </div>
+        </div>
+
+        <!-- Crop Controls -->
+        <div *ngIf="activeTool === 'crop'" class="tool-controls">
+          <app-crop-controls 
+            [disabled]="!currentImageUrl || isProcessing"
+            (optionsChanged)="cropOptions = $event">
+          </app-crop-controls>
+          
+          <div class="action-area">
+             <button mat-raised-button color="primary" class="full-width" 
+              (click)="applyCrop()" [disabled]="!currentImageUrl || isProcessing">
+              <mat-icon>crop</mat-icon> Crop Image
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resizer Handle -->
+    <div class="resizer" 
+         (mousedown)="startResize($event)" 
+         [class.active]="isResizing"
+         *ngIf="panelWidth > 0">
+      <div class="handle-icon"></div>
+    </div>
+
+    <!-- Main Canvas Area -->
+    <div class="canvas-area" [class.processing]="isProcessing">
+      <div *ngIf="isProcessing" class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+        <span>Processing...</span>
+      </div>
+
+      <div class="canvas-container" *ngIf="currentImageUrl; else emptyState">
+        <img [src]="currentImageUrl" alt="Editing" class="main-image">
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <div class="upload-zone">
+             <app-image-uploader (imageUploaded)="handleUpload($event)" [isProcessing]="isProcessing"></app-image-uploader>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

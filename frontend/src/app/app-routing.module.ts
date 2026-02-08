@@ -5,12 +5,17 @@ import { HomeComponent } from './pages/home/home.component';
 import { BackgroundRemoverComponent } from './pages/background-remover/background-remover.component';
 import { ImageEnhancementComponent } from './pages/image-enhancement/image-enhancement.component';
 import { SmartCropComponent } from './pages/smart-crop/smart-crop.component';
+import { EditorComponent } from './pages/editor/editor.component';
 import { HelpComponent } from './pages/help/help.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent
+  },
+  {
+    path: 'editor',
+    component: EditorComponent
   },
   {
     path: 'background-remover',

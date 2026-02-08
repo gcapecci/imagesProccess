@@ -3,6 +3,7 @@
     "title": "AI Image Processor"
   },
   "nav": {
+    "editor": "Studio (New)",
     "backgroundRemover": "Background Remover",
     "imageEnhancement": "Image Enhancement",
     "smartCrop": "Smart Crop",
