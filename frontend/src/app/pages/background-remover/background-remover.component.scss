@@ -1,3 +1,5 @@
+@import '../../../styles/intro-hero';
+
 .background-remover-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -5,23 +7,9 @@
 }
 
 .intro-section {
-  text-align: center;
-  margin-bottom: 48px;
-  
+  @extend .intro-hero;
 }
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 300;
-    color: #3f51b5;
-    margin-bottom: 16px;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    color: #757575;
-    max-width: 600px;
-    margin: 0 auto;
-  }
+
 .background-remover-container app-image-uploader,
 .background-remover-container app-model-selector,
 .background-remover-container app-image-processor {
@@ -65,13 +53,5 @@
 @media (max-width: 768px) {
   .background-remover-container {
     padding: 0 16px;
-  }
-  
-  .intro-section h1 {
-    font-size: 2rem;
-  }
-  
-  .intro-section p {
-    font-size: 1rem;
   }
 }

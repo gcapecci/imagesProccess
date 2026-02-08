@@ -2,61 +2,69 @@
   <div class="toolbar-content">
     <div class="logo-section" routerLink="/">
       <mat-icon class="logo-icon">photo_camera</mat-icon>
-      <span class="app-title">AI Image Processor</span>
+      <span class="app-title">{{ 'app.title' | translate }}</span>
     </div>
     
     <nav class="nav-links">
-      <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-        <mat-icon>home</mat-icon>
-        <span class="nav-text">Home</span>
-      </a>
-      
       <a mat-button routerLink="/background-remover" routerLinkActive="active">
         <mat-icon>layers_clear</mat-icon>
-        <span class="nav-text">Background Remover</span>
+        <span class="nav-text">{{ 'nav.backgroundRemover' | translate }}</span>
       </a>
 
       <a mat-button routerLink="/image-enhancement" routerLinkActive="active">
         <mat-icon>palette</mat-icon>
-        <span class="nav-text">Image Enhancement</span>
+        <span class="nav-text">{{ 'nav.imageEnhancement' | translate }}</span>
       </a>
 
       <a mat-button routerLink="/smart-crop" routerLinkActive="active">
         <mat-icon>crop</mat-icon>
-        <span class="nav-text">Smart Crop</span>
+        <span class="nav-text">{{ 'nav.smartCrop' | translate }}</span>
       </a>
       
       <a mat-button routerLink="/help" routerLinkActive="active">
         <mat-icon>help</mat-icon>
-        <span class="nav-text">Help</span>
+        <span class="nav-text">{{ 'nav.help' | translate }}</span>
       </a>
     </nav>
-    
+
+    <div class="language-select">
+      <mat-form-field appearance="outline" class="language-field">
+        <mat-select [value]="currentLang" (selectionChange)="changeLanguage($event.value)">
+          <mat-option value="en">English</mat-option>
+          <mat-option value="pt">Português</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
     <button mat-icon-button class="mobile-menu-button" [matMenuTriggerFor]="menu">
       <mat-icon>menu</mat-icon>
     </button>
     
     <mat-menu #menu="matMenu">
-      <a mat-menu-item routerLink="/">
-        <mat-icon>home</mat-icon>
-        <span>Home</span>
-      </a>
       <a mat-menu-item routerLink="/background-remover">
         <mat-icon>layers_clear</mat-icon>
-        <span>Background Remover</span>
+        <span>{{ 'nav.backgroundRemover' | translate }}</span>
       </a>
       <a mat-menu-item routerLink="/image-enhancement">
         <mat-icon>palette</mat-icon>
-        <span>Image Enhancement</span>
+        <span>{{ 'nav.imageEnhancement' | translate }}</span>
       </a>
       <a mat-menu-item routerLink="/smart-crop">
         <mat-icon>crop</mat-icon>
-        <span>Smart Crop</span>
+        <span>{{ 'nav.smartCrop' | translate }}</span>
       </a>
       <a mat-menu-item routerLink="/help">
         <mat-icon>help</mat-icon>
-        <span>Help</span>
+        <span>{{ 'nav.help' | translate }}</span>
       </a>
+      <mat-divider></mat-divider>
+      <div class="mobile-language-selector">
+        <mat-icon>language</mat-icon>
+        <mat-select [value]="currentLang" (selectionChange)="changeLanguage($event.value)" class="mobile-lang-select">
+          <mat-option value="en">English</mat-option>
+          <mat-option value="pt">Português</mat-option>
+        </mat-select>
+      </div>
     </mat-menu>
   </div>
 </mat-toolbar>

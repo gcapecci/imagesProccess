@@ -1,3 +1,5 @@
+@import '../../../styles/intro-hero';
+
 .image-enhancement-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -5,22 +7,7 @@
 }
 
 .intro-section {
-  text-align: center;
-  margin-bottom: 48px;
-  
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 300;
-    color: #3f51b5;
-    margin-bottom: 16px;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    color: #757575;
-    max-width: 600px;
-    margin: 0 auto;
-  }
+  @extend .intro-hero;
 }
 
 app-image-uploader,
@@ -35,32 +22,8 @@ app-enhancement-processor {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
+  margin-bottom: 32px;
   align-items: stretch;
-  margin-top: 8px;
-}
-
-.grid-controls,
-.grid-processor {
-  min-width: 0;
-
-  ::ng-deep .section-panel {
-    height: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-  }
-
-  ::ng-deep .mat-expansion-panel-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  ::ng-deep .mat-expansion-panel-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
 }
 
 // Results panel — full width below grid

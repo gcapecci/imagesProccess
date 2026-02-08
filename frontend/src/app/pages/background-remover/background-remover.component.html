@@ -1,7 +1,17 @@
 <div class="background-remover-container">
+  <!-- Intro Section -->
   <div class="intro-section">
-    <h1>AI Background Remover</h1>
-    <p>Remove backgrounds from your images using advanced AI technology</p>
+    <div class="intro-content">
+      <div class="icon-container">
+        <mat-icon>layers_clear</mat-icon>
+      </div>
+      <div class="text-content">
+        <h1>{{ 'backgroundRemoverPage.heroTitle' | translate }}</h1>
+        <p>
+          {{ 'backgroundRemoverPage.heroDescription' | translate }}
+        </p>
+      </div>
+    </div>
   </div>
 
   <app-image-uploader 

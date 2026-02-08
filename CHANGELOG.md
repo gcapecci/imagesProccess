@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 2026-02-08 (Intro Hero Shared Styles & Layout Consistency)
+
+#### Estilo de Hero Unificado
+- Extraído o estilo de hero das páginas principais para um partial dedicado `_intro-hero.scss`, evitando misturar domínios com o `_settings-panel.scss`.
+- Páginas `Background Remover`, `Image Enhancement` e `Smart Crop` passaram a usar `.intro-hero` via `@extend`, garantindo visual consistente e facilitando manutenção.
+
+#### Alinhamento de Layout — Smart Crop
+- Ajustado o `padding` do container de `SmartCropComponent` para `0 24px` (desktop) e `0 16px` (mobile), alinhando a altura útil com as demais páginas (`Image Enhancement` e `Background Remover`).
+
+### Added - 2026-02-08 (Language Selector & i18n Infra)
+
+#### Seletor de Idioma no Header
+- Removido o link "Home" da navbar para reduzir largura e deixar o menu mais enxuto.
+- Adicionado seletor de idioma fixo à direita no header usando `mat-form-field` + `mat-select`, disponível em telas desktop.
+- Opções de idioma: **English (en)** e **Português (pt)**, com estado atual exibido no select.
+
+#### Internacionalização com ngx-translate
+- Adicionadas dependências `@ngx-translate/core` e `@ngx-translate/http-loader` ao frontend.
+- Configurado `TranslateModule.forRoot` em `AppModule` com `TranslateHttpLoader` lendo arquivos JSON de `assets/i18n`.
+- Criado `LanguageService` responsável por:
+  - Registrar idiomas suportados (`en`, `pt`).
+  - Ler/gravar a escolha do usuário em `localStorage` (`ai-image-language`).
+  - Aplicar o idioma inicial com base no valor salvo ou padrão `en`.
+- Header atualizado para usar chaves de tradução:
+  - Título da aplicação (`app.title`).
+  - Rótulos de navegação (`nav.backgroundRemover`, `nav.imageEnhancement`, `nav.smartCrop`, `nav.help`).
+- Layout do header refinado para manter proporção entre logo/navegação e seletor de idioma (altura mínima do toolbar e alinhamento do select com fundo branco e texto na cor primária `#3F51B5`).
+- Criados arquivos de tradução:
+  - `assets/i18n/en.json` — textos em inglês.
+  - `assets/i18n/pt.json` — equivalentes em português.
+- Ajustado `angular.json` para aumentar levemente o `maximumError` do budget inicial (`1200kb`), permitindo a inclusão das bibliotecas de i18n sem quebrar o build de produção (mantendo o `maximumWarning` em `500kb`).
+
 ### Added - 2026-02-08 (Smart Crop Feature — Complete Implementation)
 
 #### Nova Feature: Smart Crop

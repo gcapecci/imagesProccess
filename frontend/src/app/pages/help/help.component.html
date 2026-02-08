@@ -1,8 +1,8 @@
 <div class="help-container">
   <section class="help-header">
     <mat-icon class="help-icon">help_outline</mat-icon>
-    <h1>Help & Documentation</h1>
-    <p>Learn how to use AI Image Processor effectively</p>
+    <h1>{{ 'helpPage.heroTitle' | translate }}</h1>
+    <p>{{ 'helpPage.heroSubtitle' | translate }}</p>
   </section>
 
   <div class="help-content">
@@ -12,10 +12,10 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon>layers_clear</mat-icon>
-            Background Remover
+            {{ 'helpPage.sections.backgroundRemover.title' | translate }}
           </mat-panel-title>
           <mat-panel-description>
-            How to remove backgrounds from images
+            {{ 'helpPage.sections.backgroundRemover.description' | translate }}
           </mat-panel-description>
         </mat-expansion-panel-header>
         
@@ -108,10 +108,10 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon>settings</mat-icon>
-            Technical Information
+            {{ 'helpPage.sections.technicalInfo.title' | translate }}
           </mat-panel-title>
           <mat-panel-description>
-            System requirements and specifications
+            {{ 'helpPage.sections.technicalInfo.description' | translate }}
           </mat-panel-description>
         </mat-expansion-panel-header>
         
@@ -147,10 +147,10 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon>build</mat-icon>
-            Troubleshooting
+            {{ 'helpPage.sections.troubleshooting.title' | translate }}
           </mat-panel-title>
           <mat-panel-description>
-            Common issues and solutions
+            {{ 'helpPage.sections.troubleshooting.description' | translate }}
           </mat-panel-description>
         </mat-expansion-panel-header>
         
@@ -196,7 +196,7 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon>question_answer</mat-icon>
-            Frequently Asked Questions
+            {{ 'helpPage.sections.faq.title' | translate }}
           </mat-panel-title>
         </mat-expansion-panel-header>
         
@@ -240,16 +240,16 @@
     <mat-card class="contact-card">
       <mat-card-header>
         <mat-icon mat-card-avatar>contact_support</mat-icon>
-        <mat-card-title>Still Need Help?</mat-card-title>
-        <mat-card-subtitle>We're here to assist you</mat-card-subtitle>
+        <mat-card-title>{{ 'helpPage.contact.title' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'helpPage.contact.subtitle' | translate }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <p>
-          If you couldn't find the answer to your question, feel free to reach out to our support team.
+          {{ 'helpPage.contact.text' | translate }}
         </p>
         <button mat-raised-button color="primary">
           <mat-icon>email</mat-icon>
-          Contact Support
+          {{ 'helpPage.contact.button' | translate }}
         </button>
       </mat-card-content>
     </mat-card>

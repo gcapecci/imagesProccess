@@ -3,6 +3,7 @@
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 64px;
 }
 
 .toolbar-content {
@@ -10,9 +11,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 24px;
+  gap: 16px;
 }
 
 .logo-section {
@@ -67,6 +69,67 @@
   }
 }
 
+.language-select {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+
+  .language-field {
+    width: 130px;
+    
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      background-color: rgba(255, 255, 255, 0.15) !important;
+      border-radius: 4px;
+      padding-top: 0;
+    }
+
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+
+    ::ng-deep .mat-mdc-form-field-infix {
+      padding: 8px 0;
+      min-height: 40px;
+    }
+
+    ::ng-deep .mat-mdc-select {
+      color: white !important;
+      font-size: 14px;
+    }
+
+    ::ng-deep .mat-mdc-select-value-text {
+      color: white !important;
+    }
+
+    ::ng-deep .mat-mdc-select-arrow {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    ::ng-deep .mdc-notched-outline {
+      display: none;
+    }
+  }
+}
+
+.mobile-language-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  
+  mat-icon {
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  .mobile-lang-select {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
 .mobile-menu-button {
   display: none;
   color: white;
@@ -79,11 +142,21 @@
       display: none;
     }
   }
+  
+  .language-select {
+    .language-field {
+      width: 100px;
+      
+      ::ng-deep .mat-mdc-select-value-text {
+        font-size: 13px;
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {
   .toolbar-content {
-    padding: 0 8px;
+    padding: 0 12px;
   }
 
   .app-title {
@@ -94,12 +167,20 @@
     display: none;
   }
   
+  .language-select {
+    display: none;
+  }
+  
   .mobile-menu-button {
     display: inline-flex;
   }
 }
 
 @media (max-width: 480px) {
+  .toolbar-content {
+    padding: 0 8px;
+  }
+
   .app-title {
     font-size: 1rem;
   }

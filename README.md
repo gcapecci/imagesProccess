@@ -28,6 +28,7 @@
 - ✅ **Multi-Page SPA**: Navegação entre Home, Background Remover, Image Enhancement, Smart Crop e Help
 - ✅ **Seções Colapsáveis**: Toggle expand/collapse em cada seção (mat-expansion-panel)
 - ✅ **Menu Responsivo**: Navegação adaptável para desktop e mobile
+ - ✅ **i18n (EN/PT)**: Suporte a inglês e português com seletor de idioma fixo no header
 - ✅ **API RESTful**: Integração com outros sistemas
 - ✅ **Containerizado**: Deploy simplificado com Docker (profiles dev/prod)
 - ✅ **Live Reload**: Desenvolvimento com hot reload sem rebuild de containers
@@ -80,19 +81,25 @@ docker compose --profile prod up -d --build
 
 ### 🛠️ Desenvolvimento (Live Reload)
 ```bash
-# Executar em modo desenvolvimento com live reload
+# Subir somente backend + serviço de IA (sem frontend Angular)
+docker compose up -d --build
+
+# Subir ambiente completo de desenvolvimento com frontend (live reload)
 docker compose --profile dev up -d
 
-# Acessar aplicação (auto-reload ao editar código)
-# http://localhost (via Nginx proxy)
-# http://localhost:4201 (direto no Angular dev server)
+# Se você alterar Dockerfile ou dependências (package.json/requirements.txt), force rebuild
+docker compose --profile dev up -d --build
 
-# Parar ambiente
+# Acessar aplicação (auto-reload ao editar código Angular)
+# http://localhost       (via Nginx dev proxy)
+# http://localhost:4201  (direto no Angular dev server dentro do container)
+
+# Parar ambiente de desenvolvimento
 docker compose --profile dev down
 ```
 
-> **Nota**: O modo dev monta o código-fonte como volume e usa `ng serve` com polling.
-> Alterações em arquivos `.ts`, `.html` e `.scss` são detectadas automaticamente e o browser atualiza sozinho.
+> **Nota**: No profile `dev` o código do frontend é montado como volume e servido via `ng serve`.
+> Alterações em arquivos `.ts`, `.html` e `.scss` são recarregadas automaticamente, **sem precisar** rodar `docker compose --build` a cada mudança de código.
 
 **📖 Documentação completa**: [README_EXECUTION.md](README_EXECUTION.md)
 
@@ -146,6 +153,7 @@ imagesProccess/
 │   │   │   ├── smart-crop/            # Página de crop inteligente
 │   │   │   └── help/                  # Documentação e FAQ
 │   │   └── services/
+│   ├── src/assets/i18n/          # Arquivos de tradução (en.json, pt.json)
 │   └── nginx.conf
 │
 ├── 🔧 backend/                    # Node.js API

@@ -25,9 +25,15 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 // Third-party
 import { NgxFileDropModule } from 'ngx-file-drop';
+
+// i18n
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // Components
 import { AppComponent } from './app.component';
@@ -98,13 +104,22 @@ import { NotificationService } from './services/notification.service';
     MatExpansionModule,
     MatSliderModule,
     MatSlideToggleModule,
+    MatFormFieldModule,
+    MatSelectModule,
     
     // Third-party
-    NgxFileDropModule
+    NgxFileDropModule,
+
+    // i18n
+    TranslateModule.forRoot()
   ],
   providers: [
     ImageService,
-    NotificationService
+    NotificationService,
+    ...provideTranslateHttpLoader({
+      prefix: '/assets/i18n/',
+      suffix: '.json'
+    })
   ],
   bootstrap: [AppComponent]
 })

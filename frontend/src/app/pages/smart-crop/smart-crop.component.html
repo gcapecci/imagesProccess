@@ -6,10 +6,9 @@
         <mat-icon>crop</mat-icon>
       </div>
       <div class="text-content">
-        <h1>Smart Crop</h1>
+        <h1>{{ 'smartCropPage.heroTitle' | translate }}</h1>
         <p>
-          Precisely crop and resize your images with manual control or AI-powered auto-detection.
-          Select custom dimensions, choose aspect ratios, or let AI find the perfect crop.
+          {{ 'smartCropPage.heroDescription' | translate }}
         </p>
       </div>
     </div>
@@ -43,26 +42,26 @@
   <div class="info-cards" *ngIf="!uploadedImage">
     <div class="info-card">
       <mat-icon>auto_awesome</mat-icon>
-      <h3>AI Auto-Detect</h3>
-      <p>Let AI automatically detect faces and important areas for optimal cropping</p>
+      <h3>{{ 'home.features.smartCrop.bullets.faces' | translate }}</h3>
+      <p>{{ 'smartCropPage.info.autoDetectDescription' | translate }}</p>
     </div>
 
     <div class="info-card">
       <mat-icon>aspect_ratio</mat-icon>
-      <h3>Multiple Aspect Ratios</h3>
-      <p>Choose from popular presets like 16:9, 4:3, 1:1, or use custom dimensions</p>
+      <h3>{{ 'home.features.smartCrop.bullets.ratios' | translate }}</h3>
+      <p>{{ 'smartCropPage.info.aspectDescription' | translate }}</p>
     </div>
 
     <div class="info-card">
       <mat-icon>straighten</mat-icon>
-      <h3>Precise Control</h3>
-      <p>Fine-tune width and height with precision sliders for pixel-perfect results</p>
+      <h3>{{ 'home.features.smartCrop.bullets.control' | translate }}</h3>
+      <p>{{ 'smartCropPage.info.controlDescription' | translate }}</p>
     </div>
 
     <div class="info-card">
       <mat-icon>high_quality</mat-icon>
-      <h3>Maintain Quality</h3>
-      <p>Advanced algorithms preserve image quality during crop and resize operations</p>
+      <h3>{{ 'smartCropPage.info.qualityTitle' | translate }}</h3>
+      <p>{{ 'smartCropPage.info.qualityDescription' | translate }}</p>
     </div>
   </div>
 </div>

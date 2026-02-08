@@ -1,0 +1,124 @@
+{
+  "app": {
+    "title": "AI Image Processor"
+  },
+  "nav": {
+    "backgroundRemover": "Background Remover",
+    "imageEnhancement": "Image Enhancement",
+    "smartCrop": "Smart Crop",
+    "help": "Help"
+  },
+  "header": {
+    "language": "Language"
+  },
+  "home": {
+    "heroTitle": "Welcome to AI Image Processor",
+    "heroSubtitle": "Transform your images with advanced AI-powered tools",
+    "features": {
+      "backgroundRemover": {
+        "title": "Background Remover",
+        "subtitle": "Remove backgrounds instantly",
+        "description": "Use advanced AI models (U²-Net and ISNet) to automatically remove backgrounds from your images with precision and quality.",
+        "bullets": {
+          "models": "Multiple AI models",
+          "quality": "High-quality results",
+          "speed": "Fast processing"
+        },
+        "cta": "Try Now"
+      },
+      "imageEnhancement": {
+        "title": "Image Enhancement",
+        "subtitle": "Enhance your images with AI",
+        "description": "Adjust brightness, contrast, saturation, and sharpness with AI-powered tools. Use auto-enhance for one-click optimization.",
+        "bullets": {
+          "auto": "Auto-enhance with AI",
+          "manual": "Manual fine-tuning",
+          "noise": "Noise reduction"
+        },
+        "cta": "Try Now"
+      },
+      "smartCrop": {
+        "title": "Smart Crop",
+        "subtitle": "AI-powered cropping",
+        "description": "Crop and resize images with manual control or AI-powered auto-detection. Perfect crop every time with intelligent focus.",
+        "bullets": {
+          "faces": "AI auto-detect faces",
+          "ratios": "Multiple aspect ratios",
+          "control": "Precise manual control"
+        },
+        "cta": "Try Now"
+      },
+      "faceSwap": {
+        "title": "Face Swap & Style Transfer",
+        "subtitle": "Coming Soon",
+        "description": "Swap faces between images and apply artistic styles with advanced neural networks for creative transformations.",
+        "badge": "Coming Soon"
+      },
+      "restoration": {
+        "title": "Image Restoration",
+        "subtitle": "Coming Soon",
+        "description": "Restore old or damaged photos, remove scratches, and colorize black & white images with AI-powered restoration.",
+        "badge": "Coming Soon"
+      }
+    },
+    "info": {
+      "title": "How It Works",
+      "steps": {
+        "uploadTitle": "Upload",
+        "uploadText": "Choose or drag & drop your image",
+        "modelTitle": "Select Model",
+        "modelText": "Choose the AI model quality",
+        "processTitle": "Process",
+        "processText": "AI removes the background",
+        "downloadTitle": "Download",
+        "downloadText": "Get your processed image"
+      }
+    }
+  },
+  "backgroundRemoverPage": {
+    "heroTitle": "AI Background Remover",
+    "heroDescription": "Remove backgrounds from your images using advanced AI technology. Choose the best model for your use case and get clean cut-outs ready to use."
+  },
+  "imageEnhancementPage": {
+    "heroTitle": "AI Image Enhancement",
+    "heroDescription": "Enhance your images with AI-powered brightness, contrast, saturation, and sharpness adjustments. Use auto-enhance for one-click optimization or fine-tune each parameter manually."
+  },
+  "smartCropPage": {
+    "heroTitle": "Smart Crop",
+    "heroDescription": "Precisely crop and resize your images with manual control or AI-powered auto-detection. Select custom dimensions, choose aspect ratios, or let AI find the perfect crop.",
+    "info": {
+      "autoDetectDescription": "Let AI automatically detect faces and important areas for optimal cropping",
+      "aspectDescription": "Choose from popular presets like 16:9, 4:3, 1:1, or use custom dimensions",
+      "controlDescription": "Fine-tune width and height with precision sliders for pixel-perfect results",
+      "qualityTitle": "Maintain Quality",
+      "qualityDescription": "Advanced algorithms preserve image quality during crop and resize operations"
+    }
+  },
+  "helpPage": {
+    "heroTitle": "Help & Documentation",
+    "heroSubtitle": "Learn how to use AI Image Processor effectively",
+    "sections": {
+      "backgroundRemover": {
+        "title": "Background Remover",
+        "description": "How to remove backgrounds from images"
+      },
+      "technicalInfo": {
+        "title": "Technical Information",
+        "description": "System requirements and specifications"
+      },
+      "troubleshooting": {
+        "title": "Troubleshooting",
+        "description": "Common issues and solutions"
+      },
+      "faq": {
+        "title": "Frequently Asked Questions"
+      }
+    },
+    "contact": {
+      "title": "Still Need Help?",
+      "subtitle": "We're here to assist you",
+      "button": "Contact Support",
+      "text": "If you couldn't find the answer to your question, feel free to reach out to our support team."
+    }
+  }
+}
