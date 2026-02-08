@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { EnhancementOptions } from '../../services/image.service';
 
 @Component({
@@ -7,6 +7,7 @@ import { EnhancementOptions } from '../../services/image.service';
   styleUrls: ['./image-enhancement.component.scss']
 })
 export class ImageEnhancementComponent {
+  @ViewChild('resultsPanel', { read: ElementRef }) resultsPanel!: ElementRef;
   uploadedImage: File | null = null;
   isProcessing = false;
   enhancementOptions: EnhancementOptions = {
@@ -38,6 +39,16 @@ export class ImageEnhancementComponent {
   onProcessingComplete(result: any) {
     this.isProcessing = false;
     console.log('Enhancement complete:', result);
+
+    // Scroll to results panel after Angular renders it
+    setTimeout(() => {
+      if (this.resultsPanel) {
+        this.resultsPanel.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
   }
 
   onProcessingError(error: any) {

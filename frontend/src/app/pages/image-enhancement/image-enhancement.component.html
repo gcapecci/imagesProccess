@@ -10,17 +10,65 @@
     [isProcessing]="isProcessing">
   </app-image-uploader>
 
-  <app-enhancement-controls
-    (optionsChanged)="onOptionsChanged($event)"
-    [disabled]="isProcessing">
-  </app-enhancement-controls>
+  <ng-container *ngIf="uploadedImage">
+    <div class="enhancement-grid">
+      <div class="grid-controls">
+        <app-enhancement-controls
+          (optionsChanged)="onOptionsChanged($event)"
+          [disabled]="isProcessing">
+        </app-enhancement-controls>
+      </div>
 
-  <app-enhancement-processor
-    *ngIf="uploadedImage"
-    [image]="uploadedImage"
-    [enhancementOptions]="enhancementOptions"
-    (processingStart)="onProcessingStart()"
-    (processingComplete)="onProcessingComplete($event)"
-    (processingError)="onProcessingError($event)">
-  </app-enhancement-processor>
+      <div class="grid-processor">
+        <app-enhancement-processor
+          #processor
+          [image]="uploadedImage"
+          [enhancementOptions]="enhancementOptions"
+          (processingStart)="onProcessingStart()"
+          (processingComplete)="onProcessingComplete($event)"
+          (processingError)="onProcessingError($event)">
+        </app-enhancement-processor>
+      </div>
+    </div>
+
+    <!-- Results Panel (full width, below grid) -->
+    <mat-expansion-panel 
+      #resultsPanel
+      class="results-panel" 
+      *ngIf="processor.processedImage && !processor.isProcessing" 
+      [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>compare</mat-icon>
+          Enhanced Result
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="comparison">
+        <div class="image-container">
+          <h4>Original</h4>
+          <img [src]="processor.imagePreview" alt="Original" class="result-image">
+          <p class="image-label">Before</p>
+        </div>
+        
+        <mat-icon class="comparison-arrow">arrow_forward</mat-icon>
+        
+        <div class="image-container">
+          <h4>Enhanced</h4>
+          <img [src]="processor.processedImageUrl" alt="Enhanced" class="result-image">
+          <p class="image-label">After</p>
+        </div>
+      </div>
+      
+      <div class="download-section">
+        <button 
+          mat-raised-button 
+          color="accent" 
+          (click)="processor.downloadImage()">
+          <mat-icon>download</mat-icon>
+          Download Enhanced Image
+        </button>
+      </div>
+    </mat-expansion-panel>
+  </ng-container>
 </div>

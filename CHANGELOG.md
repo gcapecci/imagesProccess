@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 2026-02-08 (Image Enhancement Layout)
+
+#### Layout Enhancement — Alinhamento dos Painéis e Auto-Scroll
+- **Painéis lado a lado com altura igual** (`image-enhancement.component.scss`):
+  - Grid com `align-items: stretch` para que "AI Image Enhancement" acompanhe a altura natural do "Enhancement Settings"
+  - Removida altura fixa para manter responsividade
+  - `::ng-deep` para propagar flex layout dentro dos `mat-expansion-panel`
+
+- **Enhancement Settings** (`enhancement-controls`):
+  - Conteúdo reorganizado com `panel-content` > `panel-body` + `panel-footer`
+  - Botão "Reset All" fixo na parte inferior do painel via `margin-top: auto`
+
+- **AI Image Enhancement** (`enhancement-processor`):
+  - Preview da imagem centralizada verticalmente com `flex: 1` + `align-items: center` + `justify-content: center`
+  - Imagem usa `object-fit: contain` para se adaptar ao espaço disponível sem distorção
+  - Botão "Enhance Image" fixo na parte inferior, alinhado com "Reset All" do painel esquerdo
+  - Progress bar posicionada abaixo do botão no footer
+
+- **Painel "Enhanced Result"** mantido full-width abaixo do grid
+
+- **Auto-scroll para resultado** (`image-enhancement.component.ts`):
+  - Ao finalizar o enhancement, a tela rola automaticamente com `scrollIntoView({ behavior: 'smooth' })` até o painel "Enhanced Result"
+  - Usa `ViewChild` + `ElementRef` com `setTimeout(100ms)` para aguardar renderização do Angular
+
 ### Added - 2026-02-07 (Image Enhancement Feature)
 
 #### Image Enhancement — Full Stack Implementation

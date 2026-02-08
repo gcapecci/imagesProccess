@@ -6,6 +6,8 @@
     </mat-panel-title>
   </mat-expansion-panel-header>
 
+  <div class="panel-content">
+  <div class="panel-body">
   <!-- Auto Enhance Toggle -->
   <div class="auto-enhance-section">
     <mat-slide-toggle 
@@ -102,16 +104,20 @@
       Apply median filter to reduce image noise
     </p>
   </div>
+  </div><!-- /panel-body -->
 
   <!-- Reset Button -->
-  <div class="actions-section">
-    <button 
-      mat-stroked-button 
-      color="warn"
-      [disabled]="disabled"
-      (click)="resetAll()">
-      <mat-icon>restart_alt</mat-icon>
-      Reset All
-    </button>
+  <div class="panel-footer">
+    <div class="actions-section">
+      <button 
+        mat-stroked-button 
+        color="warn"
+        [disabled]="disabled"
+        (click)="resetAll()">
+        <mat-icon>restart_alt</mat-icon>
+        Reset All
+      </button>
+    </div>
   </div>
+  </div><!-- /panel-content -->
 </mat-expansion-panel>
