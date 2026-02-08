@@ -1,59 +1,4 @@
-:host {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.section-panel {
-  width: 100%;
-  box-sizing: border-box;
-
-  ::ng-deep .mat-expansion-panel-header-title {
-    align-items: center;
-    gap: 8px;
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-}
-
-.panel-content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-.panel-body {
-  flex: 1;
-}
-
-.panel-footer {
-  margin-top: auto;
-  padding: 16px;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  .crop-button {
-    width: 100%;
-    height: 48px;
-    font-size: 16px;
-    font-weight: 500;
-
-    mat-icon {
-      margin-right: 8px;
-    }
-  }
-
-  .reset-button {
-    width: 100%;
-    
-    mat-icon {
-      margin-right: 8px;
-    }
-  }
-}
+@import '../../../styles/settings-panel';
 
 .auto-detect-section,
 .control-section {
@@ -150,6 +95,30 @@
 
 mat-divider {
   margin: 8px 0;
+}
+
+.panel-footer {
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+
+  .crop-button {
+    width: 100%;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 500;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+
+  .reset-button {
+    width: 100%;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
 }
 
 @media (max-width: 768px) {
