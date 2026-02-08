@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processamento de Imagens - Clean Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .upload-section, .process-section, .gallery-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: #f0f4ff;
+            border-color: #764ba2;
+        }
+
+        .upload-area.dragover {
+            background: #e6edff;
+            border-color: #764ba2;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        input[type="number"], input[type="range"], select {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .image-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .image-info {
+            padding: 15px;
+        }
+
+        .image-info h3 {
+            font-size: 0.9em;
+            color: #333;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .image-info p {
+            font-size: 0.85em;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+            background: #f8f9fa;
+        }
+
+        .image-actions button {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.85em;
+            margin: 0;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .range-value {
+            display: inline-block;
+            min-width: 40px;
+            text-align: center;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Processamento de Imagens</h1>
+        <p class="subtitle">Arquitetura Limpa (Clean Architecture)</p>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h2>📤 Upload de Imagem</h2>
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">☁️</div>
+                <p>Clique ou arraste uma imagem aqui</p>
+                <p style="color: #999; font-size: 0.9em; margin-top: 10px;">
+                    Formatos: JPG, PNG, WEBP, GIF (máx 10MB)
+                </p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*">
+            <div id="uploadMessage"></div>
+        </div>
+
+        <!-- Process Section -->
+        <div class="process-section" id="processSection" style="display: none;">
+            <h2>⚙️ Processar Imagem</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Largura (px):</label>
+                    <input type="number" id="width" placeholder="Auto" min="1">
+                </div>
+                <div class="control-group">
+                    <label>Altura (px):</label>
+                    <input type="number" id="height" placeholder="Auto" min="1">
+                </div>
+                <div class="control-group">
+                    <label>Formato:</label>
+                    <select id="format">
+                        <option value="">Original</option>
+                        <option value="jpeg">JPEG</option>
+                        <option value="png">PNG</option>
+                        <option value="webp">WEBP</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Qualidade: <span class="range-value" id="qualityValue">80</span></label>
+                    <input type="range" id="quality" min="1" max="100" value="80">
+                </div>
+                <div class="control-group">
+                    <label>Ajuste:</label>
+                    <select id="fit">
+                        <option value="cover">Cover</option>
+                        <option value="contain">Contain</option>
+                        <option value="fill">Fill</option>
+                        <option value="inside">Inside</option>
+                        <option value="outside">Outside</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Rotação (graus):</label>
+                    <input type="number" id="rotate" value="0" step="90" min="-360" max="360">
+                </div>
+                <div class="control-group">
+                    <label>Desfoque: <span class="range-value" id="blurValue">0</span></label>
+                    <input type="range" id="blur" min="0" max="10" value="0" step="0.1">
+                </div>
+                <div class="control-group checkbox-group">
+                    <input type="checkbox" id="grayscale">
+                    <label for="grayscale">Preto e Branco</label>
+                </div>
+            </div>
+            <button onclick="processImage()">🔄 Processar Imagem</button>
+            <div id="processMessage"></div>
+        </div>
+
+        <!-- Gallery Section -->
+        <div class="gallery-section">
+            <h2>🖼️ Galeria de Imagens</h2>
+            <button onclick="loadImages()">🔄 Atualizar Galeria</button>
+            <div class="gallery" id="gallery"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentImageId = null;
+
+        // Upload area drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        // Range sliders
+        document.getElementById('quality').addEventListener('input', (e) => {
+            document.getElementById('qualityValue').textContent = e.target.value;
+        });
+
+        document.getElementById('blur').addEventListener('input', (e) => {
+            document.getElementById('blurValue').textContent = e.target.value;
+        });
+
+        async function handleFileUpload(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                showMessage('uploadMessage', 'Enviando imagem...', 'success');
+                
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentImageId = data.image.id;
+                    showMessage('uploadMessage', '✅ Imagem enviada com sucesso!', 'success');
+                    document.getElementById('processSection').style.display = 'block';
+                    loadImages();
+                } else {
+                    showMessage('uploadMessage', `❌ Erro: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showMessage('uploadMessage', `❌ Erro ao enviar: ${error.message}`, 'error');
+            }
+        }
+
+        async function processImage() {
+            if (!currentImageId) {
+                alert('Por favor, faça upload de uma imagem primeiro');
+                return;
+            }
+
+            const options = {
+                width: parseInt(document.getElementById('width').value) || undefined,
+                height: parseInt(document.getElementById('height').value) || undefined,
+                format: document.getElementById('format').value || undefined,
+                quality: parseInt(document.getElementById('quality').value),
+                fit: document.getElementById('fit').value,
+                rotate: parseInt(document.getElementById('rotate').value) || undefined,
+                blur: parseFloat(document.getElementById('blur').value) || undefined,
+                grayscale: document.getElementById('grayscale').checked
+            };
+
+            // Remove undefined values
+            Object.keys(options).forEach(key => 
+                options[key] === undefined && delete options[key]
+            );
+
+            try {
+                showMessage('processMessage', 'Processando imagem...', 'success');
+                
+                const response = await fetch(`/api/process/${currentImageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(options)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('processMessage', '✅ Imagem processada com sucesso!', 'success');
+                    
+                    // Show processed image
+                    const img = document.createElement('img');
+                    img.src = data.downloadUrl + '?t=' + Date.now();
+                    img.className = 'preview-image';
+                    img.alt = 'Processed Image';
+                    
+                    const existingPreview = document.querySelector('.preview-image');
+                    if (existingPreview) {
+                        existingPreview.remove();
+                    }
+                    
+                    document.getElementById('processMessage').appendChild(img);
+                } else {
+                    showMessage('processMessage', `❌ Erro: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showMessage('processMessage', `❌ Erro ao processar: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadImages() {
+            try {
+                const response = await fetch('/api/images');
+                const data = await response.json();
+
+                const gallery = document.getElementById('gallery');
+                gallery.innerHTML = '';
+
+                if (data.images.length === 0) {
+                    gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Nenhuma imagem encontrada. Faça upload de uma imagem!</p>';
+                    return;
+                }
+
+                data.images.forEach(image => {
+                    const card = document.createElement('div');
+                    card.className = 'image-card';
+                    
+                    card.innerHTML = `
+                        <img src="/uploads/${image.fileName}" alt="${image.originalName}">
+                        <div class="image-info">
+                            <h3>${image.originalName}</h3>
+                            <p>📅 ${new Date(image.uploadedAt).toLocaleString('pt-BR')}</p>
+                            <p>💾 ${(image.size / 1024).toFixed(2)} KB</p>
+                            <p>🆔 ${image.id.substring(0, 8)}...</p>
+                        </div>
+                        <div class="image-actions">
+                            <button onclick="selectImageForProcessing('${image.id}')">✏️ Processar</button>
+                            <button onclick="deleteImage('${image.id}')">🗑️ Deletar</button>
+                        </div>
+                    `;
+                    
+                    gallery.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading images:', error);
+            }
+        }
+
+        function selectImageForProcessing(imageId) {
+            currentImageId = imageId;
+            document.getElementById('processSection').style.display = 'block';
+            showMessage('processMessage', `✅ Imagem selecionada para processamento!`, 'success');
+            document.getElementById('processSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function deleteImage(imageId) {
+            if (!confirm('Tem certeza que deseja deletar esta imagem?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/images/${imageId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadImages();
+                    if (currentImageId === imageId) {
+                        currentImageId = null;
+                        document.getElementById('processSection').style.display = 'none';
+                    }
+                } else {
+                    const data = await response.json();
+                    alert(`Erro ao deletar: ${data.error}`);
+                }
+            } catch (error) {
+                alert(`Erro ao deletar: ${error.message}`);
+            }
+        }
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="message ${type}">${message}</div>`;
+        }
+
+        // Load images on page load
+        loadImages();
+    </script>
+</body>
+</html>
