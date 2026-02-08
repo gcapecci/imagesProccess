@@ -43,6 +43,18 @@ mkdir -p public/uploads
 chmod 777 public/uploads
 ```
 
+### Issue: Frontend fails with "ENOENT: no such file or directory" for index.html
+
+**Cause:** Angular cache corruption (`.angular/cache`) inside the Docker volume. This often happens after checking out a different branch or interrupting the container abruptly.
+
+**Solution:**
+Clear the local cache and rebuild:
+```bash
+docker compose --profile dev down
+rm -rf frontend/.angular
+docker compose --profile dev up -d --build
+```
+
 ## Clean Build Steps
 
 If you're experiencing persistent issues, follow these steps:
