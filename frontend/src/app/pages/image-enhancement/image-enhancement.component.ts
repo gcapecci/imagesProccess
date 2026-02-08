@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { EnhancementOptions } from '../../services/image.service';
 import { EnhancementProcessorComponent } from '../../components/enhancement-processor/enhancement-processor.component';
 
@@ -9,6 +9,7 @@ import { EnhancementProcessorComponent } from '../../components/enhancement-proc
 })
 export class ImageEnhancementComponent {
   @ViewChild(EnhancementProcessorComponent) enhancementProcessor!: EnhancementProcessorComponent;
+  @ViewChild('enhancementSection') enhancementSection!: ElementRef<HTMLDivElement>;
   
   uploadedImage: File | null = null;
   isProcessing = false;
@@ -28,6 +29,16 @@ export class ImageEnhancementComponent {
       this.enhancementProcessor.processedImage = null;
       this.enhancementProcessor.processedImageUrl = null;
     }
+
+    // Auto-scroll para a seção de enhancement após o upload
+    setTimeout(() => {
+      if (this.enhancementSection) {
+        this.enhancementSection.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 150);
   }
 
   onImageRemoved() {

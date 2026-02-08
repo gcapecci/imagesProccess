@@ -21,6 +21,7 @@
 - ✅ **IA Avançada**: Remoção de fundo usando U²-Net (Standard) e ISNet (Premium com Alpha Matting)
 - ✅ **Image Enhancement**: Ajuste de brilho, contraste, saturação e nitidez com auto-enhance AI
 - ✅ **Smart Crop**: Crop inteligente com AI auto-detect de faces ou controle manual preciso
+- ✅ **Fluxo Unificado**: Em Background Remover, Image Enhancement e Smart Crop o botão de ação fica no painel de configurações/modelo e o resultado aparece no mesmo card de preview
 - ✅ **Seleção de Modelo**: Escolha entre qualidade Standard e Premium antes do processamento
 - ✅ **Preview em Tempo Real**: Comparação antes/depois com resultado em tempo real
 - ✅ **Download Otimizado**: PNG com transparência
@@ -130,11 +131,11 @@ imagesProccess/
 │   │   ├── components/
 │   │   │   ├── header/               # Navegação responsiva
 │   │   │   ├── footer/
-│   │   │   ├── model-selector/        # Seleção de modelo AI
+│   │   │   ├── model-selector/        # Seleção de modelo AI + botão Remove Background
 │   │   │   ├── image-uploader/        # Upload com drag & drop
-│   │   │   ├── image-processor/       # Processamento e resultado
-│   │   │   ├── enhancement-controls/  # Sliders de ajuste de imagem
-│   │   │   ├── enhancement-processor/ # Processamento de enhancement
+│   │   │   ├── image-processor/       # Remoção de fundo (preview + comparação inline)
+│   │   │   ├── enhancement-controls/  # Sliders de ajuste de imagem + botão Enhance
+│   │   │   ├── enhancement-processor/ # Preview + comparação inline de enhancement
 │   │   │   ├── crop-controls/         # Controles de crop (aspect ratio, dimensões)
 │   │   │   ├── crop-processor/        # Preview e resultado de crop
 │   │   │   └── result-comparison/     # Componente reutilizável de comparação

@@ -137,6 +137,46 @@ Implementada feature completa de crop inteligente com controle manual e detecç�
   - Removido o auto-scroll para o resultado; o usuário permanece no contexto do grid principal
   - Fluxo visual e de interação agora espelha o Smart Crop (ação no settings, resultado no painel da direita)
 
+#### UX Extra — Auto-scroll após Upload
+- Ao fazer upload de uma nova imagem na página de Image Enhancement, a tela realiza um scroll suave até a seção principal de enhancement (controles + preview), garantindo que o usuário já fique posicionado onde irá ajustar e processar a imagem.
+
+### Changed - 2026-02-08 (Background Remover Layout & UX Alignment)
+
+#### Página Background Remover — Layout em Grid
+- **Reorganização da página** (`background-remover.component.html/.scss`):
+  - `Upload Your Image` permanece logo abaixo do título, como primeira etapa do fluxo.
+  - Após o upload, é exibido um grid de duas colunas (`remover-grid`):
+    - Coluna esquerda: painel "Select AI Model Quality" (`app-model-selector`).
+    - Coluna direita: painel "AI Background Removal" (`app-image-processor`).
+  - Ambos os painéis ocupam a mesma altura, alinhando visualmente controles e preview/resultado, no mesmo padrão de Image Enhancement e Smart Crop.
+
+#### Model Selector — Botão Principal de Ação
+- **ModelSelectorComponent** (`components/model-selector/`):
+  - Adicionados inputs `hasImage` e `isProcessing` e output `removeBackground`.
+  - Template agora possui `panel-content` com corpo + `panel-footer` contendo um botão principal **"Remove Background"**.
+  - O botão fica desabilitado enquanto não há imagem carregada ou enquanto o processamento está em andamento, exibindo o rótulo "Processing..." durante a execução.
+  - O clique no botão emite `removeBackground`, que delega a chamada de processamento ao `BackgroundRemoverComponent`.
+
+#### Image Processor — Preview e Resultado no Mesmo Card
+- **ImageProcessorComponent** (`components/image-processor/`):
+  - Refatorado o layout para usar o mesmo padrão do `EnhancementProcessorComponent`:
+    - Header dinâmico que alterna entre "AI Background Removal" e "Background Removal Results" conforme exista resultado.
+    - Área central que exibe apenas o preview enquanto não há resultado e, após o processamento, passa a mostrar a comparação **Original vs Background Removed** no mesmo espaço.
+  - Barra de progresso, ícones de status e porcentagem agora ficam em um footer interno do card durante o processamento.
+  - Botão **"Download Processed Image"** único e full-width exibido quando há resultado e não está processando.
+  - Removido o uso de `ResultComparisonComponent` aqui; a comparação é feita inline.
+  - Removido `scrollToResults()` e o `ViewChild` associado, já que não existe mais painel de resultados separado.
+
+#### BackgroundRemoverComponent — Fluxo e Auto-scroll
+- **BackgroundRemoverComponent** (`pages/background-remover/`):
+  - Em `onImageUploaded`, além de armazenar o arquivo, os resultados anteriores do `ImageProcessorComponent` são resetados.
+  - Após o upload, a página realiza **auto-scroll suave** até o grid principal (`backgroundSection`), posicionando o usuário diretamente na área com o seletor de modelo e o preview.
+  - Em `onImageRemoved`, a imagem e os resultados processados são limpos e o estado `isProcessing` é resetado.
+  - `onProcessingComplete` deixa de chamar `scrollToResults()`, pois o resultado já aparece no mesmo card de preview.
+
+#### Observação — ResultComparisonComponent
+- O `ResultComparisonComponent` permanece disponível como componente reutilizável de comparação para fluxos futuros, mas os módulos principais (Background Remover, Image Enhancement e Smart Crop) passaram a usar comparações inline dentro dos próprios painéis de processamento para uma experiência mais direta e consistente.
+
 ### Added - 2026-02-07 (Image Enhancement Feature)
 
 #### Image Enhancement — Full Stack Implementation

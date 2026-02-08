@@ -11,7 +11,7 @@
   </app-image-uploader>
 
   <ng-container *ngIf="uploadedImage">
-    <div class="enhancement-grid">
+    <div class="enhancement-grid" #enhancementSection>
       <div class="grid-controls">
         <app-enhancement-controls
           (optionsChanged)="onOptionsChanged($event)"

@@ -3,24 +3,34 @@
     <h1>AI Background Remover</h1>
     <p>Remove backgrounds from your images using advanced AI technology</p>
   </div>
-  
-  <app-model-selector
-    (modelSelected)="onModelSelected($event)"
-    [disabled]="isProcessing">
-  </app-model-selector>
-  
+
   <app-image-uploader 
     (imageUploaded)="onImageUploaded($event)"
     (imageRemoved)="onImageRemoved()"
     [isProcessing]="isProcessing">
   </app-image-uploader>
-  
-  <app-image-processor
-    *ngIf="uploadedImage"
-    [image]="uploadedImage"
-    [selectedModel]="selectedModel"
-    (processingStart)="onProcessingStart()"
-    (processingComplete)="onProcessingComplete($event)"
-    (processingError)="onProcessingError($event)">
-  </app-image-processor>
+
+  <ng-container *ngIf="uploadedImage">
+    <div class="remover-grid" #backgroundSection>
+      <div class="grid-controls">
+        <app-model-selector
+          (modelSelected)="onModelSelected($event)"
+          (removeBackground)="onRemoveBackground()"
+          [disabled]="isProcessing"
+          [hasImage]="!!uploadedImage"
+          [isProcessing]="isProcessing">
+        </app-model-selector>
+      </div>
+
+      <div class="grid-processor">
+        <app-image-processor
+          [image]="uploadedImage"
+          [selectedModel]="selectedModel"
+          (processingStart)="onProcessingStart()"
+          (processingComplete)="onProcessingComplete($event)"
+          (processingError)="onProcessingError($event)">
+        </app-image-processor>
+      </div>
+    </div>
+  </ng-container>
 </div>

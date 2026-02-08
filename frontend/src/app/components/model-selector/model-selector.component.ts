@@ -15,7 +15,10 @@ export interface AIModel {
 })
 export class ModelSelectorComponent {
   @Output() modelSelected = new EventEmitter<string>();
+  @Output() removeBackground = new EventEmitter<void>();
   @Input() disabled = false;
+  @Input() hasImage = false;
+  @Input() isProcessing = false;
 
   selectedModelId = 'u2net';
 
@@ -43,5 +46,9 @@ export class ModelSelectorComponent {
 
   onModelChange() {
     this.modelSelected.emit(this.selectedModelId);
+  }
+
+  onRemoveBackgroundClick() {
+    this.removeBackground.emit();
   }
 }

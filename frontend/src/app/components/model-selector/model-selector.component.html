@@ -6,28 +6,45 @@
     </mat-panel-title>
   </mat-expansion-panel-header>
 
-  <p class="description">Choose the AI model that best fits your needs</p>
-  
-  <mat-radio-group 
-    [(ngModel)]="selectedModelId"
-    (change)="onModelChange()"
-    [disabled]="disabled"
-    class="model-options">
-    
-    <mat-radio-button 
-      *ngFor="let model of models" 
-      [value]="model.id"
-      class="model-option">
-      <div class="model-info">
-        <div class="model-header">
-          <mat-icon [color]="model.quality === 'premium' ? 'accent' : 'primary'">
-            {{ model.icon }}
-          </mat-icon>
-          <span class="model-name">{{ model.name }}</span>
-          <mat-chip *ngIf="model.quality === 'premium'" color="accent">Premium</mat-chip>
-        </div>
-        <p class="model-description">{{ model.description }}</p>
-      </div>
-    </mat-radio-button>
-  </mat-radio-group>
+  <div class="panel-content">
+    <div class="panel-body">
+      <p class="description">Choose the AI model that best fits your needs</p>
+      
+      <mat-radio-group 
+        [(ngModel)]="selectedModelId"
+        (change)="onModelChange()"
+        [disabled]="disabled"
+        class="model-options">
+        
+        <mat-radio-button 
+          *ngFor="let model of models" 
+          [value]="model.id"
+          class="model-option">
+          <div class="model-info">
+            <div class="model-header">
+              <mat-icon [color]="model.quality === 'premium' ? 'accent' : 'primary'">
+                {{ model.icon }}
+              </mat-icon>
+              <span class="model-name">{{ model.name }}</span>
+              <mat-chip *ngIf="model.quality === 'premium'" color="accent">Premium</mat-chip>
+            </div>
+            <p class="model-description">{{ model.description }}</p>
+          </div>
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <div class="panel-footer">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="process-button"
+        [disabled]="disabled || !hasImage || isProcessing"
+        (click)="onRemoveBackgroundClick()">
+        <mat-icon>auto_fix_high</mat-icon>
+        <span *ngIf="!isProcessing">Remove Background</span>
+        <span *ngIf="isProcessing">Processing...</span>
+      </button>
+    </div>
+  </div>
 </mat-expansion-panel>
