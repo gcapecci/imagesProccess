@@ -19,10 +19,11 @@
 
 - ✅ **Upload de Imagens**: Drag & drop com auto-hide da drop zone ao carregar imagem
 - ✅ **IA Avançada**: Remoção de fundo usando U²-Net (Standard) e ISNet (Premium com Alpha Matting)
+- ✅ **Image Enhancement**: Ajuste de brilho, contraste, saturação e nitidez com auto-enhance AI
 - ✅ **Seleção de Modelo**: Escolha entre qualidade Standard e Premium antes do processamento
 - ✅ **Preview em Tempo Real**: Comparação antes/depois com resultado colapsável
 - ✅ **Download Otimizado**: PNG com transparência
-- ✅ **Multi-Page SPA**: Navegação entre Home, Background Remover e Help
+- ✅ **Multi-Page SPA**: Navegação entre Home, Background Remover, Image Enhancement e Help
 - ✅ **Seções Colapsáveis**: Toggle expand/collapse em cada seção (mat-expansion-panel)
 - ✅ **Menu Responsivo**: Navegação adaptável para desktop e mobile
 - ✅ **API RESTful**: Integração com outros sistemas
@@ -50,6 +51,7 @@
 ### AI Service
 - **Python 3.11** + FastAPI
 - **rembg** para remoção de fundo
+- **Pillow (ImageEnhance/ImageFilter)** para image enhancement
 - **U²-Net** model (SOTA quality)
 - **OpenCV** para processamento
 
@@ -128,10 +130,13 @@ imagesProccess/
 │   │   │   ├── footer/
 │   │   │   ├── model-selector/        # Seleção de modelo AI
 │   │   │   ├── image-uploader/        # Upload com drag & drop
-│   │   │   └── image-processor/       # Processamento e resultado
+│   │   │   ├── image-processor/       # Processamento e resultado
+│   │   │   ├── enhancement-controls/  # Sliders de ajuste de imagem
+│   │   │   └── enhancement-processor/ # Processamento de enhancement
 │   │   ├── pages/
 │   │   │   ├── home/                  # Landing page
-│   │   │   ├── background-remover/    # Página principal de remoção
+│   │   │   ├── background-remover/    # Página de remoção de fundo
+│   │   │   ├── image-enhancement/     # Página de enhancement
 │   │   │   └── help/                  # Documentação e FAQ
 │   │   └── services/
 │   └── nginx.conf

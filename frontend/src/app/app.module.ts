@@ -23,6 +23,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 // Third-party
 import { NgxFileDropModule } from 'ngx-file-drop';
@@ -32,12 +34,15 @@ import { AppComponent } from './app.component';
 import { ImageUploaderComponent } from './components/image-uploader/image-uploader.component';
 import { ImageProcessorComponent } from './components/image-processor/image-processor.component';
 import { ModelSelectorComponent } from './components/model-selector/model-selector.component';
+import { EnhancementControlsComponent } from './components/enhancement-controls/enhancement-controls.component';
+import { EnhancementProcessorComponent } from './components/enhancement-processor/enhancement-processor.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 
 // Pages
 import { HomeComponent } from './pages/home/home.component';
 import { BackgroundRemoverComponent } from './pages/background-remover/background-remover.component';
+import { ImageEnhancementComponent } from './pages/image-enhancement/image-enhancement.component';
 import { HelpComponent } from './pages/help/help.component';
 
 // Services
@@ -50,10 +55,13 @@ import { NotificationService } from './services/notification.service';
     ImageUploaderComponent,
     ImageProcessorComponent,
     ModelSelectorComponent,
+    EnhancementControlsComponent,
+    EnhancementProcessorComponent,
     HeaderComponent,
     FooterComponent,
     HomeComponent,
     BackgroundRemoverComponent,
+    ImageEnhancementComponent,
     HelpComponent
   ],
   imports: [
@@ -80,6 +88,8 @@ import { NotificationService } from './services/notification.service';
     MatRadioModule,
     MatMenuModule,
     MatExpansionModule,
+    MatSliderModule,
+    MatSlideToggleModule,
     
     // Third-party
     NgxFileDropModule

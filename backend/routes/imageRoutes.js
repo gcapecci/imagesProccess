@@ -76,6 +76,60 @@ router.post('/remove-background', upload.single('image'), validateImage, async (
 });
 
 /**
+ * POST /api/images/enhance
+ * Enhance image with brightness, contrast, saturation, sharpness
+ */
+router.post('/enhance', upload.single('image'), validateImage, async (req, res) => {
+  try {
+    const { buffer, mimetype, originalname, size } = req.file;
+    const { brightness, contrast, saturation, sharpness, auto_enhance, denoise } = req.query;
+    
+    console.log(`🎨 Enhancing image: ${originalname} (${(size / 1024).toFixed(2)}KB)`);
+    
+    // Process image through AI service
+    const processedImage = await imageService.enhanceImage({
+      buffer,
+      mimetype,
+      originalname,
+      brightness: parseFloat(brightness) || 1.0,
+      contrast: parseFloat(contrast) || 1.0,
+      saturation: parseFloat(saturation) || 1.0,
+      sharpness: parseFloat(sharpness) || 1.0,
+      auto_enhance: auto_enhance === 'true',
+      denoise: denoise === 'true'
+    });
+
+    // Set appropriate headers
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Disposition': `attachment; filename="enhanced_${originalname.replace(/\.[^/.]+$/, '')}.png"`,
+      'X-Processing-Time': processedImage.processingTime,
+      'X-Enhancements': processedImage.enhancements || '',
+      'X-Original-Size': size,
+      'X-Processed-Size': processedImage.buffer.length
+    });
+
+    // Send enhanced image
+    res.send(processedImage.buffer);
+    
+  } catch (error) {
+    console.error('❌ Error enhancing image:', error);
+    
+    if (error.message.includes('AI service')) {
+      res.status(503).json({
+        error: 'AI service temporarily unavailable',
+        message: 'Please try again in a few moments'
+      });
+    } else {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: 'Failed to enhance image'
+      });
+    }
+  }
+});
+
+/**
  * POST /api/images/process-batch
  * Process multiple images in batch
  */

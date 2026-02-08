@@ -1,0 +1,117 @@
+<mat-expansion-panel class="section-panel" [expanded]="true">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon>tune</mat-icon>
+      Enhancement Settings
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <!-- Auto Enhance Toggle -->
+  <div class="auto-enhance-section">
+    <mat-slide-toggle 
+      [(ngModel)]="autoEnhance"
+      (change)="onAutoEnhanceToggle()"
+      [disabled]="disabled"
+      color="primary">
+      <div class="toggle-label">
+        <mat-icon>auto_fix_high</mat-icon>
+        <span>Auto Enhance</span>
+      </div>
+    </mat-slide-toggle>
+    <p class="toggle-description">
+      Automatically optimize brightness, contrast, saturation, and sharpness
+    </p>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Manual Sliders -->
+  <div class="sliders-section" [class.disabled-section]="autoEnhance">
+    <div class="slider-group">
+      <div class="slider-header">
+        <mat-icon>brightness_6</mat-icon>
+        <span class="slider-label">Brightness</span>
+        <span class="slider-value">{{ brightness | number:'1.1-1' }}</span>
+      </div>
+      <mat-slider 
+        [min]="0" [max]="3" [step]="0.1"
+        [disabled]="disabled || autoEnhance"
+        class="full-width-slider">
+        <input matSliderThumb [(ngModel)]="brightness" (valueChange)="onSliderChange()">
+      </mat-slider>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <mat-icon>contrast</mat-icon>
+        <span class="slider-label">Contrast</span>
+        <span class="slider-value">{{ contrast | number:'1.1-1' }}</span>
+      </div>
+      <mat-slider 
+        [min]="0" [max]="3" [step]="0.1"
+        [disabled]="disabled || autoEnhance"
+        class="full-width-slider">
+        <input matSliderThumb [(ngModel)]="contrast" (valueChange)="onSliderChange()">
+      </mat-slider>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <mat-icon>palette</mat-icon>
+        <span class="slider-label">Saturation</span>
+        <span class="slider-value">{{ saturation | number:'1.1-1' }}</span>
+      </div>
+      <mat-slider 
+        [min]="0" [max]="3" [step]="0.1"
+        [disabled]="disabled || autoEnhance"
+        class="full-width-slider">
+        <input matSliderThumb [(ngModel)]="saturation" (valueChange)="onSliderChange()">
+      </mat-slider>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <mat-icon>deblur</mat-icon>
+        <span class="slider-label">Sharpness</span>
+        <span class="slider-value">{{ sharpness | number:'1.1-1' }}</span>
+      </div>
+      <mat-slider 
+        [min]="0" [max]="3" [step]="0.1"
+        [disabled]="disabled || autoEnhance"
+        class="full-width-slider">
+        <input matSliderThumb [(ngModel)]="sharpness" (valueChange)="onSliderChange()">
+      </mat-slider>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Denoise Toggle -->
+  <div class="denoise-section">
+    <mat-slide-toggle 
+      [(ngModel)]="denoise"
+      (change)="onDenoiseToggle()"
+      [disabled]="disabled"
+      color="primary">
+      <div class="toggle-label">
+        <mat-icon>grain</mat-icon>
+        <span>Noise Reduction</span>
+      </div>
+    </mat-slide-toggle>
+    <p class="toggle-description">
+      Apply median filter to reduce image noise
+    </p>
+  </div>
+
+  <!-- Reset Button -->
+  <div class="actions-section">
+    <button 
+      mat-stroked-button 
+      color="warn"
+      [disabled]="disabled"
+      (click)="resetAll()">
+      <mat-icon>restart_alt</mat-icon>
+      Reset All
+    </button>
+  </div>
+</mat-expansion-panel>

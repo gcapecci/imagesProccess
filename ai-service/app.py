@@ -13,7 +13,7 @@ from typing import Optional
 from contextlib import asynccontextmanager
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageFilter
 from fastapi import FastAPI, File, UploadFile, HTTPException, status, Query
 from fastapi.responses import Response
 from rembg import remove, new_session
@@ -109,8 +109,8 @@ def get_memory_usage():
 async def root():
     """Root endpoint"""
     return {
-        "service": "AI Background Removal",
-        "version": "2.0.0",
+        "service": "AI Image Processing",
+        "version": "3.0.0",
         "status": "healthy",
         "available_models": list(rembg_sessions.keys()),
         "model_details": {
@@ -126,7 +126,11 @@ async def root():
                 "features": ["alpha_matting", "post_processing"]
             }
         },
-        "endpoints": ["/remove-background", "/health", "/stats"]
+        "features": {
+            "background_removal": "/remove-background",
+            "image_enhancement": "/enhance"
+        },
+        "endpoints": ["/remove-background", "/enhance", "/health", "/stats"]
     }
 
 @app.get("/health")
@@ -290,6 +294,179 @@ async def remove_background(
             status_code=500,
             detail=f"Processing failed: {str(e)}"
         )
+
+
+@app.post("/enhance")
+async def enhance_image(
+    image: UploadFile = File(...),
+    brightness: float = Query(1.0, ge=0.0, le=3.0, description="Brightness factor (1.0 = original)"),
+    contrast: float = Query(1.0, ge=0.0, le=3.0, description="Contrast factor (1.0 = original)"),
+    saturation: float = Query(1.0, ge=0.0, le=3.0, description="Saturation factor (1.0 = original)"),
+    sharpness: float = Query(1.0, ge=0.0, le=3.0, description="Sharpness factor (1.0 = original)"),
+    auto_enhance: bool = Query(False, description="Apply automatic enhancement"),
+    denoise: bool = Query(False, description="Apply noise reduction"),
+    output_format: str = Query("png", description="Output format: png or jpg")
+):
+    """
+    Enhance image with brightness, contrast, saturation, sharpness adjustments.
+    
+    Args:
+        image: Uploaded image file
+        brightness: Brightness factor (0.0 to 3.0, 1.0 = no change)
+        contrast: Contrast factor (0.0 to 3.0, 1.0 = no change)
+        saturation: Saturation factor (0.0 to 3.0, 1.0 = no change)
+        sharpness: Sharpness factor (0.0 to 3.0, 1.0 = no change)
+        auto_enhance: Apply automatic enhancement (ignores manual sliders)
+        denoise: Apply noise reduction filter
+        output_format: Output format ('png' or 'jpg')
+    
+    Returns:
+        Enhanced image
+    """
+    global stats
+    
+    start_time = time.time()
+    
+    try:
+        # Validate file
+        if not image.content_type.startswith('image/'):
+            raise HTTPException(
+                status_code=400,
+                detail="File must be an image"
+            )
+        
+        # Read image data
+        logger.info(f"🎨 Enhancing: {image.filename} ({image.content_type})")
+        image_data = await image.read()
+        
+        if len(image_data) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail="Empty image file"
+            )
+        
+        # Convert to PIL Image
+        try:
+            pil_image = Image.open(io.BytesIO(image_data))
+            if pil_image.mode not in ['RGB', 'RGBA']:
+                pil_image = pil_image.convert('RGB')
+        except Exception as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid image format: {str(e)}"
+            )
+        
+        logger.info(f"Image size: {pil_image.size}, mode: {pil_image.mode}")
+        
+        enhanced = pil_image.copy()
+        enhancements_applied = []
+        
+        if auto_enhance:
+            # Auto-enhance pipeline
+            logger.info("🤖 Applying auto-enhancement...")
+            
+            # Auto brightness: analyze histogram and adjust
+            from PIL import ImageStat
+            stat = ImageStat.Stat(enhanced.convert('L'))
+            mean_brightness = stat.mean[0]
+            
+            # Target mean brightness ~128
+            if mean_brightness < 100:
+                brightness_factor = min(1.0 + (128 - mean_brightness) / 200, 1.6)
+            elif mean_brightness > 160:
+                brightness_factor = max(1.0 - (mean_brightness - 128) / 200, 0.7)
+            else:
+                brightness_factor = 1.0
+            
+            if brightness_factor != 1.0:
+                enhanced = ImageEnhance.Brightness(enhanced).enhance(brightness_factor)
+                enhancements_applied.append(f"brightness:{brightness_factor:.2f}")
+            
+            # Auto contrast
+            enhanced = ImageEnhance.Contrast(enhanced).enhance(1.2)
+            enhancements_applied.append("contrast:1.20")
+            
+            # Auto saturation boost
+            enhanced = ImageEnhance.Color(enhanced).enhance(1.15)
+            enhancements_applied.append("saturation:1.15")
+            
+            # Auto sharpness
+            enhanced = ImageEnhance.Sharpness(enhanced).enhance(1.3)
+            enhancements_applied.append("sharpness:1.30")
+            
+            # Light denoise via median filter
+            enhanced = enhanced.filter(ImageFilter.MedianFilter(size=3))
+            enhancements_applied.append("denoise:median")
+            
+        else:
+            # Manual adjustments
+            if brightness != 1.0:
+                enhanced = ImageEnhance.Brightness(enhanced).enhance(brightness)
+                enhancements_applied.append(f"brightness:{brightness:.2f}")
+            
+            if contrast != 1.0:
+                enhanced = ImageEnhance.Contrast(enhanced).enhance(contrast)
+                enhancements_applied.append(f"contrast:{contrast:.2f}")
+            
+            if saturation != 1.0:
+                enhanced = ImageEnhance.Color(enhanced).enhance(saturation)
+                enhancements_applied.append(f"saturation:{saturation:.2f}")
+            
+            if sharpness != 1.0:
+                enhanced = ImageEnhance.Sharpness(enhanced).enhance(sharpness)
+                enhancements_applied.append(f"sharpness:{sharpness:.2f}")
+            
+            if denoise:
+                enhanced = enhanced.filter(ImageFilter.MedianFilter(size=3))
+                enhancements_applied.append("denoise:median")
+        
+        # Prepare output
+        output_buffer = io.BytesIO()
+        
+        if output_format.lower() in ['jpg', 'jpeg']:
+            if enhanced.mode == 'RGBA':
+                white_bg = Image.new('RGBA', enhanced.size, (255, 255, 255, 255))
+                enhanced = Image.alpha_composite(white_bg, enhanced)
+            enhanced.convert('RGB').save(output_buffer, format='JPEG', quality=95)
+            media_type = "image/jpeg"
+        else:
+            enhanced.save(output_buffer, format='PNG', optimize=True)
+            media_type = "image/png"
+        
+        output_buffer.seek(0)
+        
+        # Calculate processing time
+        processing_time = time.time() - start_time
+        
+        # Update statistics
+        stats["total_processed"] += 1
+        stats["total_processing_time"] += processing_time
+        stats["average_processing_time"] = stats["total_processing_time"] / stats["total_processed"]
+        stats["model_usage"]["enhance"] = stats["model_usage"].get("enhance", 0) + 1
+        
+        logger.info(f"✅ Enhanced in {processing_time:.2f}s — {', '.join(enhancements_applied)}")
+        
+        return Response(
+            content=output_buffer.getvalue(),
+            media_type=media_type,
+            headers={
+                "X-Processing-Time": f"{processing_time:.2f}s",
+                "X-Enhancements": "; ".join(enhancements_applied),
+                "X-Original-Size": str(len(image_data)),
+                "X-Processed-Size": str(len(output_buffer.getvalue()))
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        stats["total_errors"] += 1
+        logger.error(f"❌ Enhancement error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Enhancement failed: {str(e)}"
+        )
+
 
 @app.get("/stats")
 async def get_stats():

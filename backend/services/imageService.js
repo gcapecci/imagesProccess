@@ -120,6 +120,74 @@ class ImageService {
   }
 
   /**
+   * Enhance image with brightness, contrast, saturation, sharpness
+   */
+  async enhanceImage({ buffer, mimetype, originalname, brightness = 1.0, contrast = 1.0, saturation = 1.0, sharpness = 1.0, auto_enhance = false, denoise = false }) {
+    const startTime = Date.now();
+    
+    try {
+      const formData = new FormData();
+      formData.append('image', buffer, {
+        filename: originalname,
+        contentType: mimetype
+      });
+
+      // Build query params
+      const params = new URLSearchParams({
+        brightness: brightness.toString(),
+        contrast: contrast.toString(),
+        saturation: saturation.toString(),
+        sharpness: sharpness.toString(),
+        auto_enhance: auto_enhance.toString(),
+        denoise: denoise.toString()
+      });
+
+      console.log(`🎨 Sending image to AI service: ${this.aiServiceUrl}/enhance?${params}`);
+      
+      const response = await axios.post(
+        `${this.aiServiceUrl}/enhance?${params}`,
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
+          },
+          timeout: 60000,
+          responseType: 'arraybuffer'
+        }
+      );
+
+      const processingTime = Date.now() - startTime;
+      this.updateStats(processingTime, false);
+      
+      console.log(`✅ Image enhanced successfully in ${processingTime}ms`);
+      
+      return {
+        buffer: response.data,
+        processingTime: `${processingTime}ms`,
+        enhancements: response.headers['x-enhancements'] || '',
+        originalSize: buffer.length,
+        processedSize: response.data.length
+      };
+
+    } catch (error) {
+      const processingTime = Date.now() - startTime;
+      this.updateStats(processingTime, true);
+      
+      console.error('❌ AI enhancement error:', error.message);
+      
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('AI service is not available');
+      } else if (error.response) {
+        throw new Error(`AI service error: ${error.response.status} - ${error.response.statusText}`);
+      } else if (error.code === 'ECONNABORTED') {
+        throw new Error('AI service timeout');
+      } else {
+        throw new Error(`AI service communication error: ${error.message}`);
+      }
+    }
+  }
+
+  /**
    * Get processing statistics
    */
   async getStats() {

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { HomeComponent } from './pages/home/home.component';
 import { BackgroundRemoverComponent } from './pages/background-remover/background-remover.component';
+import { ImageEnhancementComponent } from './pages/image-enhancement/image-enhancement.component';
 import { HelpComponent } from './pages/help/help.component';
 
 const routes: Routes = [
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: 'background-remover',
     component: BackgroundRemoverComponent
+  },
+  {
+    path: 'image-enhancement',
+    component: ImageEnhancementComponent
   },
   {
     path: 'help',

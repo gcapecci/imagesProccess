@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2026-02-07 (Image Enhancement Feature)
+
+#### Image Enhancement — Full Stack Implementation
+- **AI Service** (`ai-service/app.py`):
+  - Novo endpoint `POST /enhance` com parâmetros: `brightness`, `contrast`, `saturation`, `sharpness` (0.0–3.0), `auto_enhance` e `denoise`
+  - **Auto Enhance**: Analisa histograma de brilho da imagem e aplica otimizações automáticas (brightness, contrast, saturation, sharpness + denoise)
+  - **Manual mode**: Ajuste fino com sliders individuais
+  - **Noise Reduction**: Filtro mediano (MedianFilter) para redução de ruído
+  - Usa `PIL.ImageEnhance` (Brightness, Contrast, Color, Sharpness) e `PIL.ImageFilter`
+  - Headers de resposta: `X-Processing-Time`, `X-Enhancements`, `X-Original-Size`, `X-Processed-Size`
+  - Adicionado `opencv-python-headless` ao `requirements.txt`
+  - Atualizado root endpoint para v3.0.0 com novo endpoint `/enhance`
+
+- **Backend** (`backend/routes/imageRoutes.js` + `backend/services/imageService.js`):
+  - Nova rota `POST /api/images/enhance` com query params para controles de enhancement
+  - Novo método `enhanceImage()` no `imageService` para proxy ao AI service
+  - Validação de imagem e error handling consistentes com rota de background removal
+
+- **Frontend — Componentes**:
+  - `EnhancementControlsComponent`: Painel colapsável com sliders (brightness, contrast, saturation, sharpness), toggle Auto Enhance, toggle Noise Reduction e botão Reset
+    - Sliders desabilitados quando Auto Enhance está ativo
+    - Usa `mat-slider`, `mat-slide-toggle`, `mat-expansion-panel`
+  - `EnhancementProcessorComponent`: Preview da imagem, botão "Enhance Image", progress bar com status, painel de resultado com comparação Before/After e download
+
+- **Frontend — Página e Navegação**:
+  - `ImageEnhancementComponent` (page): Orquestra upload, controles e processamento
+  - Rota `/image-enhancement` em `app-routing.module.ts`
+  - Link de navegação no header (desktop + mobile menu)
+  - Card na Home atualizado de "Coming Soon" para "Try Now" com routerLink
+  - `MatSliderModule` e `MatSlideToggleModule` adicionados ao `AppModule`
+
+- **Frontend — Service**:
+  - Nova interface `EnhancementOptions` no `ImageService`
+  - Novo método `enhanceImage()` com upload progress, processing status e download tracking
+  - Timeout de 120s para enhancement
+
 ### Added - 2026-02-07 (Developer Experience)
 
 #### Docker Compose Profiles (Dev/Prod)

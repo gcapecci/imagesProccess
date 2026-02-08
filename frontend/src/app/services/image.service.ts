@@ -13,6 +13,15 @@ export interface ProcessingResult {
   error?: string;
 }
 
+export interface EnhancementOptions {
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  sharpness: number;
+  autoEnhance: boolean;
+  denoise: boolean;
+}
+
 export interface UploadProgress {
   progress: number;
   status: 'uploading' | 'processing' | 'downloading' | 'complete' | 'error';
@@ -124,6 +133,96 @@ export class ImageService {
    */
   getSupportedFormats(): Observable<any> {
     return this.http.get(`${this.baseUrl}/images/formats`);
+  }
+
+  /**
+   * Enhance image with brightness, contrast, saturation, sharpness
+   */
+  enhanceImage(file: File, options: EnhancementOptions): Observable<ProcessingResult> {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const params = new URLSearchParams({
+      brightness: options.brightness.toString(),
+      contrast: options.contrast.toString(),
+      saturation: options.saturation.toString(),
+      sharpness: options.sharpness.toString(),
+      auto_enhance: options.autoEnhance.toString(),
+      denoise: options.denoise.toString()
+    });
+
+    return this.http.post(`${this.baseUrl}/images/enhance?${params}`, formData, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'blob'
+    }).pipe(
+      timeout(120000),
+      map((event: HttpEvent<Blob>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            if (event.total) {
+              const progress = Math.round(100 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress: progress * 0.3,
+                status: 'uploading',
+                message: 'Uploading image...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Sent:
+            this.uploadProgressSubject.next({
+              progress: 35,
+              status: 'processing',
+              message: options.autoEnhance 
+                ? 'Applying auto-enhancement...' 
+                : 'Applying enhancements...'
+            });
+            return { success: false };
+
+          case HttpEventType.DownloadProgress:
+            if (event.total) {
+              const progress = 35 + Math.round(65 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress,
+                status: 'downloading',
+                message: 'Receiving enhanced image...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Response:
+            this.uploadProgressSubject.next({
+              progress: 100,
+              status: 'complete',
+              message: 'Enhancement complete!'
+            });
+
+            return {
+              success: true,
+              processedImage: event.body as Blob,
+              originalSize: file.size,
+              processedSize: event.body?.size || 0,
+              processingTime: event.headers.get('X-Processing-Time') || 'unknown'
+            };
+
+          default:
+            return { success: false };
+        }
+      }),
+      catchError(error => {
+        this.uploadProgressSubject.next({
+          progress: 0,
+          status: 'error',
+          message: this.getErrorMessage(error)
+        });
+        
+        return throwError(() => ({
+          success: false,
+          error: this.getErrorMessage(error)
+        }));
+      })
+    );
   }
 
   /**

@@ -1,0 +1,26 @@
+<div class="image-enhancement-container">
+  <div class="intro-section">
+    <h1>AI Image Enhancement</h1>
+    <p>Enhance your images with AI-powered brightness, contrast, saturation, and sharpness adjustments</p>
+  </div>
+
+  <app-image-uploader 
+    (imageUploaded)="onImageUploaded($event)"
+    (imageRemoved)="onImageRemoved()"
+    [isProcessing]="isProcessing">
+  </app-image-uploader>
+
+  <app-enhancement-controls
+    (optionsChanged)="onOptionsChanged($event)"
+    [disabled]="isProcessing">
+  </app-enhancement-controls>
+
+  <app-enhancement-processor
+    *ngIf="uploadedImage"
+    [image]="uploadedImage"
+    [enhancementOptions]="enhancementOptions"
+    (processingStart)="onProcessingStart()"
+    (processingComplete)="onProcessingComplete($event)"
+    (processingError)="onProcessingError($event)">
+  </app-enhancement-processor>
+</div>
