@@ -1,0 +1,101 @@
+:host {
+  display: block;
+}
+
+.results-panel {
+  ::ng-deep .mat-expansion-panel-header-title {
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+}
+
+.comparison {
+  display: flex;
+  gap: 24px;
+  margin: 24px 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.comparison-arrow {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #3f51b5;
+  flex-shrink: 0;
+}
+
+.image-container {
+  flex: 1;
+  text-align: center;
+  max-width: 45%;
+
+  h4 {
+    margin: 0 0 12px;
+    color: #666;
+    font-weight: 400;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.result-image {
+  max-width: 100%;
+  max-height: 350px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.image-label {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #999;
+  font-weight: 500;
+}
+
+.download-section {
+  text-align: center;
+  margin-top: 24px;
+
+  button {
+    min-width: 240px;
+    height: 44px;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .comparison {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .comparison-arrow {
+    transform: rotate(90deg);
+    margin: 8px 0;
+  }
+
+  .image-container {
+    max-width: 100%;
+  }
+
+  .result-image {
+    max-height: 250px;
+  }
+
+  .download-section button {
+    width: 100%;
+    min-width: auto;
+  }
+}

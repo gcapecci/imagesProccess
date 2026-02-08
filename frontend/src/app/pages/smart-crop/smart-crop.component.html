@@ -1,0 +1,67 @@
+<div class="smart-crop-container">
+  <!-- Intro Section -->
+  <div class="intro-section">
+    <div class="intro-content">
+      <div class="icon-container">
+        <mat-icon>crop</mat-icon>
+      </div>
+      <div class="text-content">
+        <h1>{{ 'smartCropPage.heroTitle' | translate }}</h1>
+        <p>
+          {{ 'smartCropPage.heroDescription' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Uploader -->
+  <app-image-uploader
+    (imageUploaded)="onImageSelected($event)"
+    (imageRemoved)="onImageRemoved()"
+  ></app-image-uploader>
+
+  <!-- Crop Settings & Preview Grid -->
+  <div class="crop-grid" *ngIf="uploadedImage">
+    <app-crop-controls
+      [isProcessing]="isProcessing"
+      [hasImage]="!!uploadedImage"
+      (optionsChanged)="onCropOptionsChanged($event)"
+      (cropImage)="onCropImage()"
+    ></app-crop-controls>
+
+    <app-crop-processor
+      [image]="uploadedImage"
+      [cropOptions]="cropOptions"
+      (processingStart)="onProcessingStart()"
+      (processingComplete)="onProcessingComplete($event)"
+      (processingError)="onProcessingError($event)"
+    ></app-crop-processor>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="info-cards" *ngIf="!uploadedImage">
+    <div class="info-card">
+      <mat-icon>auto_awesome</mat-icon>
+      <h3>{{ 'home.features.smartCrop.bullets.faces' | translate }}</h3>
+      <p>{{ 'smartCropPage.info.autoDetectDescription' | translate }}</p>
+    </div>
+
+    <div class="info-card">
+      <mat-icon>aspect_ratio</mat-icon>
+      <h3>{{ 'home.features.smartCrop.bullets.ratios' | translate }}</h3>
+      <p>{{ 'smartCropPage.info.aspectDescription' | translate }}</p>
+    </div>
+
+    <div class="info-card">
+      <mat-icon>straighten</mat-icon>
+      <h3>{{ 'home.features.smartCrop.bullets.control' | translate }}</h3>
+      <p>{{ 'smartCropPage.info.controlDescription' | translate }}</p>
+    </div>
+
+    <div class="info-card">
+      <mat-icon>high_quality</mat-icon>
+      <h3>{{ 'smartCropPage.info.qualityTitle' | translate }}</h3>
+      <p>{{ 'smartCropPage.info.qualityDescription' | translate }}</p>
+    </div>
+  </div>
+</div>

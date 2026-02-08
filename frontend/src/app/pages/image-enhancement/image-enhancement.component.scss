@@ -1,0 +1,64 @@
+@import '../../../styles/intro-hero';
+
+.image-enhancement-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.intro-section {
+  @extend .intro-hero;
+}
+
+app-image-uploader,
+app-enhancement-controls,
+app-enhancement-processor {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.enhancement-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+  align-items: stretch;
+}
+
+// Results panel — full width below grid
+app-result-comparison {
+  display: block;
+  margin-top: 24px;
+}
+
+// Tablet — stack vertical
+@media (max-width: 1024px) {
+  .enhancement-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-enhancement-container {
+    padding: 0 16px;
+  }
+
+  .intro-section h1 {
+    font-size: 2rem;
+  }
+
+  .intro-section p {
+    font-size: 1rem;
+  }
+
+  .enhancement-grid {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhancement-grid {
+    gap: 12px;
+  }
+}

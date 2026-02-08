@@ -1,298 +1,252 @@
-# 🖼️ Processamento de Imagens - Clean Architecture
+# 🤖 AI Image Processing Platform
 
-Uma aplicação web para processamento de imagens desenvolvida seguindo os princípios da **Arquitetura Limpa (Clean Architecture)**.
+**Sistema completo de processamento de imagens com foco em remoção de fundo usando IA**
 
-## 📋 Sobre o Projeto
+---
 
-Este projeto demonstra a implementação de um sistema de processamento de imagens utilizando os princípios da Clean Architecture proposta por Robert C. Martin (Uncle Bob). A aplicação permite upload, processamento e gerenciamento de imagens através de uma interface web intuitiva.
-
-## 🏗️ Arquitetura Limpa
-
-A Clean Architecture organiza o código em camadas concêntricas, onde as dependências apontam sempre para dentro (das camadas externas para as internas).
-
-### Camadas do Projeto
+## 🏗️ Arquitetura
 
 ```
-┌─────────────────────────────────────────┐
-│      Presentation Layer (Controllers)   │  ← Interface com usuário
-├─────────────────────────────────────────┤
-│      Application Layer (Use Cases)      │  ← Regras de negócio da aplicação
-├─────────────────────────────────────────┤
-│      Domain Layer (Entities)            │  ← Regras de negócio fundamentais
-├─────────────────────────────────────────┤
-│      Infrastructure Layer               │  ← Detalhes técnicos (BD, APIs, etc)
-└─────────────────────────────────────────┘
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Angular   │    │   Nginx     │    │   Node.js   │    │   Python    │
+│  Frontend   │◄──►│ Proxy       │◄──►│  Backend    │◄──►│ AI Service  │
+│   (Port     │    │ Reverso     │    │   (API)     │    │  (rembg)    │
+│   4200)     │    │ (Port 80)   │    │ (Port 3001) │    │ (Port 5000) │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
 ```
 
-### Estrutura de Diretórios
+## 🚀 Funcionalidades
 
-```
-src/
-├── domain/                    # Camada de Domínio (núcleo)
-│   ├── entities/             # Entidades de negócio
-│   │   └── Image.ts          # Entidade Image e interfaces
-│   └── repositories/         # Interfaces (contratos)
-│       ├── ImageRepository.ts
-│       └── ImageProcessingService.ts
-│
-├── application/               # Camada de Aplicação
-│   └── useCases/             # Casos de uso (regras de negócio)
-│       ├── UploadImageUseCase.ts
-│       ├── ProcessImageUseCase.ts
-│       ├── GetImageUseCase.ts
-│       ├── ListImagesUseCase.ts
-│       └── DeleteImageUseCase.ts
-│
-├── infrastructure/            # Camada de Infraestrutura
-│   ├── repositories/         # Implementações concretas
-│   │   ├── FileSystemImageRepository.ts
-│   │   └── SharpImageProcessingService.ts
-│   └── server.ts            # Configuração do servidor Express
-│
-├── presentation/              # Camada de Apresentação
-│   ├── controllers/          # Controladores HTTP
-│   │   └── ImageController.ts
-│   └── routes.ts            # Definição de rotas
-│
-└── index.ts                  # Ponto de entrada (Composition Root)
-```
+- ✅ **Upload de Imagens**: Drag & drop com auto-hide da drop zone ao carregar imagem
+- ✅ **IA Avançada**: Remoção de fundo usando U²-Net (Standard) e ISNet (Premium com Alpha Matting)
+- ✅ **Image Enhancement**: Ajuste de brilho, contraste, saturação e nitidez com auto-enhance AI
+- ✅ **Smart Crop**: Crop inteligente com AI auto-detect de faces ou controle manual preciso
+- ✅ **Fluxo Unificado**: Em Background Remover, Image Enhancement e Smart Crop o botão de ação fica no painel de configurações/modelo e o resultado aparece no mesmo card de preview
+- ✅ **Seleção de Modelo**: Escolha entre qualidade Standard e Premium antes do processamento
+- ✅ **Preview em Tempo Real**: Comparação antes/depois com resultado em tempo real
+- ✅ **Download Otimizado**: PNG com transparência
+- ✅ **Multi-Page SPA**: Navegação entre Home, Background Remover, Image Enhancement, Smart Crop e Help
+- ✅ **Seções Colapsáveis**: Toggle expand/collapse em cada seção (mat-expansion-panel)
+- ✅ **Menu Responsivo**: Navegação adaptável para desktop e mobile
+ - ✅ **i18n (EN/PT)**: Suporte a inglês e português com seletor de idioma fixo no header
+- ✅ **API RESTful**: Integração com outros sistemas
+- ✅ **Containerizado**: Deploy simplificado com Docker (profiles dev/prod)
+- ✅ **Live Reload**: Desenvolvimento com hot reload sem rebuild de containers
+- ✅ **Escalável**: Microserviços independentes
+- ✅ **Monitoramento**: Health checks e estatísticas
 
-## ✨ Funcionalidades
+## 📋 Tecnologias Utilizadas
 
-- ✅ Upload de imagens (JPEG, PNG, WEBP, GIF)
-- ✅ Redimensionamento de imagens
-- ✅ Conversão de formatos
-- ✅ Aplicação de filtros (preto e branco)
-- ✅ Ajuste de qualidade
-- ✅ Rotação de imagens
-- ✅ Aplicação de desfoque
-- ✅ Listagem de imagens
-- ✅ Exclusão de imagens
-- ✅ Interface web responsiva
+### Frontend
+- **Angular 17** + Angular Material
+- **TypeScript** para type safety
+- **RxJS** para programação reativa
+- **NgX File Drop** para upload intuitivo
+- **Angular Router** para navegação multi-page
+- **Mat Expansion Panel** para seções colapsáveis
 
-## 🚀 Como Executar
+### Backend  
+- **Node.js** + Express + TypeScript
+- **Multer** para upload de arquivos
+- **Rate Limiting** e segurança
+- **Health checks** automáticos
 
-### Opção 1: Usando Docker (Recomendado)
+### AI Service
+- **Python 3.11** + FastAPI
+- **rembg** para remoção de fundo
+- **Pillow (ImageEnhance/ImageFilter)** para image enhancement
+- **OpenCV** para face detection e smart crop
+- **U²-Net** model (SOTA quality)
+- **Haar Cascade** para detecção de faces
 
-#### Pré-requisitos
-- Docker
-- Docker Compose
+### Infraestrutura
+- **Docker & Docker Compose** com **profiles** (dev/prod)
+- **Nginx** como proxy reverso (config separada para dev com WebSocket)
+- **Live Reload** via `ng serve` + polling no modo dev
+- **Volume persistente** para modelos AI e node_modules
+- **Network isolation** entre containers
 
-#### Executar em Produção
+## 🔧 Execução Rápida
 
+### 🚀 Produção
 ```bash
-# Clone o repositório
-git clone https://github.com/gcapecci/imagesProccess.git
-
-# Entre no diretório
+# Clonar e executar em modo produção
+git clone <repo-url>
 cd imagesProccess
+docker compose --profile prod up -d --build
 
-# Inicie com Docker Compose
-docker compose up -d
-
-# Visualizar logs
-docker compose logs -f
-
-# Parar a aplicação
-docker compose down
+# Acessar aplicação
+# http://localhost (Frontend + API)
 ```
 
-#### Executar em Desenvolvimento (com hot reload)
-
+### 🛠️ Desenvolvimento (Live Reload)
 ```bash
-# Inicie em modo desenvolvimento
-docker compose -f docker-compose.dev.yml up
+# Subir somente backend + serviço de IA (sem frontend Angular)
+docker compose up -d --build
 
-# Parar a aplicação
-docker compose -f docker-compose.dev.yml down
+# Subir ambiente completo de desenvolvimento com frontend (live reload)
+docker compose --profile dev up -d
+
+# Se você alterar Dockerfile ou dependências (package.json/requirements.txt), force rebuild
+docker compose --profile dev up -d --build
+
+# Acessar aplicação (auto-reload ao editar código Angular)
+# http://localhost       (via Nginx dev proxy)
+# http://localhost:4201  (direto no Angular dev server dentro do container)
+
+# Parar ambiente de desenvolvimento
+docker compose --profile dev down
 ```
 
-### Opção 2: Instalação Local
+> **Nota**: No profile `dev` o código do frontend é montado como volume e servido via `ng serve`.
+> Alterações em arquivos `.ts`, `.html` e `.scss` são recarregadas automaticamente, **sem precisar** rodar `docker compose --build` a cada mudança de código.
 
-#### Pré-requisitos
-- Node.js (v14 ou superior)
-- npm ou yarn
+**📖 Documentação completa**: [README_EXECUTION.md](README_EXECUTION.md)
 
-#### Instalação
+## 🤖 Opções de IA Implementadas
 
-```bash
-# Clone o repositório
-git clone https://github.com/gcapecci/imagesProccess.git
+### Atual: Python + rembg
+- **Modelos**: U²-Net (Standard) e ISNet General Use (Premium)
+- **Premium**: Alpha Matting com warm-up automático
+- **Performance**: ~0.3-0.5s (Standard), ~1s (Premium)
+- **Formato de saída**: PNG com transparência
 
-# Entre no diretório
-cd imagesProccess
+### Alternativas Documentadas
+- **Node.js + TensorFlow.js**: Stack unificado
+- **Java + DJL**: Enterprise ready
+- **C# + ML.NET**: Microsoft ecosystem  
+- **Go + TensorFlow**: Performance máxima
+- **Rust + Candle**: Zero-cost abstractions
 
-# Instale as dependências
-npm install
+**📊 Comparação detalhada**: [AI_LANGUAGES_COMPARISON.md](AI_LANGUAGES_COMPARISON.md)
+
+## 📁 Estrutura do Projeto
+
+```
+imagesProccess/
+├── 🐳 docker-compose.yml          # Orquestração dos containers
+├── 📖 README_EXECUTION.md         # Guia de execução
+├── 📊 AI_LANGUAGES_COMPARISON.md  # Comparação de tecnologias AI
+│
+├── 🖥️ frontend/                   # Angular Frontend
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── src/app/
+│   │   ├── app.component.{ts,html,scss}
+│   │   ├── app.module.ts
+│   │   ├── app-routing.module.ts     # Roteamento (/, /background-remover, /image-enhancement, /smart-crop, /help)
+│   │   ├── components/
+│   │   │   ├── header/               # Navegação responsiva
+│   │   │   ├── footer/
+│   │   │   ├── model-selector/        # Seleção de modelo AI + botão Remove Background
+│   │   │   ├── image-uploader/        # Upload com drag & drop
+│   │   │   ├── image-processor/       # Remoção de fundo (preview + comparação inline)
+│   │   │   ├── enhancement-controls/  # Sliders de ajuste de imagem + botão Enhance
+│   │   │   ├── enhancement-processor/ # Preview + comparação inline de enhancement
+│   │   │   ├── crop-controls/         # Controles de crop (aspect ratio, dimensões)
+│   │   │   ├── crop-processor/        # Preview e resultado de crop
+│   │   │   └── result-comparison/     # Componente reutilizável de comparação
+│   │   ├── pages/
+│   │   │   ├── home/                  # Landing page
+│   │   │   ├── background-remover/    # Página de remoção de fundo
+│   │   │   ├── image-enhancement/     # Página de enhancement
+│   │   │   ├── smart-crop/            # Página de crop inteligente
+│   │   │   └── help/                  # Documentação e FAQ
+│   │   └── services/
+│   ├── src/assets/i18n/          # Arquivos de tradução (en.json, pt.json)
+│   └── nginx.conf
+│
+├── 🔧 backend/                    # Node.js API
+│   ├── Dockerfile  
+│   ├── package.json
+│   ├── server.js
+│   ├── routes/
+│   ├── services/
+│   └── middleware/
+│
+├── 🤖 ai-service/                 # Python AI Service
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── app.py (FastAPI)
+│   └── NODEJS_ALTERNATIVE.md
+│
+└── 🌐 nginx/                      # Proxy Reverso
+    ├── Dockerfile
+    ├── default.dev.conf            # Config Nginx para dev (WebSocket + port 4200)
+    └── conf.d/default.conf         # Config Nginx para produção
 ```
 
-#### Executar em Desenvolvimento
+## 📈 Performance & Escalabilidade
 
-```bash
-npm run dev
-```
+### Métricas Atuais
+- **Throughput**: ~50 imagens/minuto
+- **Latência média**: 2-5 segundos por imagem
+- **Suporte**: Imagens até 50MB
+- **Concorrência**: Múltiplas requisições simultâneas
 
-#### Build e Execução em Produção
+### Otimizações Implementadas
+- ✅ **Caching de modelos** AI
+- ✅ **Compressão** nginx 
+- ✅ **Rate limiting** inteligente
+- ✅ **Health checks** automáticos
+- ✅ **Error handling** robusto
 
-```bash
-# Compilar TypeScript
-npm run build
+## 🔒 Segurança
 
-# Executar
-npm start
-```
+- **Helmet.js**: Headers de segurança
+- **CORS** configurado adequadamente  
+- **Input validation** rigorosa
+- **File type** verification
+- **Rate limiting** anti-abuse
+- **Error handling** sem vazamento de dados
 
-A aplicação estará disponível em `http://localhost:3000`
+## 🚧 Roadmap
 
-## 📡 API Endpoints
+### Em Desenvolvimento
+- [ ] **Face Swap & Style Transfer**: Troca de rostos e transferência de estilo artístico
+- [ ] **Image Restoration**: Restauração de fotos antigas, remoção de arranhões, colorização
 
-### Upload de Imagem
-```
-POST /api/upload
-Content-Type: multipart/form-data
-Body: { image: <file> }
-```
+### Próximas Funcionalidades
+- [ ] **Autenticação JWT** 
+- [ ] **Cache Redis** para resultados
+- [ ] **Batch processing** otimizado
+- [ ] **WebSocket** para real-time progress
+- [ ] **Modelos AI customizados**
+- [ ] **Dashboard analytics**
+- [ ] **API versioning**
+- [ ] **CI/CD pipeline**
 
-### Processar Imagem
-```
-POST /api/process/:id
-Content-Type: application/json
-Body: {
-  width?: number,
-  height?: number,
-  format?: 'jpeg' | 'png' | 'webp',
-  quality?: number,
-  fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside',
-  grayscale?: boolean,
-  blur?: number,
-  rotate?: number
-}
-```
+### Otimizações Planejadas  
+- [ ] **GPU acceleration** (CUDA)
+- [ ] **CDN integration** 
+- [ ] **Load balancing** 
+- [ ] **Kubernetes** deployment
+- [ ] **Monitoring** avançado (Prometheus/Grafana)
 
-### Listar Imagens
-```
-GET /api/images
-```
+## 🏆 Vantagens Competitivas
 
-### Obter Imagem
-```
-GET /api/images/:id
-```
+### Técnicas
+- **Microserviços**: Easy scaling e manutenção
+- **containerização**: Deploy consistente
+- **API-first**: Integração com qualquer frontend
+- **Multi-formato**: JPG, PNG, WEBP, BMP, TIFF
 
-### Deletar Imagem
-```
-DELETE /api/images/:id
-```
+### Negócio
+- **Custo baixo**: Open source stack
+- **Time-to-market**: Rápido desenvolvimento  
+- **Escalabilidade**: Cloud-native architecture
+- **Flexibilidade**: Múltiplas opções de deploy
 
-### Health Check
-```
-GET /health
-```
+---
 
-## 🧪 Princípios da Clean Architecture Aplicados
+## 📞 Suporte
 
-### 1. **Dependency Rule (Regra da Dependência)**
-- As dependências sempre apontam para dentro
-- As camadas internas não conhecem as camadas externas
-- O domínio não depende de nada
+- **Issues**: Use GitHub Issues para bugs
+- **Features**: Use GitHub Discussions para ideias
+- **Documentation**: Consulte os arquivos .md do projeto
 
-### 2. **Dependency Inversion (Inversão de Dependência)**
-- Use cases dependem de interfaces (abstrações)
-- Implementações concretas estão na camada de infraestrutura
-- Exemplo: `ImageRepository` é uma interface no domínio, implementada como `FileSystemImageRepository` na infraestrutura
+---
 
-### 3. **Single Responsibility (Responsabilidade Única)**
-- Cada classe tem uma única responsabilidade
-- Controllers: lidar com HTTP
-- Use Cases: lógica de negócio
-- Repositories: persistência
+**🎯 Objetivo**: Democratizar o processamento de imagens com IA, oferecendo uma solução completa, escalável e fácil de usar para remoção de fundo em imagens.
 
-### 4. **Open/Closed (Aberto/Fechado)**
-- Fácil adicionar novos casos de uso sem modificar código existente
-- Fácil trocar implementações (ex: trocar Sharp por outra biblioteca)
-
-### 5. **Interface Segregation (Segregação de Interface)**
-- Interfaces específicas para cada necessidade
-- `ImageRepository` e `ImageProcessingService` são interfaces separadas
-
-## 🛠️ Tecnologias Utilizadas
-
-- **TypeScript**: Linguagem principal
-- **Express**: Framework web
-- **Sharp**: Processamento de imagens
-- **Multer**: Upload de arquivos
-- **UUID**: Geração de IDs únicos
-- **Docker**: Containerização e deployment
-
-## 🔧 Troubleshooting Docker
-
-### Erro: `npm ci` falha com "package-lock.json not found"
-
-Este erro ocorre quando o Docker não consegue encontrar o package-lock.json. Soluções:
-
-```bash
-# 1. Verifique se está no diretório correto
-pwd  # Deve estar em .../imagesProccess
-
-# 2. Verifique se os arquivos existem
-./verify-docker.sh
-
-# 3. Limpe o cache do Docker e rebuilde
-docker compose down
-docker builder prune -af
-docker compose build --no-cache
-docker compose up -d
-```
-
-### Erro: Referência a "frontend builder" ou "nginx" 
-
-Se você ver erros sobre stages "frontend builder" ou "nginx" que não existem:
-
-```bash
-# 1. Verifique se está usando o Dockerfile correto
-cat Dockerfile | head -5
-
-# 2. Certifique-se de não estar usando um docker-compose.yml customizado
-git status
-
-# 3. Se modificou os arquivos, restaure para a versão original
-git checkout Dockerfile docker-compose.yml
-```
-
-### Script de Verificação
-
-Execute o script de verificação para diagnosticar problemas:
-
-```bash
-chmod +x verify-docker.sh
-./verify-docker.sh
-```
-
-Este script verifica:
-- ✓ Arquivos necessários presentes
-- ✓ Estrutura de diretórios correta  
-- ✓ Docker e Docker Compose instalados
-
-### Mais Ajuda
-
-Para troubleshooting detalhado, veja [DOCKER_TROUBLESHOOTING.md](DOCKER_TROUBLESHOOTING.md)
-
-## 📝 Benefícios da Clean Architecture
-
-1. **Testabilidade**: Fácil criar testes unitários para use cases
-2. **Manutenibilidade**: Código organizado e fácil de entender
-3. **Flexibilidade**: Fácil trocar implementações (ex: mudar de Sharp para outra lib)
-4. **Independência de Framework**: Lógica de negócio não depende do Express
-5. **Escalabilidade**: Fácil adicionar novos recursos
-
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
-
-## 📄 Licença
-
-Este projeto está sob a licença ISC. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 👨‍💻 Autor
-
-Desenvolvido com ❤️ seguindo os princípios da Clean Architecture
+**⭐ Se este projeto foi útil, considere dar uma estrela no GitHub!**

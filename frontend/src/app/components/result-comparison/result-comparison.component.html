@@ -1,0 +1,34 @@
+<mat-expansion-panel class="results-panel" [expanded]="true">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon>compare</mat-icon>
+      {{ title }}
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div class="comparison">
+    <div class="image-container">
+      <h4>Original</h4>
+      <img [src]="originalImage" alt="Original" class="result-image" *ngIf="originalImage">
+      <p class="image-label">{{ originalLabel }}</p>
+    </div>
+
+    <mat-icon class="comparison-arrow">arrow_forward</mat-icon>
+
+    <div class="image-container">
+      <h4>{{ resultTitle }}</h4>
+      <img [src]="resultImage" alt="Result" class="result-image" *ngIf="resultImage">
+      <p class="image-label">{{ resultLabel }}</p>
+    </div>
+  </div>
+
+  <div class="download-section">
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="onDownload()">
+      <mat-icon>download</mat-icon>
+      {{ downloadLabel }}
+    </button>
+  </div>
+</mat-expansion-panel>

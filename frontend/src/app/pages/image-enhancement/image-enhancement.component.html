@@ -1,0 +1,48 @@
+<div class="image-enhancement-container">
+  <!-- Intro Section -->
+  <div class="intro-section">
+    <div class="intro-content">
+      <div class="icon-container">
+        <mat-icon>tune</mat-icon>
+      </div>
+      <div class="text-content">
+        <h1>{{ 'imageEnhancementPage.heroTitle' | translate }}</h1>
+        <p>
+          {{ 'imageEnhancementPage.heroDescription' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <app-image-uploader 
+    (imageUploaded)="onImageUploaded($event)"
+    (imageRemoved)="onImageRemoved()"
+    [isProcessing]="isProcessing">
+  </app-image-uploader>
+
+  <ng-container *ngIf="uploadedImage">
+    <div class="enhancement-grid" #enhancementSection>
+      <div class="grid-controls">
+        <app-enhancement-controls
+          (optionsChanged)="onOptionsChanged($event)"
+          (enhanceImage)="onEnhanceImage()"
+          [disabled]="isProcessing"
+          [isProcessing]="isProcessing"
+          [hasImage]="!!uploadedImage">
+        </app-enhancement-controls>
+      </div>
+
+      <div class="grid-processor">
+        <app-enhancement-processor
+          #processor
+          [image]="uploadedImage"
+          [enhancementOptions]="enhancementOptions"
+          (processingStart)="onProcessingStart()"
+          (processingComplete)="onProcessingComplete($event)"
+          (processingError)="onProcessingError($event)">
+        </app-enhancement-processor>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

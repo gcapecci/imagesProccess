@@ -1,0 +1,173 @@
+<div class="home-container">
+  <section class="hero-section">
+    <mat-icon class="hero-icon">auto_fix_high</mat-icon>
+    <h1>{{ 'home.heroTitle' | translate }}</h1>
+    <p class="hero-subtitle">
+      {{ 'home.heroSubtitle' | translate }}
+    </p>
+  </section>
+
+  <section class="features-section">
+    <div class="features-grid">
+      <mat-card class="feature-card" routerLink="/background-remover">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">layers_clear</mat-icon>
+          <mat-card-title>{{ 'home.features.backgroundRemover.title' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'home.features.backgroundRemover.subtitle' | translate }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            {{ 'home.features.backgroundRemover.description' | translate }}
+          </p>
+          <ul class="feature-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.backgroundRemover.bullets.models' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.backgroundRemover.bullets.quality' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.backgroundRemover.bullets.speed' | translate }}</span>
+            </li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/background-remover">
+            <mat-icon>arrow_forward</mat-icon>
+            {{ 'home.features.backgroundRemover.cta' | translate }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card" routerLink="/image-enhancement">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">palette</mat-icon>
+          <mat-card-title>{{ 'home.features.imageEnhancement.title' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'home.features.imageEnhancement.subtitle' | translate }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            {{ 'home.features.imageEnhancement.description' | translate }}
+          </p>
+          <ul class="feature-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.imageEnhancement.bullets.auto' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.imageEnhancement.bullets.manual' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.imageEnhancement.bullets.noise' | translate }}</span>
+            </li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/image-enhancement">
+            <mat-icon>arrow_forward</mat-icon>
+            {{ 'home.features.imageEnhancement.cta' | translate }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card" routerLink="/smart-crop">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">crop</mat-icon>
+          <mat-card-title>{{ 'home.features.smartCrop.title' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'home.features.smartCrop.subtitle' | translate }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            {{ 'home.features.smartCrop.description' | translate }}
+          </p>
+          <ul class="feature-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.smartCrop.bullets.faces' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.smartCrop.bullets.ratios' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'home.features.smartCrop.bullets.control' | translate }}</span>
+            </li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/smart-crop">
+            <mat-icon>arrow_forward</mat-icon>
+            {{ 'home.features.smartCrop.cta' | translate }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card coming-soon">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">face</mat-icon>
+          <mat-card-title>{{ 'home.features.faceSwap.title' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'home.features.faceSwap.subtitle' | translate }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            {{ 'home.features.faceSwap.description' | translate }}
+          </p>
+          <mat-chip class="coming-soon-chip">{{ 'home.features.faceSwap.badge' | translate }}</mat-chip>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card coming-soon">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">restore</mat-icon>
+          <mat-card-title>{{ 'home.features.restoration.title' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'home.features.restoration.subtitle' | translate }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            {{ 'home.features.restoration.description' | translate }}
+          </p>
+          <mat-chip class="coming-soon-chip">{{ 'home.features.restoration.badge' | translate }}</mat-chip>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </section>
+
+  <section class="info-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>info</mat-icon>
+        <mat-card-title>{{ 'home.info.title' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="steps-grid">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>{{ 'home.info.steps.uploadTitle' | translate }}</h3>
+            <p>{{ 'home.info.steps.uploadText' | translate }}</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>{{ 'home.info.steps.modelTitle' | translate }}</h3>
+            <p>{{ 'home.info.steps.modelText' | translate }}</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>{{ 'home.info.steps.processTitle' | translate }}</h3>
+            <p>{{ 'home.info.steps.processText' | translate }}</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <h3>{{ 'home.info.steps.downloadTitle' | translate }}</h3>
+            <p>{{ 'home.info.steps.downloadText' | translate }}</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

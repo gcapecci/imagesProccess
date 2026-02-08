@@ -1,0 +1,194 @@
+.header-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 64px;
+}
+
+.toolbar-content {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  gap: 16px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.logo-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.app-title {
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+  
+  a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    
+    mat-icon {
+      margin-right: 4px;
+    }
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    &.active {
+      background-color: rgba(255, 255, 255, 0.2);
+      font-weight: 500;
+    }
+  }
+}
+
+.language-select {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+
+  .language-field {
+    width: 130px;
+    
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      background-color: rgba(255, 255, 255, 0.15) !important;
+      border-radius: 4px;
+      padding-top: 0;
+    }
+
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+
+    ::ng-deep .mat-mdc-form-field-infix {
+      padding: 8px 0;
+      min-height: 40px;
+    }
+
+    ::ng-deep .mat-mdc-select {
+      color: white !important;
+      font-size: 14px;
+    }
+
+    ::ng-deep .mat-mdc-select-value-text {
+      color: white !important;
+    }
+
+    ::ng-deep .mat-mdc-select-arrow {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    ::ng-deep .mdc-notched-outline {
+      display: none;
+    }
+  }
+}
+
+.mobile-language-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  
+  mat-icon {
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  .mobile-lang-select {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+.mobile-menu-button {
+  display: none;
+  color: white;
+}
+
+// Responsive
+@media (max-width: 960px) {
+  .nav-links {
+    a .nav-text {
+      display: none;
+    }
+  }
+  
+  .language-select {
+    .language-field {
+      width: 100px;
+      
+      ::ng-deep .mat-mdc-select-value-text {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .toolbar-content {
+    padding: 0 12px;
+  }
+
+  .app-title {
+    font-size: 1.2rem;
+  }
+  
+  .nav-links {
+    display: none;
+  }
+  
+  .language-select {
+    display: none;
+  }
+  
+  .mobile-menu-button {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .toolbar-content {
+    padding: 0 8px;
+  }
+
+  .app-title {
+    font-size: 1rem;
+  }
+
+  .logo-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+

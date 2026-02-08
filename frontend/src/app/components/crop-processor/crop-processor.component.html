@@ -1,0 +1,81 @@
+<div class="processor-container">
+  <div class="panel-header">
+    <mat-icon>{{ processedImageUrl ? 'check_circle' : 'crop' }}</mat-icon>
+    <h3>{{ processedImageUrl ? 'Crop Results' : 'Image Preview & Crop' }}</h3>
+  </div>
+  
+  <div class="panel-content">
+    <!-- Image Preview (shown when no result) -->
+    <div class="image-preview" *ngIf="!processedImageUrl">
+      <img 
+        *ngIf="imagePreview" 
+        [src]="imagePreview" 
+        alt="Uploaded image preview"
+        class="preview-image"
+      />
+      <p *ngIf="!imagePreview" class="no-image-text">
+        <mat-icon>image</mat-icon>
+        Upload an image to preview
+      </p>
+
+      <!-- Crop Area Indicator -->
+      <div *ngIf="imagePreview && !cropOptions.autoDetect" class="crop-info">
+        <mat-icon>crop_free</mat-icon>
+        <span>{{ cropOptions.width }}×{{ cropOptions.height }}px</span>
+        <span *ngIf="cropOptions.aspectRatio !== 'custom'" class="ratio-badge">
+          {{ cropOptions.aspectRatio }}
+        </span>
+      </div>
+
+      <div *ngIf="imagePreview && cropOptions.autoDetect" class="auto-detect-badge">
+        <mat-icon>auto_awesome</mat-icon>
+        <span>AI Auto-Detect Active</span>
+      </div>
+    </div>
+
+    <!-- Results View (replaces preview) -->
+    <div class="results-view" *ngIf="processedImageUrl">
+      <div class="comparison-container">
+        <div class="image-side">
+          <label>Original</label>
+          <img [src]="imagePreview" alt="Original" />
+        </div>
+        
+        <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+        
+        <div class="image-side">
+          <label>Cropped</label>
+          <img [src]="processedImageUrl" alt="Cropped" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Bar (shown during processing) -->
+    <div class="panel-footer" *ngIf="isProcessing">
+      <div class="progress-container">
+        <div class="progress-info">
+          <mat-icon class="progress-icon">{{ getProgressIcon() }}</mat-icon>
+          <span class="progress-text">{{ progress.status }} {{ progress.progress }}%</span>
+        </div>
+        <mat-progress-bar 
+          mode="determinate" 
+          [value]="progress.progress"
+          color="accent"
+        ></mat-progress-bar>
+      </div>
+    </div>
+
+    <!-- Download Button (shown when result exists) -->
+    <div class="panel-footer" *ngIf="processedImageUrl && !isProcessing">
+      <button 
+        mat-raised-button 
+        color="accent"
+        (click)="downloadImage()"
+        class="download-button"
+      >
+        <mat-icon>download</mat-icon>
+        Download Cropped Image
+      </button>
+    </div>
+  </div>
+</div>

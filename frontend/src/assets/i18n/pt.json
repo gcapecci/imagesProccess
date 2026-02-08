@@ -1,0 +1,124 @@
+{
+  "app": {
+    "title": "AI Image Processor"
+  },
+  "nav": {
+    "backgroundRemover": "Removedor de Fundo",
+    "imageEnhancement": "Aprimoramento de Imagem",
+    "smartCrop": "Corte Inteligente",
+    "help": "Ajuda"
+  },
+  "header": {
+    "language": "Idioma"
+  },
+  "home": {
+    "heroTitle": "Bem-vindo ao AI Image Processor",
+    "heroSubtitle": "Transforme suas imagens com ferramentas avançadas de IA",
+    "features": {
+      "backgroundRemover": {
+        "title": "Removedor de Fundo",
+        "subtitle": "Remova fundos instantaneamente",
+        "description": "Use modelos de IA avançados (U²-Net e ISNet) para remover automaticamente o fundo das suas imagens com precisão e qualidade.",
+        "bullets": {
+          "models": "Múltiplos modelos de IA",
+          "quality": "Resultados de alta qualidade",
+          "speed": "Processamento rápido"
+        },
+        "cta": "Usar agora"
+      },
+      "imageEnhancement": {
+        "title": "Aprimoramento de Imagem",
+        "subtitle": "Melhore suas imagens com IA",
+        "description": "Ajuste brilho, contraste, saturação e nitidez com ferramentas impulsionadas por IA. Use o auto-enhance para otimização em um clique.",
+        "bullets": {
+          "auto": "Otimização automática com IA",
+          "manual": "Ajuste fino manual",
+          "noise": "Redução de ruído"
+        },
+        "cta": "Usar agora"
+      },
+      "smartCrop": {
+        "title": "Corte Inteligente",
+        "subtitle": "Recorte com IA",
+        "description": "Recorte e redimensione imagens com controle manual ou detecção automática via IA. Recorte perfeito sempre, com foco inteligente.",
+        "bullets": {
+          "faces": "Detecção automática de rostos",
+          "ratios": "Múltiplas proporções",
+          "control": "Controle manual preciso"
+        },
+        "cta": "Usar agora"
+      },
+      "faceSwap": {
+        "title": "Troca de Rostos & Style Transfer",
+        "subtitle": "Em breve",
+        "description": "Troque rostos entre imagens e aplique estilos artísticos com redes neurais avançadas para transformações criativas.",
+        "badge": "Em breve"
+      },
+      "restoration": {
+        "title": "Restauração de Imagens",
+        "subtitle": "Em breve",
+        "description": "Restaure fotos antigas ou danificadas, remova riscos e colorize imagens em preto e branco com restauração guiada por IA.",
+        "badge": "Em breve"
+      }
+    },
+    "info": {
+      "title": "Como Funciona",
+      "steps": {
+        "uploadTitle": "Upload",
+        "uploadText": "Escolha ou arraste e solte sua imagem",
+        "modelTitle": "Selecione o Modelo",
+        "modelText": "Escolha a qualidade do modelo de IA",
+        "processTitle": "Processar",
+        "processText": "A IA remove o fundo",
+        "downloadTitle": "Download",
+        "downloadText": "Baixe sua imagem processada"
+      }
+    }
+  },
+  "backgroundRemoverPage": {
+    "heroTitle": "Removedor de Fundo com IA",
+    "heroDescription": "Remova fundos das suas imagens usando tecnologia avançada de IA. Escolha o melhor modelo para o seu caso de uso e obtenha recortes limpos prontos para uso."
+  },
+  "imageEnhancementPage": {
+    "heroTitle": "Aprimoramento de Imagem com IA",
+    "heroDescription": "Aprimore suas imagens com ajustes de brilho, contraste, saturação e nitidez impulsionados por IA. Use o auto-enhance para otimização em um clique ou ajuste cada parâmetro manualmente."
+  },
+  "smartCropPage": {
+    "heroTitle": "Corte Inteligente",
+    "heroDescription": "Recorte e redimensione suas imagens com controle manual ou detecção automática por IA. Selecione dimensões personalizadas, escolha proporções ou deixe a IA encontrar o corte perfeito.",
+    "info": {
+      "autoDetectDescription": "Deixe a IA detectar automaticamente rostos e áreas importantes para um corte ideal",
+      "aspectDescription": "Escolha entre proporções populares como 16:9, 4:3, 1:1 ou use dimensões personalizadas",
+      "controlDescription": "Ajuste largura e altura com sliders de precisão para resultados perfeitos em pixels",
+      "qualityTitle": "Mantenha a Qualidade",
+      "qualityDescription": "Algoritmos avançados preservam a qualidade da imagem durante o corte e o redimensionamento"
+    }
+  },
+  "helpPage": {
+    "heroTitle": "Ajuda & Documentação",
+    "heroSubtitle": "Aprenda a usar o AI Image Processor de forma eficiente",
+    "sections": {
+      "backgroundRemover": {
+        "title": "Removedor de Fundo",
+        "description": "Como remover fundos de imagens"
+      },
+      "technicalInfo": {
+        "title": "Informações Técnicas",
+        "description": "Requisitos de sistema e especificações"
+      },
+      "troubleshooting": {
+        "title": "Solução de Problemas",
+        "description": "Problemas comuns e soluções"
+      },
+      "faq": {
+        "title": "Perguntas Frequentes"
+      }
+    },
+    "contact": {
+      "title": "Ainda precisa de ajuda?",
+      "subtitle": "Estamos aqui para ajudar",
+      "button": "Falar com o suporte",
+      "text": "Se você não encontrou a resposta para sua dúvida, entre em contato com nossa equipe de suporte."
+    }
+  }
+}

@@ -1,0 +1,57 @@
+@import '../../../styles/intro-hero';
+
+.background-remover-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.intro-section {
+  @extend .intro-hero;
+}
+
+.background-remover-container app-image-uploader,
+.background-remover-container app-model-selector,
+.background-remover-container app-image-processor {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.remover-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+
+.grid-controls,
+.grid-processor {
+  min-width: 0;
+
+  ::ng-deep .section-panel {
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ::ng-deep .mat-expansion-panel-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ::ng-deep .mat-expansion-panel-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .background-remover-container {
+    padding: 0 16px;
+  }
+}
