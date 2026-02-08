@@ -22,6 +22,15 @@ export interface EnhancementOptions {
   denoise: boolean;
 }
 
+export interface CropOptions {
+  width: number;
+  height: number;
+  aspectRatio: string;
+  autoDetect: boolean;
+  x?: number;
+  y?: number;
+}
+
 export interface UploadProgress {
   progress: number;
   status: 'uploading' | 'processing' | 'downloading' | 'complete' | 'error';
@@ -196,6 +205,101 @@ export class ImageService {
               progress: 100,
               status: 'complete',
               message: 'Enhancement complete!'
+            });
+
+            return {
+              success: true,
+              processedImage: event.body as Blob,
+              originalSize: file.size,
+              processedSize: event.body?.size || 0,
+              processingTime: event.headers.get('X-Processing-Time') || 'unknown'
+            };
+
+          default:
+            return { success: false };
+        }
+      }),
+      catchError(error => {
+        this.uploadProgressSubject.next({
+          progress: 0,
+          status: 'error',
+          message: this.getErrorMessage(error)
+        });
+        
+        return throwError(() => ({
+          success: false,
+          error: this.getErrorMessage(error)
+        }));
+      })
+    );
+  }
+
+  /**
+   * Crop image with manual or auto-detect modes
+   */
+  cropImage(file: File, options: CropOptions): Observable<ProcessingResult> {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const params = new URLSearchParams({
+      width: options.width.toString(),
+      height: options.height.toString(),
+      auto_detect: options.autoDetect.toString()
+    });
+
+    // Add x, y coordinates if provided (manual crop position)
+    if (options.x !== undefined) {
+      params.append('x', options.x.toString());
+    }
+    if (options.y !== undefined) {
+      params.append('y', options.y.toString());
+    }
+
+    return this.http.post(`${this.baseUrl}/images/crop?${params}`, formData, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'blob'
+    }).pipe(
+      timeout(120000),
+      map((event: HttpEvent<Blob>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            if (event.total) {
+              const progress = Math.round(100 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress: progress * 0.3,
+                status: 'uploading',
+                message: 'Uploading image...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Sent:
+            this.uploadProgressSubject.next({
+              progress: 35,
+              status: 'processing',
+              message: options.autoDetect 
+                ? 'AI detecting important areas...' 
+                : 'Cropping image...'
+            });
+            return { success: false };
+
+          case HttpEventType.DownloadProgress:
+            if (event.total) {
+              const progress = 35 + Math.round(65 * event.loaded / event.total);
+              this.uploadProgressSubject.next({
+                progress,
+                status: 'downloading',
+                message: 'Receiving cropped image...'
+              });
+            }
+            return { success: false };
+
+          case HttpEventType.Response:
+            this.uploadProgressSubject.next({
+              progress: 100,
+              status: 'complete',
+              message: 'Crop complete!'
             });
 
             return {

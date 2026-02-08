@@ -1,0 +1,168 @@
+.smart-crop-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.intro-section {
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 40px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+  .intro-content {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: 900px;
+  }
+
+  .icon-container {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  .text-content {
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+  }
+}
+
+// Upload Section
+app-image-uploader {
+  display: block;
+  margin-bottom: 24px;
+}
+
+// Crop Settings & Preview Grid
+.crop-grid {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  align-items: stretch;
+}
+
+// Info Cards
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+
+  .info-card {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #667eea;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #666;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .crop-grid {
+    grid-template-columns: 320px 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .smart-crop-container {
+    padding: 16px;
+  }
+
+  .intro-section {
+    padding: 24px;
+    margin-bottom: 24px;
+
+    .intro-content {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .icon-container {
+      width: 64px;
+      height: 64px;
+
+      mat-icon {
+        font-size: 36px;
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    .text-content {
+      h1 {
+        font-size: 24px;
+      }
+
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .crop-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .info-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+}

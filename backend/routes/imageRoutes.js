@@ -130,6 +130,59 @@ router.post('/enhance', upload.single('image'), validateImage, async (req, res) 
 });
 
 /**
+ * POST /api/images/crop
+ * Crop and resize image with manual or auto-detect modes
+ */
+router.post('/crop', upload.single('image'), validateImage, async (req, res) => {
+  try {
+    const { buffer, mimetype, originalname, size } = req.file;
+    const { width, height, x, y, auto_detect } = req.query;
+    
+    console.log(`📐 Cropping image: ${originalname} to ${width}x${height}, auto_detect=${auto_detect}`);
+    
+    // Process image through AI service
+    const processedImage = await imageService.cropImage({
+      buffer,
+      mimetype,
+      originalname,
+      width: parseInt(width) || 800,
+      height: parseInt(height) || 600,
+      x: x ? parseInt(x) : undefined,
+      y: y ? parseInt(y) : undefined,
+      auto_detect: auto_detect === 'true'
+    });
+
+    // Set appropriate headers
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Disposition': `attachment; filename="cropped_${originalname.replace(/\.[^/.]+$/, '')}.png"`,
+      'X-Processing-Time': processedImage.processingTime,
+      'X-Crop-Box': processedImage.cropBox || '',
+      'X-Original-Size': size,
+      'X-Processed-Size': processedImage.buffer.length
+    });
+
+    // Send cropped image
+    res.send(processedImage.buffer);
+    
+  } catch (error) {
+    console.error('❌ Error cropping image:', error);
+    
+    if (error.message.includes('AI service')) {
+      res.status(503).json({
+        error: 'AI service temporarily unavailable',
+        message: 'Please try again in a few moments'
+      });
+    } else {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: 'Failed to crop image'
+      });
+    }
+  }
+});
+
+/**
  * POST /api/images/process-batch
  * Process multiple images in batch
  */

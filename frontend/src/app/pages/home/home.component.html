@@ -77,16 +77,65 @@
         </mat-card-actions>
       </mat-card>
 
-      <mat-card class="feature-card coming-soon">
+      <mat-card class="feature-card" routerLink="/smart-crop">
         <mat-card-header>
           <mat-icon mat-card-avatar class="feature-icon">crop</mat-icon>
           <mat-card-title>Smart Crop</mat-card-title>
+          <mat-card-subtitle>AI-powered cropping</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Crop and resize images with manual control or AI-powered auto-detection.
+            Perfect crop every time with intelligent focus.
+          </p>
+          <ul class="feature-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>AI auto-detect faces</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>Multiple aspect ratios</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>Precise manual control</span>
+            </li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" routerLink="/smart-crop">
+            <mat-icon>arrow_forward</mat-icon>
+            Try Now
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card coming-soon">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">face</mat-icon>
+          <mat-card-title>Face Swap & Style Transfer</mat-card-title>
           <mat-card-subtitle>Coming Soon</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
           <p>
-            Automatically crop and resize images with intelligent focus 
-            on important elements.
+            Swap faces between images and apply artistic styles with 
+            advanced neural networks for creative transformations.
+          </p>
+          <mat-chip class="coming-soon-chip">Coming Soon</mat-chip>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card coming-soon">
+        <mat-card-header>
+          <mat-icon mat-card-avatar class="feature-icon">restore</mat-icon>
+          <mat-card-title>Image Restoration</mat-card-title>
+          <mat-card-subtitle>Coming Soon</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Restore old or damaged photos, remove scratches, and colorize 
+            black & white images with AI-powered restoration.
           </p>
           <mat-chip class="coming-soon-chip">Coming Soon</mat-chip>
         </mat-card-content>

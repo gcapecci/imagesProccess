@@ -1,0 +1,111 @@
+<mat-expansion-panel class="section-panel" [expanded]="true">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon>crop</mat-icon>
+      Crop Settings
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div class="panel-content">
+    <div class="panel-body">
+      <!-- Auto Detect Toggle -->
+      <div class="auto-detect-section">
+        <mat-slide-toggle 
+          [(ngModel)]="autoDetect"
+          (change)="onAutoDetectToggle()"
+          [disabled]="disabled"
+          color="primary">
+          <div class="toggle-label">
+            <mat-icon>auto_fix_high</mat-icon>
+            <span>Smart Auto-Detect</span>
+          </div>
+        </mat-slide-toggle>
+        <p class="toggle-description">
+          Automatically detect and crop around important elements (faces, objects)
+        </p>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Aspect Ratio -->
+      <div class="control-section" [class.disabled-section]="autoDetect">
+        <div class="control-header">
+          <mat-icon>aspect_ratio</mat-icon>
+          <span class="control-label">Aspect Ratio</span>
+        </div>
+        <mat-radio-group 
+          [(ngModel)]="aspectRatio" 
+          (change)="onAspectRatioChange()"
+          [disabled]="disabled || autoDetect"
+          class="radio-group">
+          <mat-radio-button *ngFor="let ar of aspectRatios" [value]="ar.value" class="radio-button">
+            {{ ar.label }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Dimensions -->
+      <div class="dimensions-section" [class.disabled-section]="autoDetect">
+        <div class="dimension-group">
+          <div class="control-header">
+            <mat-icon>width</mat-icon>
+            <span class="control-label">Width</span>
+            <span class="control-value">{{ width }}px</span>
+          </div>
+          <mat-slider 
+            [min]="100" 
+            [max]="2000" 
+            [step]="10"
+            [disabled]="disabled || autoDetect"
+            class="full-width-slider">
+            <input matSliderThumb [(ngModel)]="width" (valueChange)="onWidthChange()">
+          </mat-slider>
+        </div>
+
+        <div class="dimension-group">
+          <div class="control-header">
+            <mat-icon>height</mat-icon>
+            <span class="control-label">Height</span>
+            <span class="control-value">{{ height }}px</span>
+          </div>
+          <mat-slider 
+            [min]="100" 
+            [max]="2000" 
+            [step]="10"
+            [disabled]="disabled || autoDetect"
+            class="full-width-slider">
+            <input matSliderThumb [(ngModel)]="height" (valueChange)="onHeightChange()">
+          </mat-slider>
+        </div>
+      </div>
+    </div>
+
+    <!-- Crop & Reset Buttons -->
+    <div class="panel-footer">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        [disabled]="!hasImage || isProcessing"
+        (click)="cropImage.emit()"
+        class="crop-button"
+      >
+        <mat-icon>crop</mat-icon>
+        <span *ngIf="!isProcessing">Crop Image</span>
+        <span *ngIf="isProcessing">Processing...</span>
+      </button>
+      
+      <button 
+        mat-stroked-button 
+        color="warn"
+        [disabled]="disabled"
+        (click)="resetAll()"
+        class="reset-button"
+      >
+        <mat-icon>restart_alt</mat-icon>
+        Reset All
+      </button>
+    </div>
+  </div>
+</mat-expansion-panel>

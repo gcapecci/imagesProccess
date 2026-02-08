@@ -20,10 +20,11 @@
 - ✅ **Upload de Imagens**: Drag & drop com auto-hide da drop zone ao carregar imagem
 - ✅ **IA Avançada**: Remoção de fundo usando U²-Net (Standard) e ISNet (Premium com Alpha Matting)
 - ✅ **Image Enhancement**: Ajuste de brilho, contraste, saturação e nitidez com auto-enhance AI
+- ✅ **Smart Crop**: Crop inteligente com AI auto-detect de faces ou controle manual preciso
 - ✅ **Seleção de Modelo**: Escolha entre qualidade Standard e Premium antes do processamento
-- ✅ **Preview em Tempo Real**: Comparação antes/depois com resultado colapsável
+- ✅ **Preview em Tempo Real**: Comparação antes/depois com resultado em tempo real
 - ✅ **Download Otimizado**: PNG com transparência
-- ✅ **Multi-Page SPA**: Navegação entre Home, Background Remover, Image Enhancement e Help
+- ✅ **Multi-Page SPA**: Navegação entre Home, Background Remover, Image Enhancement, Smart Crop e Help
 - ✅ **Seções Colapsáveis**: Toggle expand/collapse em cada seção (mat-expansion-panel)
 - ✅ **Menu Responsivo**: Navegação adaptável para desktop e mobile
 - ✅ **API RESTful**: Integração com outros sistemas
@@ -52,8 +53,9 @@
 - **Python 3.11** + FastAPI
 - **rembg** para remoção de fundo
 - **Pillow (ImageEnhance/ImageFilter)** para image enhancement
+- **OpenCV** para face detection e smart crop
 - **U²-Net** model (SOTA quality)
-- **OpenCV** para processamento
+- **Haar Cascade** para detecção de faces
 
 ### Infraestrutura
 - **Docker & Docker Compose** com **profiles** (dev/prod)
@@ -132,11 +134,15 @@ imagesProccess/
 │   │   │   ├── image-uploader/        # Upload com drag & drop
 │   │   │   ├── image-processor/       # Processamento e resultado
 │   │   │   ├── enhancement-controls/  # Sliders de ajuste de imagem
-│   │   │   └── enhancement-processor/ # Processamento de enhancement
+│   │   │   ├── enhancement-processor/ # Processamento de enhancement
+│   │   │   ├── crop-controls/         # Controles de crop (aspect ratio, dimensões)
+│   │   │   ├── crop-processor/        # Preview e resultado de crop
+│   │   │   └── result-comparison/     # Componente reutilizável de comparação
 │   │   ├── pages/
 │   │   │   ├── home/                  # Landing page
 │   │   │   ├── background-remover/    # Página de remoção de fundo
 │   │   │   ├── image-enhancement/     # Página de enhancement
+│   │   │   ├── smart-crop/            # Página de crop inteligente
 │   │   │   └── help/                  # Documentação e FAQ
 │   │   └── services/
 │   └── nginx.conf
@@ -186,6 +192,10 @@ imagesProccess/
 - **Error handling** sem vazamento de dados
 
 ## 🚧 Roadmap
+
+### Em Desenvolvimento
+- [ ] **Face Swap & Style Transfer**: Troca de rostos e transferência de estilo artístico
+- [ ] **Image Restoration**: Restauração de fotos antigas, remoção de arranhões, colorização
 
 ### Próximas Funcionalidades
 - [ ] **Autenticação JWT** 

@@ -188,6 +188,78 @@ class ImageService {
   }
 
   /**
+   * Crop image with manual or auto-detect modes
+   */
+  async cropImage({ buffer, mimetype, originalname, width = 800, height = 600, x, y, auto_detect = false }) {
+    const startTime = Date.now();
+    
+    try {
+      const formData = new FormData();
+      formData.append('image', buffer, {
+        filename: originalname,
+        contentType: mimetype
+      });
+
+      // Build query params
+      const params = new URLSearchParams({
+        width: width.toString(),
+        height: height.toString(),
+        auto_detect: auto_detect.toString()
+      });
+
+      if (x !== undefined) {
+        params.append('x', x.toString());
+      }
+      if (y !== undefined) {
+        params.append('y', y.toString());
+      }
+
+      console.log(`📐 Sending image to AI service: ${this.aiServiceUrl}/crop?${params}`);
+      
+      const response = await axios.post(
+        `${this.aiServiceUrl}/crop?${params}`,
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
+          },
+          timeout: 60000,
+          responseType: 'arraybuffer'
+        }
+      );
+
+      const processingTime = Date.now() - startTime;
+      this.updateStats(processingTime, false);
+      
+      console.log(`✅ Image cropped successfully in ${processingTime}ms`);
+      
+      return {
+        buffer: response.data,
+        processingTime: `${processingTime}ms`,
+        cropBox: response.headers['x-crop-box'] || '',
+        originalSize: buffer.length,
+        processedSize: response.data.length
+      };
+
+    } catch (error) {
+      const processingTime = Date.now() - startTime;
+      this.updateStats(processingTime, true);
+      
+      console.error('❌ AI crop error:', error.message);
+      
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('AI service is not available');
+      } else if (error.response) {
+        throw new Error(`AI service error: ${error.response.status} - ${error.response.statusText}`);
+      } else if (error.code === 'ECONNABORTED') {
+        throw new Error('AI service timeout');
+      } else {
+        throw new Error(`AI service communication error: ${error.message}`);
+      }
+    }
+  }
+
+  /**
    * Get processing statistics
    */
   async getStats() {

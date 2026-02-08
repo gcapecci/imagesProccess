@@ -36,6 +36,8 @@ import { ImageProcessorComponent } from './components/image-processor/image-proc
 import { ModelSelectorComponent } from './components/model-selector/model-selector.component';
 import { EnhancementControlsComponent } from './components/enhancement-controls/enhancement-controls.component';
 import { EnhancementProcessorComponent } from './components/enhancement-processor/enhancement-processor.component';
+import { CropControlsComponent } from './components/crop-controls/crop-controls.component';
+import { CropProcessorComponent } from './components/crop-processor/crop-processor.component';
 import { ResultComparisonComponent } from './components/result-comparison/result-comparison.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -44,6 +46,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { HomeComponent } from './pages/home/home.component';
 import { BackgroundRemoverComponent } from './pages/background-remover/background-remover.component';
 import { ImageEnhancementComponent } from './pages/image-enhancement/image-enhancement.component';
+import { SmartCropComponent } from './pages/smart-crop/smart-crop.component';
 import { HelpComponent } from './pages/help/help.component';
 
 // Services
@@ -58,12 +61,15 @@ import { NotificationService } from './services/notification.service';
     ModelSelectorComponent,
     EnhancementControlsComponent,
     EnhancementProcessorComponent,
+    CropControlsComponent,
+    CropProcessorComponent,
     ResultComparisonComponent,
     HeaderComponent,
     FooterComponent,
     HomeComponent,
     BackgroundRemoverComponent,
     ImageEnhancementComponent,
+    SmartCropComponent,
     HelpComponent
   ],
   imports: [

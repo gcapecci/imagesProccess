@@ -7,6 +7,91 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2026-02-08 (Smart Crop Feature — Complete Implementation)
+
+#### Nova Feature: Smart Crop
+Implementada feature completa de crop inteligente com controle manual e detecção AI de áreas importantes.
+
+**Componentes criados:**
+- **CropControlsComponent** (`components/crop-controls/`):
+  - Interface `CropOptions` (width, height, aspectRatio, autoDetect, x?, y?)
+  - Presets de aspect ratio: Custom, 16:9, 4:3, 1:1, 9:16, 3:4
+  - Sliders para width/height (100-2000px) com lógica de manutenção de ratio
+  - Toggle "Auto-Detect" que desabilita controles manuais quando ativo (`.disabled-section { opacity: 0.4 }`)
+  - Botão "Reset All" para restaurar valores padrão
+  - Estrutura flex panel-content/body/footer seguindo padrão estabelecido
+
+- **CropProcessorComponent** (`components/crop-processor/`):
+  - Preview da imagem com overlay visual indicando dimensões do crop (`crop-info`)
+  - Badge "AI Auto-Detect Active" quando modo AI está habilitado
+  - Botão "Crop Image" com progress bar durante processamento
+  - Indicadores de status (uploading → processing → downloading → complete)
+  - Reutiliza `ResultComparisonComponent` para exibir resultado cropped
+  - Método público `scrollToResults()` para auto-scroll após processar
+  - Gerenciamento de memória com `URL.revokeObjectURL()` no `ngOnDestroy`
+
+- **SmartCropComponent** (`pages/smart-crop/`):
+  - Intro section com gradient background e ícone crop
+  - Grid side-by-side (350px controls + 1fr processor) seguindo padrão Image Enhancement
+  - 4 info cards quando nenhuma imagem foi carregada (AI Auto-Detect, Multiple Aspect Ratios, Precise Control, Maintain Quality)
+  - Orquestração dos componentes com state management local
+  - Auto-scroll para resultado após processar via `ViewChild(CropProcessorComponent)`
+  - Responsive com grid colapsando para 1 coluna em mobile
+
+**Backend/AI Service:**
+- **AI Service** (`ai-service/app.py`):
+  - Endpoint `POST /crop` com query params: `width`, `height`, `x`, `y`, `auto_detect`
+  - **Auto-detect mode**: Usa OpenCV Haar Cascade para detectar faces (`haarcascade_frontalface_default.xml`)
+  - Fallback para centro da imagem quando nenhuma face é detectada ou OpenCV não está disponível
+  - Calcula crop box centered no ponto detectado, com ajuste para boundaries da imagem
+  - Redimensiona imagem se crop exceder tamanho original (mantém aspect ratio)
+  - Retorna PNG otimizado com headers personalizados: `X-Processing-Time`, `X-Crop-Box`, `X-Original-Size`, `X-Cropped-Size`
+  - Atualização de statistics (total_processed, model_usage["crop"])
+
+- **Backend Node.js** (`backend/routes/imageRoutes.js` + `backend/services/imageService.js`):
+  - Rota `POST /api/images/crop` com validação de imagem
+  - Proxy para AI service com timeout de 60s
+  - Método `cropImage()` no `ImageService` com tratamento de erros
+  - Header `Content-Disposition` com nome de arquivo modificado (`cropped_<filename>.png`)
+
+**Frontend Service:**
+- **ImageService** (`image.service.ts`):
+  - Interface `CropOptions` exportada (matching backend params)
+  - Método `cropImage(file: File, options: CropOptions): Observable<ProcessingResult>`
+  - Progress tracking via `HttpEventType` (Upload → Processing → Download → Complete)
+  - Mensagens contextuais: "AI detecting important areas..." vs "Cropping image..."
+  - Timeout de 2 minutos, error handling com mensagens customizadas
+
+**Routing & Navegação:**
+- Rota `/smart-crop` adicionada em `app-routing.module.ts`
+- Link "Smart Crop" no header desktop com ícone `crop`
+- Link "Smart Crop" no mobile menu (MatMenu)
+- Componente registrado no `AppModule` (declarations + imports)
+
+**Home Page Updates:**
+- **Card Smart Crop ativado**:
+  - Removido badge "Coming Soon"
+  - Adicionado `routerLink="/smart-crop"` e botão "Try Now"
+  - Feature list: AI auto-detect faces, Multiple aspect ratios, Precise manual control
+  - Ícone crop com gradiente purple
+
+- **Novos Cards "Coming Soon"**:
+  1. **Face Swap & Style Transfer**:
+     - Ícone `face`, descrição: "Swap faces between images and apply artistic styles with advanced neural networks"
+     - Badge "Coming Soon", botão disabled
+
+  2. **Image Restoration**:
+     - Ícone `restore`, descrição: "Restore old or damaged photos, remove scratches, and colorize black & white images"
+     - Badge "Coming Soon", botão disabled
+
+**Arquitetura & Qualidade:**
+- Seguiu padrão estabelecido de componentes de apresentação puros
+- Comunicação via `@Input/@Output`, sem dependências diretas entre componentes
+- Component composition: SmartCropComponent orquestra CropControls + CropProcessor + ResultComparison
+- Responsive design com breakpoint 768px
+- Estilos encapsulados (seguiu mesma estrutura CSS dos outros componentes)
+- Auto-scroll UX consistente (ViewChild + ElementRef + scrollIntoView)
+
 ### Refactored - 2026-02-08 (ResultComparisonComponent — DRY)
 
 #### Componente Reutilizável de Comparação de Resultados

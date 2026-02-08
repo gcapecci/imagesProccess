@@ -468,6 +468,169 @@ async def enhance_image(
         )
 
 
+@app.post("/crop")
+async def crop_image(
+    image: UploadFile = File(...),
+    width: int = Query(800, ge=10, le=8000, description="Target width in pixels"),
+    height: int = Query(600, ge=10, le=8000, description="Target height in pixels"),
+    x: Optional[int] = Query(None, ge=0, description="Crop start X position"),
+    y: Optional[int] = Query(None, ge=0, description="Crop start Y position"),
+    auto_detect: bool = Query(False, description="Auto-detect important areas (faces, center of mass)")
+):
+    """
+    Crop and resize image with manual or AI auto-detection
+    
+    - **Manual mode**: Provide width, height, and optional x, y coordinates
+    - **Auto-detect mode**: AI finds important areas (faces or center of mass)
+    """
+    start_time = time.time()
+    
+    try:
+        # Validate file type
+        if not image.content_type.startswith('image/'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid file type. Please upload an image."
+            )
+        
+        # Read and validate image
+        image_data = await image.read()
+        if len(image_data) > 50 * 1024 * 1024:  # 50MB limit
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail="File too large. Maximum size is 50MB."
+            )
+        
+        logger.info(f"📐 Crop request: {width}x{height}, auto_detect={auto_detect}")
+        
+        # Open image
+        img = Image.open(io.BytesIO(image_data))
+        
+        # Convert to RGB if needed
+        if img.mode in ('RGBA', 'LA', 'P'):
+            background = Image.new('RGB', img.size, (255, 255, 255))
+            if img.mode == 'P':
+                img = img.convert('RGBA')
+            background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
+            img = background
+        elif img.mode != 'RGB':
+            img = img.convert('RGB')
+        
+        original_width, original_height = img.size
+        
+        # Determine crop box
+        if auto_detect:
+            # Try to detect faces using OpenCV (if available)
+            try:
+                import cv2
+                img_array = np.array(img)
+                gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+                
+                # Load Haar Cascade for face detection
+                face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+                faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                
+                if len(faces) > 0:
+                    # Use the first detected face as center
+                    (fx, fy, fw, fh) = faces[0]
+                    center_x = fx + fw // 2
+                    center_y = fy + fh // 2
+                    logger.info(f"✅ Face detected at ({center_x}, {center_y})")
+                else:
+                    # No face detected, use center of image
+                    center_x = original_width // 2
+                    center_y = original_height // 2
+                    logger.info("ℹ️  No face detected, using center of image")
+            except ImportError:
+                # OpenCV not available, use center of image
+                center_x = original_width // 2
+                center_y = original_height // 2
+                logger.info("ℹ️  OpenCV not available, using center of image")
+            
+            # Calculate crop box centered on the detected point
+            x = max(0, center_x - width // 2)
+            y = max(0, center_y - height // 2)
+            
+            # Adjust if crop box exceeds image boundaries
+            if x + width > original_width:
+                x = original_width - width
+            if y + height > original_height:
+                y = original_height - height
+            
+            # Ensure coordinates are non-negative
+            x = max(0, x)
+            y = max(0, y)
+        else:
+            # Manual mode: use provided coordinates or center
+            if x is None:
+                x = max(0, (original_width - width) // 2)
+            if y is None:
+                y = max(0, (original_height - height) // 2)
+            
+            # Ensure crop box stays within bounds
+            x = min(x, max(0, original_width - width))
+            y = min(y, max(0, original_height - height))
+        
+        # Perform crop
+        crop_box = (x, y, x + width, y + height)
+        
+        # Handle case where crop dimensions exceed image size
+        if x + width > original_width or y + height > original_height:
+            # Resize image first to fit the crop dimensions
+            aspect_ratio = width / height
+            if original_width / original_height > aspect_ratio:
+                new_height = original_height
+                new_width = int(new_height * aspect_ratio)
+            else:
+                new_width = original_width
+                new_height = int(new_width / aspect_ratio)
+            
+            img = img.resize((max(width, new_width), max(height, new_height)), Image.Resampling.LANCZOS)
+            original_width, original_height = img.size
+            x = max(0, (original_width - width) // 2)
+            y = max(0, (original_height - height) // 2)
+            crop_box = (x, y, x + width, y + height)
+        
+        cropped = img.crop(crop_box)
+        
+        # Save to buffer
+        output_buffer = io.BytesIO()
+        cropped.save(output_buffer, format='PNG', optimize=True)
+        output_buffer.seek(0)
+        
+        # Calculate processing time
+        processing_time = time.time() - start_time
+        
+        # Update statistics
+        stats["total_processed"] += 1
+        stats["total_processing_time"] += processing_time
+        stats["average_processing_time"] = stats["total_processing_time"] / stats["total_processed"]
+        stats["model_usage"]["crop"] = stats["model_usage"].get("crop", 0) + 1
+        
+        logger.info(f"✅ Cropped to {width}x{height} in {processing_time:.2f}s")
+        
+        return Response(
+            content=output_buffer.getvalue(),
+            media_type="image/png",
+            headers={
+                "X-Processing-Time": f"{processing_time:.2f}s",
+                "X-Crop-Box": f"{x},{y},{x+width},{y+height}",
+                "X-Original-Size": f"{original_width}x{original_height}",
+                "X-Cropped-Size": f"{width}x{height}"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        stats["total_errors"] += 1
+        logger.error(f"❌ Crop error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Crop failed: {str(e)}"
+        )
+
+
 @app.get("/stats")
 async def get_stats():
     """Get service statistics"""
